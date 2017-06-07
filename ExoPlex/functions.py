@@ -130,12 +130,11 @@ def get_percents(FeMg,SiMg,CaMg,AlMg,frac_Fe_in_mantle,frac_Si_core, \
 
     return(Core_wt_per,Mantle_wt_per,Core_mol_per)
 
-"""
-def new(0):
-    plxMan   = repr(MgOmwt) + ' ' + repr(SiO2mwt) + ' ' +repr(FeOmwt)+ ' ' +repr(CaOmwt)+ ' ' +repr(Al2O3mwt) #MgO,SiO2,FeO, CaO, Al2O3 wt%
-    solfileparamsString0 = '_'+repr(round(SiMg,3))+'_'+repr(round(FeMg,3))+'_'+repr(round(CaMg,3))+'_'+ repr(round(AlMg,3))+'_'+repr(round(XFeO,3)) \
-                    +'_'+repr(round(fSic,3)) +'_'+repr(round(fOc,3)) + '_'+ repr(round(fSc,3))
-    solfileparamsString  = solfileparamsString0.replace('.',',')
+
+def verbosity():
+
+    # MgO,SiO2,FeO, CaO, Al2O3 wt%
+
 
     solutionFileNameMan    = 'SiMg_FeMg_CaMg_AlMg_XFeO_fSic_fOc_fSc' + solfileparamsString+'_MANTLE'
 #    datafileName         = 'Mass_MgSi_FeSi_XFeO_fSic_fOc_' +repr(round(PlanetMass/MEarth,3))+solfileparamsString
@@ -152,7 +151,7 @@ def new(0):
     solutionFileNameCor     = 'fSic_fOc_fSc' + solfileparamsString+'_CORE'
 
      #print some stuff here
-    if verbose == 'y':
+    if verbose:
         print 'Mantle composition (wt%%): \n'
         print 'MgO = %.4f \tSiO2 = %.4f \tFeO = %.4f \tCaO = %.4f \tAl2O3 = %.4f\n' %                        \
                 (np.abs(MgOmwt),np.abs(SiO2mwt),np.abs(FeOmwt),np.abs(CaOmwt), np.abs(Al2O3mwt) )
@@ -180,7 +179,7 @@ def new(0):
 
     #DEBUG: print out the ratios of Mg/Si and Fe/Si
     # x = [nFec,nMgc,nSic,nOc, nSc | ,nFem,nMgm,nSim,nOm]
-    if verbose == 'y':
+    if verbose:
         print 'Calculated Values'
         print 'Mg/Si = %.4f' % (x[5]/(x[1]+x[6]))
         print 'Fe/Si = %.4f' % ((x[0]+x[4])/(x[1]+x[6]))
@@ -209,4 +208,4 @@ def new(0):
 #  return values: masfCor,masfMan, MgOmwt,SiO2mwt,FeOmwt, Sicwt, Fecwt,O2cwt
     #must rememer: the masfMan and Cor are wt%s
     return (masfCor,masfMan,MgOmwt,SiO2mwt,FeOmwt,CaOmwt, Al2O3mwt, Sicwt,Fecwt,O2cwt,S2cwt,solutionFileNameCor,solutionFileNameMan, plxMan,plxCor)
-"""
+
