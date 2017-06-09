@@ -40,13 +40,12 @@ def run_perplex(*args):
 
     if os.path.isfile('../Solutions/'+solutionFileNameMan):
         if verbose:  # the verbose variable is
-            print '\n\n***The mantle .tab already exists, please wait briefly for solution***\n'
-            print 'Mantle File name: '+ solutionFileNameMan
+            print '\nThe mantle .tab already exists, please wait briefly for solution\n'
+            print 'Mantle File name: '+ solutionFileNameMan+'\n'
         return
 
     else:
-        print '\n\n***new mantle solution file will be generated:\n', solutionFileNameMan, ' ***'
-        print 'it will be stored in: ../Solutions/'+ solutionFileNameMan
+        print '\n Making Mantle PerPlex phase file. \n This will be stored in: ../Solutions/'+ solutionFileNameMan
         #we need to shorten the file name for PerPlex to accept it
         solutionFileNameMan_short = list(solutionFileNameMan)
         solutionFileNameMan_short[0:30] = []
@@ -156,6 +155,12 @@ def run_perplex(*args):
     # Below, select parameters density, alpha, cp.
     # Ns for no calculating individual phase properties
     p.sendline('2')
+    p.sendline('N')
+    p.sendline('12')
+    p.sendline('N')
+    p.sendline('13')
+    p.sendline('N')
+    p.sendline('14')
     p.sendline('N')
     p.sendline('4')
     p.sendline('N')
