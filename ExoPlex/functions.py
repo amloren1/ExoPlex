@@ -28,7 +28,7 @@ def get_percents(*args):
     # system of equation which when solved gives molar values of elements in mantle and core
     # x = [nFec,nSic,nOc, nSc | ,nFem,nMgm,nSim,nOm, nCam, nAlm]
 
-    #Sum of all masses = 1 g
+    #Sum of all masses = 100 g
     b = np.array([0., 0. , 0. , 0. ,  0. , 0. , 0 , 0.,0., 100.])
 
 ############################################################################################
@@ -88,8 +88,6 @@ def get_percents(*args):
     CaO_mant_wt = Mantle_moles[4]*(mCa+mO)/mass_of_Mantle
     Al2O3_mant_wt = (Mantle_moles[5]/2.)*(2.*mAl+3.*mO)/mass_of_Mantle
 
-
-
     #Throw exception, not if statement
     #make inequality not, absolute if. Use machine precision
     if (FeO_mant_wt+MgO_mant_wt+SiO2_mant_wt+CaO_mant_wt+Al2O3_mant_wt) != 1.:
@@ -106,7 +104,8 @@ def get_percents(*args):
     CaO_mant_wt  = abs(round(CaO_mant_wt * 100., 8))
     Al2O3_mant_wt  = abs(round(Al2O3_mant_wt * 100., 8))
 
-    Mantle_wt_per = {'FeO': FeO_mant_wt, 'SiO2': SiO2_mant_wt, 'MgO': MgO_mant_wt, 'CaO': CaO_mant_wt,'Al2O3':Al2O3_mant_wt}
+    Mantle_wt_per = {'FeO': FeO_mant_wt, 'SiO2': SiO2_mant_wt, 'MgO': MgO_mant_wt, \
+                     'CaO': CaO_mant_wt,'Al2O3':Al2O3_mant_wt}
 
     #decimal fraction of materials in CORE by mass, these are perplex inputs (hence the rounding)
     # this is the wt% of Fe and the Fe in FeSi *** so total Fe in core

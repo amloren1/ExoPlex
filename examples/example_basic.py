@@ -43,4 +43,5 @@ if __name__ == "__main__":
                           wt_frac_O_core,wt_frac_S_core]
 
     structure_params =  [Pressure_range_mantle,Temperature_range_mantle,resolution]
+
     exo.run_planet(composition_params,structure_params,verbose)
