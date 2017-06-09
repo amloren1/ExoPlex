@@ -9,7 +9,7 @@ PerPlex_path = os.path.dirname(os.path.realpath(__file__))+"/PerPlex"
 if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
     sys.path.insert(1, os.path.abspath('..'))
 
-def run_perplex(Mantle_wt_per,SiMg,FeMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, prange, trange,verbose):
+def run_perplex(Mantle_wt_per,SiMg,FeMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, prange, trange,resolution,verbose):
 
 
     plxMan = str(Mantle_wt_per.get('MgO')) + ' ' + str(Mantle_wt_per.get('SiO2')) + ' ' \
@@ -187,12 +187,12 @@ def run_perplex(Mantle_wt_per,SiMg,FeMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_
     p2.sendline('7')
     p2.sendline('Aki')  # 9
     p2.sendline('7')
-    p2.sendline('Gt')  # 10
+    p2.sendline('Gt_maj')  # 10
     p2.sendline('7')
-    # p2.sendline('Ppv')  # 11
-    # p2.sendline('7')
-    # p2.sendline('CF')   # 12
-    # p2.sendline('7')
+    p2.sendline('Ppv')  # 11
+    p2.sendline('7')
+    p2.sendline('CF')   # 12
+    p2.sendline('7')
     p2.sendline('st')  # 12
     p2.sendline('7')
     p2.sendline('q')  # 13
@@ -216,7 +216,7 @@ def run_perplex(Mantle_wt_per,SiMg,FeMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_
 
     # Enter number of nodes in the T(K)     and P(bar)   directions:
 
-    p2.sendline('10 10')
+    p2.sendline(resolution)
     p2.logfile = open('werami.log','wb')
     p2.expect('    0 - EXIT', timeout=None)
     p2.sendline('0')

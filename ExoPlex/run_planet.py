@@ -13,11 +13,11 @@ import functions as func
 import run_perplex
 
 def run_planet(FeMg,SiMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, wt_frac_O_core, wt_frac_S_core, wt_frac_water, \
-               Pressure_range_mantle,Temperature_range_mantle,verbose):
+               Pressure_range_mantle,Temperature_range_mantle,resolution,verbose):
 
     Core_wt_per, Mantle_wt_per, Core_mol_per = func.get_percents(FeMg,SiMg,CaMg,AlMg,0.,0.,0.,0.)
 
-    run_perplex.run_perplex(Mantle_wt_per,SiMg,FeMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core,Pressure_range_mantle,Temperature_range_mantle,verbose)
+    run_perplex.run_perplex(Mantle_wt_per,SiMg,FeMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core,Pressure_range_mantle,Temperature_range_mantle,resolution,verbose)
 
 
 
