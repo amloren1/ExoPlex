@@ -162,16 +162,12 @@ def run_perplex(*args):
     p.sendline('19')
     p.sendline('N')
     ####### the next lines will pass requests to perplex to print phases and their proportions into the .tab file
+
     # 21 species, in all for Fe-Si-Mg-O regime
     p.sendline('7')
     p.sendline('C2/c')  # 0
     p.sendline('7')
     p.sendline('Wus')  # 1
-
-    # nn = p.expect(['No such entity as Wus', pe.EOF, pe.TIMEOUT], timeout=1)
-
-    # if nn == 0:
-    #    p.sendline('per')
     p.sendline('7')
     p.sendline('Pv')  # 2
     p.sendline('7')
@@ -227,5 +223,5 @@ def run_perplex(*args):
     p.terminate()
     print "Done with PerPlex"
 
-    return 0
+    return solutionFileNameMan
 

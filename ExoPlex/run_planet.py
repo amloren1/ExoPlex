@@ -16,6 +16,6 @@ def run_planet(compositional_params,structure_params,verbose):
 
     Core_wt_per, Mantle_wt_per, Core_mol_per = functions.get_percents(*compositional_params)
 
-    run_perplex.run_perplex(*[Mantle_wt_per,compositional_params,structure_params])
+    Mantle_filename = run_perplex.run_perplex(*[Mantle_wt_per,compositional_params,structure_params])
 
     return 0
