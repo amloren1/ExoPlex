@@ -18,7 +18,7 @@ bounds                     VRH  | [VRH] HS; Voigt-Reuss-Hill or Hashin-Shtrikman
 closed_c_space             T    | T[rue] or F[alse], default is T => closed composition space for gridded minimization 
 composition_constant       F    | T[rue] or F[alse], default is F; allows constants in composition expressions
 composition_phase          mol  | mol or wt; phase compositions in WERAMI output
-composition_system         wt   | mol or wt; system composition in WERAMI mode 2-4 output
+composition_system         mol   | mol or wt; system composition in WERAMI mode 2-4 output
 console_messages           on   | on or off
 dependent_potentials       on   | on or off
 efficiency                 3    | 1->5
@@ -42,7 +42,7 @@ pause_on_error              T   | T[rue] or F[alse], T => wait for user response
 pc_perturbation           5d-3  | perturbation to pseudo-compound compositions, for Schreinemakers and Mixed-variable calculations
 poisson_ratio        on   0.35  | value 1: on, off or all; value 2: 0->0.5; poisson ratio estimates for shear moduli
 poisson_test               F    | T[rue] or F[alse], default is F, T => use poisson ratio to check for valid results
-proportions               mol   | vol or wt; phase proportions
+proportions               mol   | mol or vol or wt; phase proportions
 pseudocompound_file        F    | echo static pseudocompound compositions to my_project_pseudocompound_list.txt
 reach_increment_switch     on   | all, on, off; default is on; all consumes more resources
 reaction_format        minimum  | minimum, full, stoich, S+V, or everything

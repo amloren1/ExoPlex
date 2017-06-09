@@ -18,3 +18,10 @@ ExoPlex/PerPlex/vertex
 *.log
 
 Examples/*.dat
+
+*.plt
+
+*.tof
+
+*.txt
+*.tab
