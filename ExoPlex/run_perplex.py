@@ -147,88 +147,84 @@ def run_perplex(*args):
 
     print 'Finished with Vertex, beginning Werami'
 
-    p2 = pe.spawn(PerPlex_path+"/./werami",timeout=600)
+    p = pe.spawn(PerPlex_path+"/./werami",timeout=600)
 
 
-    p2.sendline(solutionFileNameMan)
+    p.sendline(solutionFileNameMan)
     # select 2D grid
-    p2.sendline('2')
+    p.sendline('2')
     # Below, select parameters density, alpha, cp.
     # Ns for no calculating individual phase properties
-    p2.sendline('2')
-    p2.sendline('N')
-    p2.sendline('4')
-    p2.sendline('N')
-    p2.sendline('19')
-    p2.sendline('N')
+    p.sendline('2')
+    p.sendline('N')
+    p.sendline('4')
+    p.sendline('N')
+    p.sendline('19')
+    p.sendline('N')
     ####### the next lines will pass requests to perplex to print phases and their proportions into the .tab file
     # 21 species, in all for Fe-Si-Mg-O regime
-    p2.sendline('7')
-    p2.sendline('C2/c')  # 0
-    p2.sendline('7')
-    p2.sendline('Wus')  # 1
+    p.sendline('7')
+    p.sendline('C2/c')  # 0
+    p.sendline('7')
+    p.sendline('Wus')  # 1
 
-    # nn = p2.expect(['No such entity as Wus', pe.EOF, pe.TIMEOUT], timeout=1)
+    # nn = p.expect(['No such entity as Wus', pe.EOF, pe.TIMEOUT], timeout=1)
 
     # if nn == 0:
-    #    p2.sendline('per')
-    p2.sendline('7')
-    p2.sendline('Pv')  # 2
-    p2.sendline('7')
-    p2.sendline('an')  # 3
-    p2.sendline('7')
-    #  p2.sendline('Sp')  #4
-    # p2.sendline('7')
-    p2.sendline('O')  # 4
-    p2.sendline('7')
-    p2.sendline('Wad')  # 5
-    p2.sendline('7')
-    p2.sendline('Ring')  # 6  #if statement about no FeO or some shit
-    # nn = p2.expect(['No such entity as Ring', pe.EOF, pe.TIMEOUT], timeout=1)
-    # if nn == 0:
-    #    p2.sendline('ring')
-    p2.sendline('7')
-    p2.sendline('Opx')  # 7
-    p2.sendline('7')
-    p2.sendline('Cpx')  # 8
-    p2.sendline('7')
-    p2.sendline('Aki')  # 9
-    p2.sendline('7')
-    p2.sendline('Gt_maj')  # 10
-    p2.sendline('7')
-    p2.sendline('Ppv')  # 11
-    p2.sendline('7')
-    p2.sendline('CF')   # 12
-    p2.sendline('7')
-    p2.sendline('st')  # 12
-    p2.sendline('7')
-    p2.sendline('q')  # 13
-    p2.sendline('7')
-    p2.sendline('ca-pv')  # 14
-    p2.sendline('7')
-    p2.sendline('cfs')  # 15
-
-    p2.sendline('7')
-    p2.sendline('coe')  # 16
-    p2.sendline('7')
-    p2.sendline('ky')  # 17
-    p2.sendline('7')
-    p2.sendline('seif')  # 18
+    #    p.sendline('per')
+    p.sendline('7')
+    p.sendline('Pv')  # 2
+    p.sendline('7')
+    p.sendline('an')  # 3
+    p.sendline('7')
+    p.sendline('Sp')  #4
+    p.sendline('7')
+    p.sendline('O')  # 4
+    p.sendline('7')
+    p.sendline('Wad')  # 5
+    p.sendline('7')
+    p.sendline('Ring')  # 6  #if statement about no FeO or some shit
+    p.sendline('7')
+    p.sendline('Opx')  # 7
+    p.sendline('7')
+    p.sendline('Cpx')  # 8
+    p.sendline('7')
+    p.sendline('Aki')  # 9
+    p.sendline('7')
+    p.sendline('Gt_maj')  # 10
+    p.sendline('7')
+    p.sendline('Ppv')  # 11
+    p.sendline('7')
+    p.sendline('CF')   # 12
+    p.sendline('7')
+    p.sendline('st')  # 12
+    p.sendline('7')
+    p.sendline('q')  # 13
+    p.sendline('7')
+    p.sendline('ca-pv')  # 14
+    p.sendline('7')
+    p.sendline('cfs')  # 15
+    p.sendline('7')
+    p.sendline('coe')  # 16
+    p.sendline('7')
+    p.sendline('ky')  # 17
+    p.sendline('7')
+    p.sendline('seif')  # 18
 
     # exit parameter choosing
 
-    p2.sendline('0')
+    p.sendline('0')
     # Change default variable range (y/n)?
-    p2.sendline('N')
+    p.sendline('N')
 
     # Enter number of nodes in the T(K)     and P(bar)   directions:
 
-    p2.sendline(resolution)
-    p2.logfile = open('werami.log','wb')
-    p2.expect('    0 - EXIT', timeout=None)
-    p2.sendline('0')
-    p2.read()
-    p2.terminate()
+    p.sendline(resolution)
+    p.logfile = open('werami.log','wb')
+    p.expect('    0 - EXIT', timeout=None)
+    p.sendline('0')
+    p.read()
+    p.terminate()
     print "Done with PerPlex"
 
     return 0
