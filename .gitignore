@@ -4,3 +4,17 @@
 *.iml
 
 *.pyc
+
+ExoPlex/PerPlex/build
+
+ExoPlex/PerPlex/werami
+
+ExoPlex/PerPlex/vertex
+
+*.arf
+
+*.blk
+
+*.log
+
+Examples/*.dat
