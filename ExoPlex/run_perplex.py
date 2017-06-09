@@ -9,8 +9,20 @@ PerPlex_path = os.path.dirname(os.path.realpath(__file__))+"/PerPlex"
 if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
     sys.path.insert(1, os.path.abspath('..'))
 
-def run_perplex(Mantle_wt_per,SiMg,FeMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, prange, trange,resolution,verbose):
+def run_perplex(*args):
 
+    Mantle_wt_per = args[0]
+
+    FeMg = args[1][1]
+    SiMg = args[1][2]
+    CaMg = args[1][3]
+    AlMg = args[1][4]
+    mol_frac_Fe_mantle = args[1][5]
+    wt_frac_Si_core = args[1][6]
+
+    Pressure_range_mantle = args[2][0]
+    Temperature_range_mantle = args[2][1]
+    resolution = args[2][2]
 
     plxMan = str(Mantle_wt_per.get('MgO')) + ' ' + str(Mantle_wt_per.get('SiO2')) + ' ' \
              + str(Mantle_wt_per.get('FeO')) + ' ' + str(Mantle_wt_per.get('CaO')) \
@@ -79,10 +91,10 @@ def run_perplex(Mantle_wt_per,SiMg,FeMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_
     # Select x-axis variable:
     p.sendline('2')
     # Enter minimum and maximum values, respectively, for: T(K)
-    p.sendline(trange)
+    p.sendline(Temperature_range_mantle)
     # Enter minimum and maximum values, respectively, for: P(bar)
     # P(Pa) = P(bar)*100000
-    p.sendline(prange)
+    p.sendline(Pressure_range_mantle)
     # Specify component amounts by weight (Y/N)?
     p.sendline('Y')
     # Enter weight amounts of the components:
@@ -134,11 +146,6 @@ def run_perplex(Mantle_wt_per,SiMg,FeMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_
     p.wait()
 
     print 'Finished with Vertex, beginning Werami'
-    #shutil.move(solutionFileNameMan+'.arf', '../ExoPlex/PerPlex/')
-    #shutil.move(solutionFileNameMan+'.dat', '../ExoPlex/PerPlex/')
-    #shutil.move(solutionFileNameMan+'.blk', '../ExoPlex/PerPlex/')
-    #shutil.move(solutionFileNameMan+'.plt', '../ExoPlex/PerPlex/')
-    #shutil.move(solutionFileNameMan+'.tof', '../ExoPlex/PerPlex/')
 
     p2 = pe.spawn(PerPlex_path+"/./werami",timeout=600)
 

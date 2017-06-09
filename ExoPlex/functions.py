@@ -1,14 +1,15 @@
 import numpy as np
 import sys
 
-def get_percents(FeMg,SiMg,CaMg,AlMg,frac_Fe_in_mantle,frac_Si_core, \
-                 frac_O_core,frac_S_core):
-
-
-    XFeO = frac_Fe_in_mantle
-    fSic = frac_Si_core
-    fOc = frac_O_core
-    fSc = frac_S_core
+def get_percents(*args):
+    FeMg = args[1]
+    SiMg = args[2]
+    CaMg = args[3]
+    AlMg = args[4]
+    mol_frac_Fe_mantle = args[5]
+    wt_frac_Si_core = args[6]
+    wt_frac_O_core = args[7]
+    wt_frac_S_core = args[8]
 
     MgSi = SiMg**(-1)
     FeSi = FeMg*MgSi
@@ -40,10 +41,13 @@ def get_percents(FeMg,SiMg,CaMg,AlMg,frac_Fe_in_mantle,frac_Si_core, \
            [0, -MgSi, 0, 0 ,0. ,1 ,-MgSi ,0.,0.,0.] ,
             [0, -CaSi, 0, 0 ,0. ,0. ,-CaSi ,0., 1 ,0.] ,
         [0, -AlSi, 0, 0 ,0. ,0. ,-AlSi ,0.,0., 1] ,
-          [XFeO , 0 , 0 ,0, (XFeO-1) ,  0 , 0 , 0 ,0., 0] ,
-          [fSic*mFe , (fSic-1)*mSi , fSic*mO , fSic*mS , 0. , 0 , 0. , 0 , 0., 0.] ,
-          [fOc*mFe , (fOc)*mSi , (fOc-1)*mO , fOc*mS , 0. , 0 , 0. , 0 , 0., 0.]  ,
-          [fSc*mFe , (fSc)*mSi , (fSc)*mO , (fSc-1)*mS , 0. , 0 , 0. , 0 , 0., 0.] ,
+          [mol_frac_Fe_mantle , 0 , 0 ,0, (mol_frac_Fe_mantle-1) ,  0 , 0 , 0 ,0., 0] ,
+          [wt_frac_Si_core*mFe , (wt_frac_Si_core-1)*mSi , wt_frac_Si_core*mO , wt_frac_Si_core*mS \
+                       , 0. , 0 , 0. , 0 , 0., 0.] ,
+          [wt_frac_O_core*mFe , (wt_frac_O_core)*mSi , (wt_frac_O_core-1)*mO , wt_frac_O_core*mS
+                       , 0. , 0 , 0. , 0 , 0., 0.]  ,
+          [wt_frac_S_core*mFe , (wt_frac_S_core)*mSi , (wt_frac_S_core)*mO , (wt_frac_S_core-1)*mS
+                       , 0. , 0 , 0. , 0 , 0., 0.] ,
           [mFe , mSi , mO, mS ,  mFe , mMg , mSi ,mO, mCa, mAl]   ])
 
 
