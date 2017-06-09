@@ -228,5 +228,12 @@ def run_perplex(*args):
     p.terminate()
     print "Done with PerPlex"
 
-    return solutionFileNameMan
+    file = open(solutionFileNameMan+'.tab',"rw")
+
+    Phases = file.readlines()[12].split()[8:]
+
+    for i in range(len(Phases)):
+        Phases[i] = Phases[i].strip(",mo%")
+
+    return solutionFileNameMan,Phases
 
