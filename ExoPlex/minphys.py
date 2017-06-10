@@ -14,11 +14,10 @@ def get_rho(Planet,mass_planet,grids,Core_wt_per,structural_params):
     num_layers = num_mantle_layers+num_core_layers+number_h2o_layers
     temperature_grid, pressure_grid, density_grid, speed_grid, alpha_grid, cp_grid, phases_grid = grids
 
-
     for i in range(num_layers+1):
-        if i < num_core_layers:
+        if i <= num_core_layers:
             rho_layers[i] = get_core_rho(Pressure_layers[i],Temperature_layers[i],Core_wt_per)
-        elif i>=num_core_layers+num_mantle_layers:
+        elif i<=num_core_layers+num_mantle_layers:
             rho_layers[i] = get_mantle_rho(Pressure_layers[i],Temperature_layers[i],pressure_grid,\
                                            temperature_grid,density_grid)
         else:
@@ -33,9 +32,10 @@ def get_core_rho(Pressure,Temperature,Core_wt_per):
     frac_Fe = Core_wt_per.get('Fe')
 
 
-    return density
+    return 0
 
 def get_mantle_rho(Pressure,Temperature,pressure_grid,temperature_grid,density_grid):
+    print Pressure,Temperature
     density = interpolate.griddata((pressure_grid,temperature_grid),density_grid,(Pressure,Temperature),method='linear')
     return density
 

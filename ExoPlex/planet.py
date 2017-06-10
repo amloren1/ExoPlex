@@ -125,12 +125,12 @@ def initialize(*args):
             Temperature_layers[i] = 300.
 
     for i in range(num_layers+1):
-        if i >= num_core_layers+num_mantle_layers:
+        if i > num_core_layers+num_mantle_layers:
             Pressure_layers[i] = 1
         elif i > num_core_layers:
-            Pressure_layers[i] = 10000*(num_core_layers+num_mantle_layers-i)
+            Pressure_layers[i] = 50000*(num_core_layers+num_mantle_layers-i+1)
         else:
-            Pressure_layers[i] = 1000000*(num_core_layers-i)
+            Pressure_layers[i] = 100000*(num_core_layers-i)
 
 
     #initial temperature guess of 0.5 K per km
@@ -142,8 +142,8 @@ def initialize(*args):
 def compress(*args):
     Planet = args[0]
     Mass_planet = args[1]
-    Mantle_filename = args[2]
-    compositional_params = args[3]
+    grids = args[2]
+    Core_wt_per = args[3]
     structural_params= args[4]
 
 
@@ -151,5 +151,5 @@ def compress(*args):
     max_iterations = 1
 
     while n_iterations <= max_iterations:
-        rho_layers = minphys.get_rho(Planet,Mantle_filename,structural_params)
+        rho_layers = minphys.get_rho(Planet,Mass_planet,grids,Core_wt_per,structural_params)
         n_iterations+=1
