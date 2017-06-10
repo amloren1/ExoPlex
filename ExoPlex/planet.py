@@ -113,7 +113,6 @@ def initialize(*args):
 
 
         else:
-            print "in here"
             radius_layers[i]=core_thickness_guess+mantle_thickness_guess+\
                              ((float(i-num_core_layers-num_mantle_layers)/number_h2o_layers)*water_thickness_guess)
             rho_layers[i]=1000.
@@ -127,10 +126,10 @@ def initialize(*args):
     for i in range(num_layers+1):
         if i > num_core_layers+num_mantle_layers:
             Pressure_layers[i] = 1
-        elif i > num_core_layers:
-            Pressure_layers[i] = 50000*(num_core_layers+num_mantle_layers-i+1)
         else:
-            Pressure_layers[i] = 100000*(num_core_layers-i)
+            Pressure_layers[i] = 2000000*((num_core_layers+num_mantle_layers-i+1)/float(num_core_layers+num_mantle_layers))
+
+    Pressure_layers[num_core_layers+num_mantle_layers] = 10000
 
 
     #initial temperature guess of 0.5 K per km
