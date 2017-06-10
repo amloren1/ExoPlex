@@ -19,8 +19,9 @@ def run_planet(mass_planet,compositional_params,structure_params,verbose):
 
     #Mantle_filename,Phases = run_perplex.run_perplex(*[Mantle_wt_per,compositional_params,structure_params])
     Mantle_filename='1,0_1,0_0,067_0,091_0,0_0,0_MANTLE'
+    grids = functions.make_mantle_grid(Mantle_filename)
     Planet = planet.initialize(*[mass_planet,core_mass_frac,structure_params,compositional_params])
 
-    #Planet = planet.compress(*[Planet,mass_planet,Mantle_filename,Core_wt_per,structure_params])
-    minphys.get_mantle_rho(1000,1544.4445,'1,0_1,0_0,067_0,091_0,0_0,0_MANTLE')
+    #Planet = planet.compress(*[Planet,mass_planet,Core_wt_per,structure_params])
+    minphys.get_mantle_rho(1000,1544.4445,grids,'1,0_1,0_0,067_0,091_0,0_0,0_MANTLE')
     return 0

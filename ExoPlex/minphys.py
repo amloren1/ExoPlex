@@ -3,7 +3,7 @@ import numpy as np
 import burnman
 from scipy import interpolate
 
-def get_rho(Planet,Mantle_filename,Core_wt_per,structural_params):
+def get_rho(Planet,mass_planet,grids,Core_wt_per,structural_params):
 
     radius_layers, rho_layers, rho0_layers, volume_layers, \
      mass_layers, cumulative_mass, Temperature_layers, \
@@ -12,12 +12,15 @@ def get_rho(Planet,Mantle_filename,Core_wt_per,structural_params):
     num_mantle_layers, num_core_layers, number_h2o_layers = structural_params[4:]
 
     num_layers = num_mantle_layers+num_core_layers+number_h2o_layers
+    temperature_grid, pressure_grid, density_grid, speed_grid, alpha_grid, cp_grid, phases_grid = grids
+
 
     for i in range(num_layers+1):
         if i < num_core_layers:
             rho_layers[i] = get_core_rho(Pressure_layers[i],Temperature_layers[i],Core_wt_per)
         elif i>=num_core_layers+num_mantle_layers:
-            rho_layers[i] = get_mantle_rho(Pressure_layers[i],Temperature_layers[i],Mantle_filename)
+            rho_layers[i] = get_mantle_rho(Pressure_layers[i],Temperature_layers[i],pressure_grid,\
+                                           temperature_grid,density_grid)
         else:
             rho_layers[i] = get_water_rho(Pressure_layers[i],Temperature_layers[i])
 
@@ -32,27 +35,7 @@ def get_core_rho(Pressure,Temperature,Core_wt_per):
 
     return density
 
-def get_mantle_rho(Pressure,Temperature,Mantle_filename):
-
-    file = open(Mantle_filename+'_1.tab','r')
-    temp_file = file.readlines()
-    num_rows = len(temp_file[13:])
-    num_columns = len(temp_file[12].split())
-
-
-    data = temp_file[13:]
-    grid = np.zeros((num_rows,num_columns))
-
-    for i in range(num_rows):
-        #for j in range(num_columns):
-        columns = data[i].strip('\n').split()
-        grid[i] = [float(j) for j in columns]
-
-
-    pressure_grid = [row[1] for row in grid]
-    temperature_grid = [row[0] for row in grid]
-    density_grid = [row[2] for row in grid]
-
+def get_mantle_rho(Pressure,Temperature,pressure_grid,temperature_grid,density_grid):
     density = interpolate.griddata((pressure_grid,temperature_grid),density_grid,(Pressure,Temperature),method='linear')
     return density
 

@@ -213,3 +213,31 @@ def verbosity():
     #must rememer: the masfMan and Cor are wt%s
     return (masfCor,masfMan,MgOmwt,SiO2mwt,FeOmwt,CaOmwt, Al2O3mwt, Sicwt,Fecwt,O2cwt,S2cwt,solutionFileNameCor,solutionFileNameMan, plxMan,plxCor)
 
+def make_mantle_grid(Mantle_filename):
+    file = open(Mantle_filename+'_1.tab','r')
+    temp_file = file.readlines()
+    num_rows = len(temp_file[13:])
+    num_columns = len(temp_file[12].split())
+
+    data = temp_file[13:]
+    grid = np.zeros((num_rows,num_columns))
+
+    for i in range(num_rows):
+        #for j in range(num_columns):
+        columns = data[i].strip('\n').split()
+        grid[i] = [float(j) for j in columns]
+
+
+    num_phases = len(grid[0][8:])
+    phases_grid = np.zeros((num_rows,num_phases))
+    for i in range(num_rows):
+        phases_grid[i] = grid[i][8:]
+
+    temperature_grid = [row[0] for row in grid]
+    pressure_grid = [row[1] for row in grid]
+    density_grid = [row[2] for row in grid]
+    speed_grid = [[row[3],row[4],row[5]] for row in grid]
+    alpha_grid = [row[6] for row in grid]
+    cp_grid = [row[7] for row in grid]
+
+    return (temperature_grid,pressure_grid,density_grid,speed_grid,alpha_grid,cp_grid,phases_grid)
