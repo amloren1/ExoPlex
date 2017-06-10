@@ -16,6 +16,7 @@ import ExoPlex as exo
 if __name__ == "__main__":
 
     #First user must input the ratios
+    mass_planet = 1.
     FeMg = 1.
     SiMg = 1.
     wt_frac_Si_core = 0.
@@ -36,12 +37,17 @@ if __name__ == "__main__":
     wt_frac_O_core = 0.
     wt_frac_S_core = 0.
 
+    num_mantle_layers = 10
+    num_core_layers = 10
+    number_h2o_layers = 0
+
+    Mantle_potential_temp = 1650
     #Earth Mass, Earth Radius, array, array, array,2D grid
     #Mass, Radius, pressure, temperature, density, composition =
 
-    composition_params = [wt_frac_water,FeMg,SiMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, \
+    compositional_params = [wt_frac_water,FeMg,SiMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, \
                           wt_frac_O_core,wt_frac_S_core]
 
-    structure_params =  [Pressure_range_mantle,Temperature_range_mantle,resolution]
+    structure_params =  [Pressure_range_mantle,Temperature_range_mantle,resolution,Mantle_potential_temp,num_mantle_layers,num_core_layers,number_h2o_layers]
 
-    exo.run_planet(composition_params,structure_params,verbose)
+    exo.run_planet(mass_planet,compositional_params,structure_params,verbose)

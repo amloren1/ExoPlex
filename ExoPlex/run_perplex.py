@@ -228,7 +228,7 @@ def run_perplex(*args):
     p.terminate()
     print "Done with PerPlex"
 
-    file = open(solutionFileNameMan+'.tab',"rw")
+    file = open(solutionFileNameMan+'_1.tab',"rw")
 
     Phases = file.readlines()[12].split()[8:]
 

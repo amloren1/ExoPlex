@@ -79,6 +79,7 @@ def get_percents(*args):
 
     Mtot= mass_of_Core+mass_of_Mantle #in g
 
+    core_mass_frac = mass_of_Core/Mtot
     #Weight percents of mantle oxides
     #Weight percents assuming FeO, MgO, SiO2, CaO, Al2O3
 
@@ -131,7 +132,7 @@ def get_percents(*args):
                   'O':Core_moles[2]/tot_moles_core,'S':Core_moles[3]/tot_moles_core}
 
 
-    return(Core_wt_per,Mantle_wt_per,Core_mol_per)
+    return(Core_wt_per,Mantle_wt_per,Core_mol_per,core_mass_frac)
 
 
 def verbosity():
