@@ -2,6 +2,8 @@ import os
 import sys
 import numpy as np
 Earth_radius = 6.371e6
+import minphys
+
 
 def initialize(*args):
     mass_planet = args[0]
@@ -53,7 +55,7 @@ def initialize(*args):
     ########################################################################################################## Move to compression function and set as outputs
     # used for compressiofh2on funciton
     gravity = np.zeros(num_layers + 1)
-    Pressure = np.zeros(num_layers + 1)
+    Pressure_layers = np.zeros(num_layers + 1)
 
     rhon = np.zeros(num_layers + 1)
     alpha = np.zeros(num_layers + 1)
@@ -109,6 +111,7 @@ def initialize(*args):
             Temperature_layers[i] = Mantle_potential_temp + 0.5 * (core_thickness_guess+mantle_thickness_guess\
                                                                    - radius_layers[i])/1000.
 
+
         else:
             print "in here"
             radius_layers[i]=core_thickness_guess+mantle_thickness_guess+\
@@ -121,9 +124,32 @@ def initialize(*args):
             #Temperature_layers[i] = Surface_temp +(float(i-num_core_layers-num_mantle_layers)/number_h2o_layers)*water_thickness_guess)
             Temperature_layers[i] = 300.
 
+    for i in range(num_layers+1):
+        if i >= num_core_layers+num_mantle_layers:
+            Pressure_layers[i] = 1
+        elif i > num_core_layers:
+            Pressure_layers[i] = 10000*(num_core_layers+num_mantle_layers-i)
+        else:
+            Pressure_layers[i] = 1000000*(num_core_layers-i)
+
 
     #initial temperature guess of 0.5 K per km
 
     return ([radius_layers, rho_layers, rho0_layers, volume_layers,\
              mass_layers, cumulative_mass, Temperature_layers,\
-             gravity, Pressure, rhon, alpha, cp, phase])
+             gravity, Pressure_layers, rhon, alpha, cp, phase])
+
+def compress(*args):
+    Planet = args[0]
+    Mass_planet = args[1]
+    Mantle_filename = args[2]
+    compositional_params = args[3]
+    structural_params= args[4]
+
+
+    n_iterations = 1
+    max_iterations = 1
+
+    while n_iterations <= max_iterations:
+        rho_layers = minphys.get_rho(Planet,Mantle_filename,structural_params)
+        n_iterations+=1
