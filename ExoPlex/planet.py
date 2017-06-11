@@ -130,6 +130,7 @@ def compress(*args):
 
     old_rho = [0  for i in range(len(Planet['density']))]
     converge = False
+    print
     while n_iterations <= max_iterations and converge == False:
         print "iteration #",n_iterations
         Planet['density'] = minphys.get_rho(Planet,grids,Core_wt_per,structural_params)

@@ -330,4 +330,5 @@ def write(Planet,filename):
 
     print
     print "file written to:", filename
+    print
     return 0
