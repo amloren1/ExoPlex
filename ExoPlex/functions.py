@@ -328,4 +328,6 @@ def write(Planet,filename):
     np.savetxt(filename, output, '%.5f', "\t", newline='\n',
                 header=string_element, footer='', comments='# ')
 
+    print
+    print "file written to:", filename
     return 0
