@@ -138,7 +138,7 @@ def compress(*args):
 
         print "Grav"
 
-        Planet['gravity'] = minphys.get_gravity(Planet,structural_params)
+        Planet['gravity'] = minphys.get_gravity(Planet)
 
         print "pressure"
 
