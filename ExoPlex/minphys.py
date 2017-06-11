@@ -171,7 +171,6 @@ def check_convergence(new_rho,old_rho):
 
     for i in delta:
         if i >= 1.e-6:
-            print i
             return False,new_rho
         else:
             return True, new_rho
