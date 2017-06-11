@@ -30,15 +30,15 @@ if __name__ == "__main__":
 
     #Feel free to change, but these are defaulted right now
     #Do you want to pin Mass and solve Radius?
-    resolution = '10 10'
+    resolution = '60 60'
 
     CaMg = 0.011/0.165
     AlMg = 0.015/.165
     wt_frac_O_core = 0.
     wt_frac_S_core = 0.
 
-    num_mantle_layers = 10
-    num_core_layers = 10
+    num_mantle_layers = 100
+    num_core_layers = 100
     number_h2o_layers = 0
 
     Mantle_potential_temp = 1650

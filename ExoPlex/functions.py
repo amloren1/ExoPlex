@@ -219,6 +219,8 @@ def make_mantle_grid(Mantle_filename):
     num_rows = len(temp_file[13:])
     num_columns = len(temp_file[12].split())
 
+    header = temp_file[12].strip('\n').split()
+
     data = temp_file[13:]
     grid = np.zeros((num_rows,num_columns))
 
@@ -239,5 +241,6 @@ def make_mantle_grid(Mantle_filename):
     speed_grid = [[row[3],row[4],row[5]] for row in grid]
     alpha_grid = [row[6] for row in grid]
     cp_grid = [row[7] for row in grid]
+
 
     return (temperature_grid,pressure_grid,density_grid,speed_grid,alpha_grid,cp_grid,phases_grid)
