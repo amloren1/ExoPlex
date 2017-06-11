@@ -103,7 +103,9 @@ def initialize(*args):
         if i > num_core_layers+num_mantle_layers:
             Pressure_layers[i] = 1
         else:
-            Pressure_layers[i] = (10000.*300.)*((num_core_layers+num_mantle_layers-i)/float(num_core_layers+num_mantle_layers))
+            Pressure_layers[i] = (float((10000.-(300.*10000))/float(num_core_layers+num_mantle_layers))*float(i)
+                                  + 300.*10000)
+
 
     Pressure_layers[num_core_layers+num_mantle_layers-1] = 10000
 
@@ -131,9 +133,19 @@ def compress(*args):
     while n_iterations <= max_iterations and converge == False:
         print
         print "iteration",n_iterations
+        print "Den"
         Planet['density'] = minphys.get_rho(Planet,grids,Core_wt_per,structural_params)
-        Planet['gravity'] = minphys.get_gravity(Planet)
+
+        print "Grav"
+
+        Planet['gravity'] = minphys.get_gravity(Planet,structural_params)
+
+        print "pressure"
+
         Planet['pressure'] = minphys.get_pressure(Planet)
+
+        print "temperature"
+
         Planet['temperature'] = minphys.get_temperature(Planet,grids,structural_params)
         converge,old_rho = minphys.check_convergence(Planet['density'],old_rho)
         print converge
