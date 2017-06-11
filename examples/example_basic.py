@@ -17,31 +17,31 @@ if __name__ == "__main__":
 
     #First user must input the ratios
     mass_planet = 1.
-    FeMg = 1.
-    SiMg = 1.
+    FeMg = .149/.165
+    SiMg = 0.158/0.198
     wt_frac_Si_core = 0.
     wt_frac_water = 0.
-    mol_frac_Fe_mantle = 0
-    Pressure_range_mantle = '1000 2500000'
-    Temperature_range_mantle =  '1400 4000'
+    mol_frac_Fe_mantle = 0.0
+    Pressure_range_mantle = '5000 2000000'
+    Temperature_range_mantle =  '1400 3000'
 
 
     verbose = True
 
     #Feel free to change, but these are defaulted right now
     #Do you want to pin Mass and solve Radius?
-    resolution = '60 60'
+    resolution = '60 100'
 
-    CaMg = 0.011/0.165
-    AlMg = 0.015/.165
+    CaMg = 0.013/0.198
+    AlMg = 0.018/0.198
     wt_frac_O_core = 0.
     wt_frac_S_core = 0.
 
-    num_mantle_layers = 100
-    num_core_layers = 100
+    num_mantle_layers = 600
+    num_core_layers = 500
     number_h2o_layers = 0
 
-    Mantle_potential_temp = 1650
+    Mantle_potential_temp = 1800
     #Earth Mass, Earth Radius, array, array, array,2D grid
     #Mass, Radius, pressure, temperature, density, composition =
 
@@ -52,6 +52,31 @@ if __name__ == "__main__":
 
     Planet = exo.run_planet(mass_planet,compositional_params,structure_params,verbose)
 
+    output = []
+
+    for i in range(len(Planet['pressure'])):
+        line_item = [Planet['radius'][i]/1000.,Planet['density'][i]/1000.,Planet['pressure'][i]/10000.,Planet['temperature'][i],
+                     Planet['Vphi'][i],Planet['Vp'][i],Planet['Vs'][i]]
+        for j in range(len(Planet['phases'][i])):
+            line_item.append(Planet['phases'][i][j])
+
+        output.append(line_item)
+    line_name = []
+    line_name.append('Radius')
+    line_name.append('Density')
+    line_name.append('Pressure')
+    line_name.append('Temperature')
+    line_name.append('Vphi')
+    line_name.append('Vp')
+    line_name.append('Vs')
+    for i in Planet['phase_names']:
+        line_name.append(str(i))
+
+    string_element = '	'.join(line_name)
+    np.savetxt("test.dat", output, '%.5f', "\t", newline='\n',
+                header=string_element, footer='', comments='# ')
+
+    """
     figure = plt.figure(figsize = (12,10))
     # figure.suptitle('Your planet is %.3f Earth Masses with Average Density of %.1f kg/m$^3$' %((Plan.mass/5.97e24), \
     #                (Plan.mass/(4./3.*np.pi*Plan.radial_slices[-1]*Plan.radial_slices[-1]*Plan.radial_slices[-1]))),\
@@ -87,3 +112,4 @@ if __name__ == "__main__":
     ax4.set_ylim(0., max(Planet['temperature']) + 100)
 
     plt.show()
+    """

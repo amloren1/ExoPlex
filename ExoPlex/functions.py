@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+from scipy import interpolate
 
 def get_percents(*args):
     FeMg = args[1]
@@ -36,18 +37,18 @@ def get_percents(*args):
     #Comment here
     #Double checks
     #Return only moles of elements, no molecules
-    A = np.array([ [0., 0., 0. , 0. , -1. ,-1, -2 , 1 , -1, -1.5] ,
-            [1 , -FeSi , 0. , 0. , 1 , 0. , -FeSi , 0.,0.,0.] ,
-           [0, -MgSi, 0, 0 ,0. ,1 ,-MgSi ,0.,0.,0.] ,
-            [0, -CaSi, 0, 0 ,0. ,0. ,-CaSi ,0., 1 ,0.] ,
-        [0, -AlSi, 0, 0 ,0. ,0. ,-AlSi ,0.,0., 1] ,
-          [mol_frac_Fe_mantle , 0 , 0 ,0, (mol_frac_Fe_mantle-1) ,  0 , 0 , 0 ,0., 0] ,
-          [wt_frac_Si_core*mFe , (wt_frac_Si_core-1)*mSi , wt_frac_Si_core*mO , wt_frac_Si_core*mS \
-                       , 0. , 0 , 0. , 0 , 0., 0.] ,
+    A = np.array([ [0., 0., 0. , 0. , -1. ,-1., -2. , 1. , -1., -1.5] ,
+            [1. , -FeSi , 0. , 0. , 1. , 0. , -FeSi , 0.,0.,0.] ,
+           [0., -MgSi, 0., 0. ,0. ,1. ,-MgSi ,0.,0.,0.] ,
+            [0., -CaSi, 0., 0. ,0. ,0. ,-CaSi ,0., 1. ,0.] ,
+        [0., -AlSi, 0., 0. ,0. ,0. ,-AlSi ,0.,0., 1.] ,
+          [mol_frac_Fe_mantle , 0. , 0. ,0., (mol_frac_Fe_mantle-1.) ,  0. , 0. , 0. ,0., 0.] ,
+          [wt_frac_Si_core*mFe , (wt_frac_Si_core-1.)*mSi , wt_frac_Si_core*mO , wt_frac_Si_core*mS \
+                       , 0. , 0. , 0. , 0. , 0., 0.] ,
           [wt_frac_O_core*mFe , (wt_frac_O_core)*mSi , (wt_frac_O_core-1)*mO , wt_frac_O_core*mS
-                       , 0. , 0 , 0. , 0 , 0., 0.]  ,
+                       , 0. , 0. , 0. , 0. , 0., 0.]  ,
           [wt_frac_S_core*mFe , (wt_frac_S_core)*mSi , (wt_frac_S_core)*mO , (wt_frac_S_core-1)*mS
-                       , 0. , 0 , 0. , 0 , 0., 0.] ,
+                       , 0. , 0. , 0. , 0. , 0., 0.] ,
           [mFe , mSi , mO, mS ,  mFe , mMg , mSi ,mO, mCa, mAl]   ])
 
 
@@ -91,7 +92,8 @@ def get_percents(*args):
 
     #Throw exception, not if statement
     #make inequality not, absolute if. Use machine precision
-    if (FeO_mant_wt+MgO_mant_wt+SiO2_mant_wt+CaO_mant_wt+Al2O3_mant_wt) != 1.:
+    if abs(float(FeO_mant_wt+MgO_mant_wt+SiO2_mant_wt+CaO_mant_wt+Al2O3_mant_wt)-1.) > np.finfo(float).eps:
+        print abs(float(FeO_mant_wt+MgO_mant_wt+SiO2_mant_wt+CaO_mant_wt+Al2O3_mant_wt)-1.)
         print '\n\n Mantle wt% don\'t add to 1'
         sys.exit()
 
@@ -214,12 +216,17 @@ def verbosity():
     return (masfCor,masfMan,MgOmwt,SiO2mwt,FeOmwt,CaOmwt, Al2O3mwt, Sicwt,Fecwt,O2cwt,S2cwt,solutionFileNameCor,solutionFileNameMan, plxMan,plxCor)
 
 def make_mantle_grid(Mantle_filename):
+
     file = open(Mantle_filename+'_1.tab','r')
     temp_file = file.readlines()
     num_rows = len(temp_file[13:])
     num_columns = len(temp_file[12].split())
 
     header = temp_file[12].strip('\n').split()
+    Phases = header[8:]
+
+    for i in range(len(Phases)):
+        Phases[i] = Phases[i].strip(",mo%")
 
     data = temp_file[13:]
     grid = np.zeros((num_rows,num_columns))
@@ -241,6 +248,56 @@ def make_mantle_grid(Mantle_filename):
     speed_grid = [[row[3],row[4],row[5]] for row in grid]
     alpha_grid = [row[6] for row in grid]
     cp_grid = [row[7] for row in grid]
+    phase_grid = [row[8:] for row in grid]
+
+    keys = ['temperature','pressure','density','speeds','alpha','cp','phases']
+    return dict(zip(keys,[temperature_grid,pressure_grid,density_grid,speed_grid,alpha_grid,cp_grid,phase_grid])),Phases
+
+def get_phases(Planet,grids,structural_params):
+    num_mantle_layers, num_core_layers, number_h2o_layers = structural_params[4:]
 
 
-    return (temperature_grid,pressure_grid,density_grid,speed_grid,alpha_grid,cp_grid,phases_grid)
+    mantle_pressures = Planet['pressure'][num_core_layers:]
+    mantle_temperatures = Planet['temperature'][num_core_layers:]
+    core_pressures = Planet['pressure']
+    core_temperatures = Planet['temperature']
+
+    Mantle_phases = interpolate.griddata((grids['pressure'], grids['temperature']), grids['phases'],
+                         (mantle_pressures, mantle_temperatures), method='linear')
+
+    Core_phases = interpolate.griddata((grids['pressure'], grids['temperature']), grids['phases'],
+                         (core_pressures, core_temperatures), method='linear')
+
+    #phases = np.append(Core_phases,Mantle_phases)
+    Core_phases[num_core_layers:] = Mantle_phases
+    Phases = Core_phases
+
+    return Phases
+
+def get_speeds(Planet,grids,structural_params):
+    num_mantle_layers, num_core_layers, number_h2o_layers = structural_params[4:]
+
+
+    mantle_pressures = Planet['pressure'][num_core_layers:]
+    mantle_temperatures = Planet['temperature'][num_core_layers:]
+    core_pressures = Planet['pressure']
+    core_temperatures = Planet['temperature']
+
+    Mantle_speeds = interpolate.griddata((grids['pressure'], grids['temperature']), grids['speeds'],
+                         (mantle_pressures, mantle_temperatures), method='linear')
+
+    Core_speeds = interpolate.griddata((grids['pressure'], grids['temperature']), grids['speeds'],
+                         (core_pressures, core_temperatures), method='linear')
+
+    #phases = np.append(Core_phases,Mantle_phases)
+    Core_speeds[num_core_layers:] = Mantle_speeds
+    speeds = Core_speeds
+
+    Vphi = []
+    Vp = []
+    Vs = []
+    for i in speeds:
+        Vphi.append(i[0])
+        Vp.append(i[1])
+        Vs.append(i[2])
+    return Vphi,Vp,Vs

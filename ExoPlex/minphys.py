@@ -20,17 +20,24 @@ def get_rho(Planet,grids,Core_wt_per,structural_params):
     num_mantle_layers, num_core_layers, number_h2o_layers = structural_params[4:]
 
     num_layers = num_mantle_layers+num_core_layers+number_h2o_layers
-    temperature_grid, pressure_grid, density_grid, speed_grid, alpha_grid, cp_grid, phases_grid = grids
 
-    for i in range(num_layers+1):
+    P_points_mantle = np.zeros(num_mantle_layers)
+    T_points_mantle = np.zeros(num_mantle_layers)
+
+    for i in range(num_core_layers):
         if i <= num_core_layers:
             rho_layers[i] = get_core_rho(Pressure_layers[i],Temperature_layers[i],Core_wt_per)
 
-        elif i<=num_core_layers+num_mantle_layers:
-            rho_layers[i] = get_mantle_rho(Pressure_layers[i],Temperature_layers[i],pressure_grid,\
-                                           temperature_grid,density_grid)
-        else:
-            rho_layers[i] = get_water_rho(Pressure_layers[i],Temperature_layers[i])
+    for i in range(num_mantle_layers):
+        P_points_mantle[i] = Pressure_layers[i+num_core_layers]
+        T_points_mantle[i] = Temperature_layers[i+num_core_layers]
+
+    mantle_data = interpolate.griddata((grids['pressure'], grids['temperature']),
+                                           grids['density'],(P_points_mantle, T_points_mantle), method='linear')
+
+    rho_layers[num_core_layers:num_core_layers+num_mantle_layers] = mantle_data
+    #else:
+    #    rho_layers[i] = get_water_rho(Pressure_layers[i],Temperature_layers[i])
 
     return rho_layers
 
@@ -71,11 +78,6 @@ def get_core_rho(Pressure,Temperature,Core_wt_per):
     rock = iron()
     density = rock.evaluate(['density'], 1.e9*(Pressure/10000.), Temperature)[0]
     return density
-
-def get_mantle_rho(Pressure,Temperature,pressure_grid,temperature_grid,density_grid):
-    density = interpolate.griddata((pressure_grid,temperature_grid),density_grid,(Pressure,Temperature),method='linear')
-    return density
-
 
 def get_water_rho(Pressure,Temperature):
     return 0
@@ -123,31 +125,26 @@ def get_mass(Planet):
     mass = np.ravel(odeint(mass_in_sphere,0.,radii))
     return mass
 
-def get_phases(Planet,grids):
-
-    return 0
-
 def get_temperature(Planet,grids,structural_params):
     radii = Planet.get('radius')
     gravity = Planet.get('gravity')
     temperature = Planet.get('temperature')
     pressure = Planet.get('pressure')
 
-    temperature_grid, pressure_grid, density_grid, speed_grid, alpha_grid, cp_grid, phases_grid = grids
-    num_mantle_layers, num_core_layers, number_h2o_layers = structural_params[4:]
+    Mantle_potential_temp,num_mantle_layers, num_core_layers, number_h2o_layers = structural_params[3:]
 
     radii = radii[num_core_layers:]
     gravity =  gravity[num_core_layers:]
 
-    spec_heat = np.zeros(len(radii))
-    alpha =  np.zeros(len(radii))
     pressure = pressure[num_core_layers:]
 
     temperature = temperature[num_core_layers:]
     depths = radii[-1] - radii
-    for i in range(len(pressure)):
-        spec_heat[i] = interpolate.griddata((pressure_grid,temperature_grid),cp_grid,(pressure[i],temperature[i]),method='linear')
-        alpha[i] = interpolate.griddata((pressure_grid,temperature_grid),alpha_grid,(pressure[i],temperature[i]),method='linear')
+
+    spec_heat= interpolate.griddata((grids['pressure'],grids['temperature']),grids['cp'],
+                                    (pressure,temperature),method='linear')
+    alpha= interpolate.griddata((grids['pressure'],grids['temperature']),grids['alpha'],
+                                (pressure,temperature),method='linear')
 
 
     grav_func = interpolate.UnivariateSpline(depths[::-1],gravity[::-1])
@@ -159,7 +156,7 @@ def get_temperature(Planet,grids,structural_params):
 
     gradient = np.ravel(odeint(adiabat, initial_grad,depths[::-1]))
 
-    mantle_temperatures = [math.exp(i)*1650. for i in gradient][::-1]
+    mantle_temperatures = [math.exp(i)*Mantle_potential_temp for i in gradient][::-1]
 
     core_temperatures = Planet.get('temperature')[:num_core_layers]
     temperatures = np.append(core_temperatures,mantle_temperatures)

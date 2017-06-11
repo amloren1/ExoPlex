@@ -135,7 +135,7 @@ def run_perplex(*args):
 
     # Spawn Vertex ----------------#
     # Enter the project name (the name assigned in BUILD) [default = my_project]:
-    p = pe.spawn(PerPlex_path+"/./vertex",timeout=600)
+    p = pe.spawn(PerPlex_path+"/./vertex",timeout=1200)
 
     p.sendline(solutionFileNameMan)
 
@@ -146,7 +146,7 @@ def run_perplex(*args):
 
     print 'Finished with Vertex, beginning Werami'
 
-    p = pe.spawn(PerPlex_path+"/./werami",timeout=600)
+    p = pe.spawn(PerPlex_path+"/./werami",timeout=1200)
 
 
     p.sendline(solutionFileNameMan)
@@ -228,12 +228,6 @@ def run_perplex(*args):
     p.terminate()
     print "Done with PerPlex"
 
-    file = open(solutionFileNameMan+'_1.tab',"rw")
 
-    Phases = file.readlines()[12].split()[8:]
-
-    for i in range(len(Phases)):
-        Phases[i] = Phases[i].strip(",mo%")
-
-    return solutionFileNameMan,Phases
+    return solutionFileNameMan
 
