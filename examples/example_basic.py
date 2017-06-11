@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
     sys.path.insert(1, os.path.abspath('..'))
 
+
 import ExoPlex as exo
 
 if __name__ == "__main__":
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     mol_frac_Fe_mantle = 0.0
     Pressure_range_mantle = '5000 2000000'
     Temperature_range_mantle =  '1400 3000'
-
+    filename = 'new_test_cold.dat'
 
     verbose = True
 
@@ -38,10 +39,10 @@ if __name__ == "__main__":
     wt_frac_S_core = 0.
 
     num_mantle_layers = 600
-    num_core_layers = 500
+    num_core_layers = 600
     number_h2o_layers = 0
 
-    Mantle_potential_temp = 1800
+    Mantle_potential_temp = 1500
     #Earth Mass, Earth Radius, array, array, array,2D grid
     #Mass, Radius, pressure, temperature, density, composition =
 
@@ -52,29 +53,11 @@ if __name__ == "__main__":
 
     Planet = exo.run_planet(mass_planet,compositional_params,structure_params,verbose)
 
-    output = []
+    print
+    print Planet['mass'][-1]/5.97e24
 
-    for i in range(len(Planet['pressure'])):
-        line_item = [Planet['radius'][i]/1000.,Planet['density'][i]/1000.,Planet['pressure'][i]/10000.,Planet['temperature'][i],
-                     Planet['Vphi'][i],Planet['Vp'][i],Planet['Vs'][i]]
-        for j in range(len(Planet['phases'][i])):
-            line_item.append(Planet['phases'][i][j])
+    exo.functions.write(Planet,filename)
 
-        output.append(line_item)
-    line_name = []
-    line_name.append('Radius')
-    line_name.append('Density')
-    line_name.append('Pressure')
-    line_name.append('Temperature')
-    line_name.append('Vphi')
-    line_name.append('Vp')
-    line_name.append('Vs')
-    for i in Planet['phase_names']:
-        line_name.append(str(i))
-
-    string_element = '	'.join(line_name)
-    np.savetxt("test.dat", output, '%.5f', "\t", newline='\n',
-                header=string_element, footer='', comments='# ')
 
     """
     figure = plt.figure(figsize = (12,10))

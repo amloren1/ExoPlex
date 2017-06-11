@@ -301,3 +301,31 @@ def get_speeds(Planet,grids,structural_params):
         Vp.append(i[1])
         Vs.append(i[2])
     return Vphi,Vp,Vs
+
+def write(Planet,filename):
+    output = []
+    for i in range(len(Planet['pressure'])):
+        line_item = [(Planet['radius'][-1]-Planet['radius'][i])/1000.,Planet['radius'][i]/1000.,
+                     Planet['density'][i]/1000.,Planet['pressure'][i]/10000.,Planet['temperature'][i],
+                     Planet['Vphi'][i],Planet['Vp'][i],Planet['Vs'][i]]
+        for j in range(len(Planet['phases'][i])):
+            line_item.append(Planet['phases'][i][j])
+
+        output.append(line_item)
+    line_name = []
+    line_name.append('Depth')
+    line_name.append('Radius')
+    line_name.append('Density')
+    line_name.append('Pressure')
+    line_name.append('Temperature')
+    line_name.append('Vphi')
+    line_name.append('Vp')
+    line_name.append('Vs')
+    for i in Planet['phase_names']:
+        line_name.append(str(i))
+
+    string_element = '	'.join(line_name)
+    np.savetxt(filename, output, '%.5f', "\t", newline='\n',
+                header=string_element, footer='', comments='# ')
+
+    return 0

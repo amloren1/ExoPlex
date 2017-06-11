@@ -158,7 +158,7 @@ def get_temperature(Planet,grids,structural_params):
 
     mantle_temperatures = [math.exp(i)*Mantle_potential_temp for i in gradient][::-1]
 
-    core_temperatures = Planet.get('temperature')[:num_core_layers]
+    core_temperatures = Planet['temperature'][:num_core_layers]
     temperatures = np.append(core_temperatures,mantle_temperatures)
 
     return temperatures
@@ -166,8 +166,13 @@ def get_temperature(Planet,grids,structural_params):
 
 def check_convergence(new_rho,old_rho):
 
-    delta = sum([(1.-(old_rho[i]/new_rho[i])) for i in range(len(new_rho))])
+    delta = ([(1.-(old_rho[i]/new_rho[i])) for i in range(len(new_rho))])
     new_rho = [i for i in new_rho]
-    print "delta",delta
 
-    return delta,new_rho
+    for i in delta:
+        if i >= 1.e-6:
+            print i
+            return False,new_rho
+        else:
+            return True, new_rho
+

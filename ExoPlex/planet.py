@@ -64,7 +64,7 @@ def initialize(*args):
 
     # 15 mineral phases + 2ice + liquid water #phasechange
     planet_radius_guess = mass_planet*Earth_radius
-    core_thickness_guess = (core_mass_frac*2.)*planet_radius_guess
+    core_thickness_guess = (.54)*planet_radius_guess
     mantle_thickness_guess = planet_radius_guess - (wt_frac_water*planet_radius_guess) - core_thickness_guess
 
     water_thickness_guess = planet_radius_guess - mantle_thickness_guess - core_thickness_guess
@@ -127,9 +127,8 @@ def compress(*args):
     max_iterations = 100
 
     old_rho = [0  for i in range(len(Planet['density']))]
-    converge = 1.
-
-    while n_iterations <= max_iterations and abs(converge) > 5.e-6:
+    converge = False
+    while n_iterations <= max_iterations and converge == False:
         print
         print "iteration",n_iterations
         Planet['density'] = minphys.get_rho(Planet,grids,Core_wt_per,structural_params)
@@ -137,7 +136,7 @@ def compress(*args):
         Planet['pressure'] = minphys.get_pressure(Planet)
         Planet['temperature'] = minphys.get_temperature(Planet,grids,structural_params)
         converge,old_rho = minphys.check_convergence(Planet['density'],old_rho)
-
+        print converge
         n_iterations+=1
 
     return Planet
