@@ -50,4 +50,40 @@ if __name__ == "__main__":
 
     structure_params =  [Pressure_range_mantle,Temperature_range_mantle,resolution,Mantle_potential_temp,num_mantle_layers,num_core_layers,number_h2o_layers]
 
-    exo.run_planet(mass_planet,compositional_params,structure_params,verbose)
+    Planet = exo.run_planet(mass_planet,compositional_params,structure_params,verbose)
+
+    figure = plt.figure(figsize = (12,10))
+    # figure.suptitle('Your planet is %.3f Earth Masses with Average Density of %.1f kg/m$^3$' %((Plan.mass/5.97e24), \
+    #                (Plan.mass/(4./3.*np.pi*Plan.radial_slices[-1]*Plan.radial_slices[-1]*Plan.radial_slices[-1]))),\
+    #                 fontsize=20)
+
+    ax1 = plt.subplot2grid((6, 3), (0, 0), colspan=3, rowspan=3)
+    ax2 = plt.subplot2grid((6, 3), (3, 0), colspan=3, rowspan=1)
+    ax3 = plt.subplot2grid((6, 3), (4, 0), colspan=3, rowspan=1)
+    ax4 = plt.subplot2grid((6, 3), (5, 0), colspan=3, rowspan=1)
+
+    ax1.plot(Planet['radius'] / 1.e3, Planet['density'] / 1.e3, 'k', linewidth=2.)
+    ax1.set_ylim(0., (max(Planet['density']) / 1.e3) + 1.)
+    ax1.set_xlim(0., max(Planet['radius']) / 1.e3)
+    ax1.set_ylabel("Density ( $\cdot 10^3$ kg/m$^3$)")
+
+    # Make a subplot showing the calculated pressure profile
+    ax2.plot(Planet['radius'] / 1.e3, Planet['pressure'] / 1.e4, 'b', linewidth=2.)
+    ax2.set_ylim(0., (max(Planet['pressure']) / 1e4) + 10.)
+    ax2.set_xlim(0., max(Planet['radius']) / 1.e3)
+    ax2.set_ylabel("Pressure (GPa)")
+
+    # Make a subplot showing the calculated gravity profile
+    ax3.plot(Planet['radius'] / 1.e3, Planet['gravity'], 'r', linewidth=2.)
+    ax3.set_ylabel("Gravity (m/s$^2)$")
+    ax3.set_xlim(0., max(Planet['radius']) / 1.e3)
+    ax3.set_ylim(0., max(Planet['gravity']) + 0.5)
+
+    # Make a subplot showing the calculated temperature profile
+    ax4.plot(Planet['radius'] / 1.e3, Planet['temperature'], 'g', linewidth=2.)
+    ax4.set_ylabel("Temperature ($K$)")
+    ax4.set_xlabel("Radius (km)")
+    ax4.set_xlim(0., max(Planet['radius']) / 1.e3)
+    ax4.set_ylim(0., max(Planet['temperature']) + 100)
+
+    plt.show()

@@ -22,5 +22,5 @@ def run_planet(mass_planet,compositional_params,structure_params,verbose):
     grids = functions.make_mantle_grid(Mantle_filename)
     Planet = planet.initialize(*[mass_planet,core_mass_frac,structure_params,compositional_params])
 
-    planet.compress(*[Planet,mass_planet,grids,Core_wt_per,structure_params])
-    return 0
+    Planet = planet.compress(*[Planet,mass_planet,grids,Core_wt_per,structure_params])
+    return Planet
