@@ -2,6 +2,7 @@ import numpy as np
 import sys
 from scipy import interpolate
 
+
 def get_percents(*args):
     FeMg = args[1]
     SiMg = args[2]
@@ -12,7 +13,7 @@ def get_percents(*args):
     wt_frac_O_core = args[7]
     wt_frac_S_core = args[8]
 
-    MgSi = SiMg**(-1)
+    MgSi = 1./SiMg
     FeSi = FeMg*MgSi
     CaSi = CaMg*MgSi
     AlSi = AlMg*MgSi
@@ -74,9 +75,10 @@ def get_percents(*args):
     mass_of_Core = (mFe*(Core_moles[0])+mSi*Core_moles[1]\
                     +(mO)*Core_moles[2]+mS*Core_moles[3])
 
-    mass_of_Mantle = (mFe*Mantle_moles[0]+mMg*Mantle_moles[1]\
-                   +mSi*Mantle_moles[2]+mO*Mantle_moles[3]\
-                   +mCa*Mantle_moles[4]+mAl*Mantle_moles[5])
+    mass_of_Mantle = (mFe*Mantle_moles[0])+(mMg*Mantle_moles[1])\
+                   +(mSi*Mantle_moles[2])+(mO*Mantle_moles[3])\
+                   +(mCa*Mantle_moles[4])+(mAl*Mantle_moles[5])
+
 
     Mtot= mass_of_Core+mass_of_Mantle #in g
 
@@ -86,7 +88,7 @@ def get_percents(*args):
 
     FeO_mant_wt = Mantle_moles[0]*(mFe+mO)/mass_of_Mantle
     MgO_mant_wt = Mantle_moles[1]*(mMg+mO)/mass_of_Mantle
-    SiO2_mant_wt = Mantle_moles[2]*(mSi+2.*mO)/mass_of_Mantle
+    SiO2_mant_wt = Mantle_moles[2]*(mSi+(2.*mO))/mass_of_Mantle
     CaO_mant_wt = Mantle_moles[4]*(mCa+mO)/mass_of_Mantle
     Al2O3_mant_wt = (Mantle_moles[5]/2.)*(2.*mAl+3.*mO)/mass_of_Mantle
 
@@ -253,8 +255,8 @@ def make_mantle_grid(Mantle_filename):
     keys = ['temperature','pressure','density','speeds','alpha','cp','phases']
     return dict(zip(keys,[temperature_grid,pressure_grid,density_grid,speed_grid,alpha_grid,cp_grid,phase_grid])),Phases
 
-def get_phases(Planet,grids,structural_params):
-    num_mantle_layers, num_core_layers, number_h2o_layers = structural_params[4:]
+def get_phases(Planet,grids,layers):
+    num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
 
     mantle_pressures = Planet['pressure'][num_core_layers:]
@@ -266,7 +268,8 @@ def get_phases(Planet,grids,structural_params):
                          (mantle_pressures, mantle_temperatures), method='linear')
 
     Core_phases = interpolate.griddata((grids['pressure'], grids['temperature']), grids['phases'],
-                         (core_pressures, core_temperatures), method='linear')
+                         ([0 for i in Planet['pressure']], [0 for i in Planet['temperature']]), method='linear')
+
 
     #phases = np.append(Core_phases,Mantle_phases)
     Core_phases[num_core_layers:] = Mantle_phases
@@ -274,9 +277,8 @@ def get_phases(Planet,grids,structural_params):
 
     return Phases
 
-def get_speeds(Planet,grids,structural_params):
-    num_mantle_layers, num_core_layers, number_h2o_layers = structural_params[4:]
-
+def get_speeds(Planet,grids,layers):
+    num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
     mantle_pressures = Planet['pressure'][num_core_layers:]
     mantle_temperatures = Planet['temperature'][num_core_layers:]
@@ -332,3 +334,40 @@ def write(Planet,filename):
     print "file written to:", filename
     print
     return 0
+
+def find_CRF(radius_planet, core_mass_frac, structure_params, compositional_params, grids, Core_wt_per, layers):
+
+    import planet
+    import minphys
+
+    def calc_CRF(value, args):
+        radius_planet = args[0]
+        structure_params = args[1]
+        compositional_params = args[2]
+        num_core_layers = args[3][1]
+        grids = args[4]
+        Core_wt_per = args[5]
+        CMF_to_fit = args[6]
+
+        structure_params[3] = value
+        Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
+        Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
+        mod_plan = {'radius': Planet['radius'][:num_core_layers], 'density': Planet['density'][:num_core_layers]}
+        core_mass = minphys.get_mass(mod_plan)
+        planet_mass = minphys.get_mass(Planet)
+
+        CMF = core_mass[-1]/planet_mass[-1]
+
+        return (CMF_to_fit - CMF)
+
+    from scipy.optimize import brentq
+
+    args = [radius_planet, structure_params, compositional_params, layers,grids,Core_wt_per,core_mass_frac]
+    structure_params[3] = brentq(calc_CRF,.4,.75,args=args,xtol=1e-3)
+
+    Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
+    Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
+
+    return Planet
+
+

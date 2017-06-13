@@ -135,7 +135,7 @@ def run_perplex(*args):
 
     # Spawn Vertex ----------------#
     # Enter the project name (the name assigned in BUILD) [default = my_project]:
-    p = pe.spawn(PerPlex_path+"/./vertex",timeout=1200)
+    p = pe.spawn(PerPlex_path+"/./vertex",timeout=2400)
 
     p.sendline(solutionFileNameMan)
 
@@ -146,7 +146,7 @@ def run_perplex(*args):
 
     print 'Finished with Vertex, beginning Werami'
 
-    p = pe.spawn(PerPlex_path+"/./werami",timeout=1200)
+    p = pe.spawn(PerPlex_path+"/./werami",timeout=None)
 
 
     p.sendline(solutionFileNameMan)

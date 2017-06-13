@@ -6,16 +6,16 @@ import minphys
 import matplotlib.pyplot as plt
 from scipy import interpolate
 
-def initialize(*args):
-    mass_planet = args[0]
-    core_mass_frac = args[1]
-    structural_params = args[2]
-    compositional_params = args[3]
+def initialize_by_radius(*args):
+    radius_planet = args[0]
+    structural_params = args[1]
+    compositional_params = args[2]
+    num_mantle_layers, num_core_layers, number_h2o_layers = args[3]
 
     wt_frac_water, FeMg, SiMg, CaMg, AlMg, mol_frac_Fe_mantle, wt_frac_Si_core, \
      wt_frac_O_core, wt_frac_S_core = compositional_params
 
-    Mantle_potential_temp,num_mantle_layers,num_core_layers,number_h2o_layers = structural_params[3:]
+    core_rad_frac,Mantle_potential_temp = structural_params[-2:]
 
 
     #def Setup(Mp, masMan, masCor, masH2O, nr, tCrstMan, dtManCor):
@@ -63,8 +63,8 @@ def initialize(*args):
     K =  np.zeros(num_layers)
 
     # 15 mineral phases + 2ice + liquid water #phasechange
-    planet_radius_guess = mass_planet*Earth_radius
-    core_thickness_guess = (.54)*planet_radius_guess
+    planet_radius_guess = radius_planet*Earth_radius
+    core_thickness_guess = core_rad_frac * planet_radius_guess
     mantle_thickness_guess = planet_radius_guess - (wt_frac_water*planet_radius_guess) - core_thickness_guess
 
     water_thickness_guess = planet_radius_guess - mantle_thickness_guess - core_thickness_guess
@@ -77,7 +77,7 @@ def initialize(*args):
             volume_layers[i]=(4.0 / 3.) * np.pi * (pow(radius_layers[i],3.)- pow(radius_layers[i - 1],3.))
             mass_layers[i]=density_layers[i] * volume_layers[i]
             cumulative_mass[i]=cumulative_mass[i - 1] + mass_layers[i]
-            Temperature_layers[i] = 3500.+ (float((3000.-3500.))/float(num_core_layers))\
+            Temperature_layers[i] = 4500.+ (float((3000.-4500.))/float(num_core_layers))\
                                                             *float((i))
 
         elif i <= (num_core_layers+num_mantle_layers):
@@ -87,8 +87,9 @@ def initialize(*args):
             mass_layers[i]= density_layers[i] * volume_layers[i]
             cumulative_mass[i]= cumulative_mass[i - 1] + mass_layers[i]
 
-            Temperature_layers[i] = 2500. + (float((Mantle_potential_temp-2500.))/float(num_mantle_layers))\
+            Temperature_layers[i] = 3999. + (float((Mantle_potential_temp-3999.))/float(num_mantle_layers))\
                                                             *float((i-num_core_layers))
+
 
         else:
             radius_layers[i]=core_thickness_guess+mantle_thickness_guess+\
@@ -124,22 +125,26 @@ def compress(*args):
     grids = args[1]
     Core_wt_per = args[2]
     structural_params= args[3]
-
+    layers= args[4]
     n_iterations = 1
     max_iterations = 100
+
 
     old_rho = [0  for i in range(len(Planet['density']))]
     converge = False
     print
     while n_iterations <= max_iterations and converge == False:
         print "iteration #",n_iterations
-        Planet['density'] = minphys.get_rho(Planet,grids,Core_wt_per,structural_params)
+        Planet['density'] = minphys.get_rho(Planet,grids,Core_wt_per,layers)
 
+        for i in range(len(Planet['density'])):
+            if np.isnan(Planet['density'][i]) == True:
+                print i, Planet['pressure'][i],Planet['temperature'][i]
         Planet['gravity'] = minphys.get_gravity(Planet)
 
         Planet['pressure'] = minphys.get_pressure(Planet)
 
-        Planet['temperature'] = minphys.get_temperature(Planet,grids,structural_params)
+        Planet['temperature'] = minphys.get_temperature(Planet,grids,structural_params,layers)
         converge,old_rho = minphys.check_convergence(Planet['density'],old_rho)
         n_iterations+=1
 

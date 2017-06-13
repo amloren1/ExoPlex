@@ -17,49 +17,53 @@ import ExoPlex as exo
 if __name__ == "__main__":
 
     #First user must input the ratios
-    mass_planet = 1.
+    Radius_planet = 1.
     FeMg = .149/.165
     SiMg = 0.158/0.198
+
     wt_frac_Si_core = 0.
     wt_frac_water = 0.
     mol_frac_Fe_mantle = 0.0
     Pressure_range_mantle = '5000 2000000'
-    Temperature_range_mantle =  '1400 3000'
-    filename = 'new_test_cold.dat'
+    Temperature_range_mantle =  '1400 4000'
 
     verbose = True
 
     #Feel free to change, but these are defaulted right now
     #Do you want to pin Mass and solve Radius?
-    resolution = '60 100'
+    resolution = '100 125'
 
     CaMg = 0.013/0.198
     AlMg = 0.018/0.198
     wt_frac_O_core = 0.
     wt_frac_S_core = 0.
 
-    num_mantle_layers = 600
-    num_core_layers = 600
+    num_mantle_layers = 1000
+    num_core_layers = 1000
     number_h2o_layers = 0
 
-    Mantle_potential_temp = 1500
+    Mantle_potential_temp = 1500.
+    filename = 'Mars'+str(int(Mantle_potential_temp))+'_'+str(int(Radius_planet))+'.dat'
     #Earth Mass, Earth Radius, array, array, array,2D grid
     #Mass, Radius, pressure, temperature, density, composition =
 
     compositional_params = [wt_frac_water,FeMg,SiMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, \
                           wt_frac_O_core,wt_frac_S_core]
 
-    structure_params =  [Pressure_range_mantle,Temperature_range_mantle,resolution,Mantle_potential_temp,num_mantle_layers,num_core_layers,number_h2o_layers]
+    Core_rad_frac_guess = .54
+    structure_params =  [Pressure_range_mantle,Temperature_range_mantle,resolution,Core_rad_frac_guess,Mantle_potential_temp]
 
-    Planet = exo.run_planet(mass_planet,compositional_params,structure_params,verbose)
+    layers = [num_mantle_layers,num_core_layers,number_h2o_layers]
+    Planet = exo.run_planet_radius(Radius_planet,compositional_params,structure_params,layers)
 
     print
-    print Planet['mass'][-1]/5.97e24
+    print "Mass = ", '%.3f'%(Planet['mass'][-1]/5.97e24), "Earth masses"
 
+    print "CMB Pressure",'%.3f'%(Planet['pressure'][num_core_layers+1]/10000.)
     exo.functions.write(Planet,filename)
 
 
-    """
+
     figure = plt.figure(figsize = (12,10))
     # figure.suptitle('Your planet is %.3f Earth Masses with Average Density of %.1f kg/m$^3$' %((Plan.mass/5.97e24), \
     #                (Plan.mass/(4./3.*np.pi*Plan.radial_slices[-1]*Plan.radial_slices[-1]*Plan.radial_slices[-1]))),\
@@ -95,4 +99,3 @@ if __name__ == "__main__":
     ax4.set_ylim(0., max(Planet['temperature']) + 100)
 
     plt.show()
-    """

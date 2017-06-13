@@ -11,13 +11,13 @@ ToPa = 100000.
 ToBar = 1./ToPa
 G = 6.67408e-11
 
-def get_rho(Planet,grids,Core_wt_per,structural_params):
+def get_rho(Planet,grids,Core_wt_per,layers):
 
     Pressure_layers = Planet.get('pressure')
     Temperature_layers = Planet.get('temperature')
     rho_layers = Planet.get('density')
 
-    num_mantle_layers, num_core_layers, number_h2o_layers = structural_params[4:]
+    num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
     num_layers = num_mantle_layers+num_core_layers+number_h2o_layers
 
@@ -125,13 +125,15 @@ def get_mass(Planet):
     mass = np.ravel(odeint(mass_in_sphere,0.,radii))
     return mass
 
-def get_temperature(Planet,grids,structural_params):
+def get_temperature(Planet,grids,structural_parameters,layers):
     radii = Planet.get('radius')
     gravity = Planet.get('gravity')
     temperature = Planet.get('temperature')
     pressure = Planet.get('pressure')
 
-    Mantle_potential_temp,num_mantle_layers, num_core_layers, number_h2o_layers = structural_params[3:]
+    num_mantle_layers, num_core_layers, number_h2o_layers = layers
+
+    Mantle_potential_temp = structural_parameters[-1]
 
     radii = radii[num_core_layers:]
     gravity =  gravity[num_core_layers:]
@@ -152,9 +154,8 @@ def get_temperature(Planet,grids,structural_params):
     alpha_func = interpolate.UnivariateSpline(depths[::-1],alpha[::-1])
 
     adiabat = lambda p, x:  alpha_func(x)*grav_func(x) / spec_heat_func(x)
-    initial_grad = alpha[0]*gravity[0]/spec_heat[0]
 
-    gradient = np.ravel(odeint(adiabat, initial_grad,depths[::-1]))
+    gradient = np.ravel(odeint(adiabat, 0.,depths[::-1]))
 
     mantle_temperatures = [math.exp(i)*Mantle_potential_temp for i in gradient][::-1]
 
