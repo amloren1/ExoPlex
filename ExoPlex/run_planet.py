@@ -31,6 +31,6 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
 
     Planet['phase_names'] = names
 
-    Planet['Vphi'], Planet['Vp'], Planet['Vs'] = functions.get_speeds(Planet, grids, layers)
+    Planet['Vphi'], Planet['Vp'], Planet['Vs'] = functions.get_speeds(Planet, Core_wt_per, grids, layers)
 
     return Planet

@@ -79,6 +79,48 @@ def get_core_rho(Pressure,Temperature,Core_wt_per):
     density = rock.evaluate(['density'], 1.e9*(Pressure/10000.), Temperature)[0]
     return density
 
+def get_core_speeds(Pressure,Temperature,Core_wt_per):
+    wt_frac_Si = Core_wt_per.get('Si')
+    wt_frac_O = Core_wt_per.get('O')
+    wt_frac_S = Core_wt_per.get('S')
+    wt_frac_Fe = Core_wt_per.get('Fe')
+
+    mFe = 55.845 #molar weights
+    mSi = 28.0867
+    mO = 15.9994
+    mS = 32.0650
+
+    mol_total = (wt_frac_Fe/mFe)+(wt_frac_O/mO)+(wt_frac_S/mS)+(wt_frac_Si/mSi)
+    mol_frac_Fe = (wt_frac_Fe/mFe) / mol_total
+
+    mol_frac_Si = (wt_frac_Si/mSi) / mol_total
+    mol_frac_S = (wt_frac_S/mS) / mol_total
+    mol_frac_O = (wt_frac_O/mO) / mol_total
+
+    molar_weight_core = (mol_frac_Fe*mFe) + (mol_frac_Si * mSi) + (mol_frac_O*mO) + (mol_frac_S*mS)
+
+    class iron(burnman.Mineral):
+
+        def __init__(self):
+            self.params = {
+                'name': 'iron',
+                'equation_of_state': 'bm4',
+                'V_0': 7.95626e-6,
+                'K_0': 109.7e9,
+                'Kprime_0': 4.66,
+                'Kprime_prime_0': -0.043e-9,
+                'molar_mass': molar_weight_core/1000.,
+            }
+            burnman.Mineral.__init__(self)
+
+    Pressure = [i*((1.e9)/10000.) for i in Pressure]
+    Temperature = [i for i in Temperature]
+
+    rock = iron()
+    speeds = rock.evaluate(['v_phi', 'v_p', 'v_s'], Pressure, Temperature)
+
+    return speeds
+
 def get_water_rho(Pressure,Temperature):
     return 0
 

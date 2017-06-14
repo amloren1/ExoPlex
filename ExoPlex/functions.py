@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 from scipy import interpolate
-
+import minphys
 
 def get_percents(*args):
     FeMg = args[1]
@@ -277,9 +277,10 @@ def get_phases(Planet,grids,layers):
 
     return Phases
 
-def get_speeds(Planet,grids,layers):
+def get_speeds(Planet,core_wt_per,grids,layers):
     num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
+    total_layers = num_core_layers+num_mantle_layers+number_h2o_layers
     mantle_pressures = Planet['pressure'][num_core_layers:]
     mantle_temperatures = Planet['temperature'][num_core_layers:]
     core_pressures = Planet['pressure']
@@ -288,20 +289,27 @@ def get_speeds(Planet,grids,layers):
     Mantle_speeds = interpolate.griddata((grids['pressure'], grids['temperature']), grids['speeds'],
                          (mantle_pressures, mantle_temperatures), method='linear')
 
-    Core_speeds = interpolate.griddata((grids['pressure'], grids['temperature']), grids['speeds'],
-                         (core_pressures, core_temperatures), method='linear')
 
-    #phases = np.append(Core_phases,Mantle_phases)
-    Core_speeds[num_core_layers:] = Mantle_speeds
-    speeds = Core_speeds
+    Core_speeds = minphys.get_core_speeds(core_pressures,core_temperatures,core_wt_per)
 
     Vphi = []
     Vp = []
     Vs = []
-    for i in speeds:
-        Vphi.append(i[0])
-        Vp.append(i[1])
-        Vs.append(i[2])
+    for i in range(total_layers):
+        if i <= num_core_layers:
+            Vphi.append(Core_speeds[0][i]/1000.)
+            Vp.append(Core_speeds[1][i]/1000.)
+            Vs.append(Core_speeds[2][i]/1000.)
+
+        elif i < num_mantle_layers + num_core_layers:
+            Vphi.append(Mantle_speeds[i-num_core_layers][0])
+            Vp.append(Mantle_speeds[i-num_core_layers][1])
+            Vs.append(Mantle_speeds[i-num_core_layers][2])
+        else:
+            Vphi.append(0.)
+            Vp.append(0.)
+            Vs.append(0.)
+
     return Vphi,Vp,Vs
 
 def write(Planet,filename):
