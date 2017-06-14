@@ -41,9 +41,8 @@ def run_perplex(*args):
     solutionFileNameMan = 'SiMg_FeMg_CaMg_AlMg_XFeO_fSic' + solfileparamsString + '_MANTLE'
 
     if os.path.isfile('../Solutions/'+filename+'_1.tab'):
-        if verbose:  # the verbose variable is
-            print '\nThe mantle .tab already exists, please wait briefly for solution\n'
-            print 'Mantle File name: '+ '../Solutions/'+filename+'\n'
+        print '\nThe mantle .tab already exists, please wait briefly for solution\n'
+        print 'Mantle File name: '+ '../Solutions/'+filename+'\n'
         return '../Solutions/'+filename
 
     else:
