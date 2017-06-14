@@ -24,6 +24,8 @@ def run_perplex(*args):
     Temperature_range_mantle = args[2][1]
     resolution = args[2][2]
 
+    filename = args[3]
+
     plxMan = str(Mantle_wt_per.get('MgO')) + ' ' + str(Mantle_wt_per.get('SiO2')) + ' ' \
              + str(Mantle_wt_per.get('FeO')) + ' ' + str(Mantle_wt_per.get('CaO')) \
              + ' ' + str(Mantle_wt_per.get('Al2O3'))+ ' ' + str(0.) #last value included for Na
@@ -228,6 +230,16 @@ def run_perplex(*args):
     p.terminate()
     print "Done with PerPlex"
 
+    os.rename(solutionFileNameMan+'_1.tab','../Solutions/'+filename+'_1.tab')
+    os.rename(solutionFileNameMan+'.arf','../Solutions/'+filename+'.arf')
+    os.rename(solutionFileNameMan+'.blk','../Solutions/'+filename+'.blk')
+    os.rename(solutionFileNameMan+'.dat','../Solutions/'+filename+'.dat')
+    os.rename(solutionFileNameMan+'.plt','../Solutions/'+filename+'.plt')
+    os.rename(solutionFileNameMan+'.tof','../Solutions/'+filename+'.tof')
+    os.remove(solutionFileNameMan+'_VERTEX_options.txt')
+    os.remove(solutionFileNameMan+'_WERAMI_options.txt')
+    os.remove(solutionFileNameMan+'_auto_refine.txt')
 
-    return solutionFileNameMan
+    filename = '../Solutions/'+filename
+    return filename
 

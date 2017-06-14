@@ -15,11 +15,10 @@ import run_perplex
 import planet
 
 
-def run_planet_radius(radius_planet, compositional_params, structure_params, layers):
+def run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename):
     Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac = functions.get_percents(*compositional_params)
 
-    # Mantle_filename = run_perplex.run_perplex(*[Mantle_wt_per,compositional_params,structure_params])
-    Mantle_filename = 'Earth_4000'
+    Mantle_filename = run_perplex.run_perplex(*[Mantle_wt_per,compositional_params,structure_params,filename])
     grids, names = functions.make_mantle_grid(Mantle_filename)
 
     Planet = functions.find_CRF(radius_planet, core_mass_frac,structure_params, compositional_params, grids, Core_wt_per, layers)

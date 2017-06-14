@@ -18,8 +18,12 @@ if __name__ == "__main__":
 
     #First user must input the ratios
     Radius_planet = 1.
-    FeMg = .149/.165
-    SiMg = 0.158/0.198
+
+    FeMg = 0.758578
+    SiMg = 0.933254
+
+    CaMg = 0.0501187
+    AlMg = 0.0794328
 
     wt_frac_Si_core = 0.
     wt_frac_water = 0.
@@ -33,8 +37,12 @@ if __name__ == "__main__":
     #Do you want to pin Mass and solve Radius?
     resolution = '100 125'
 
-    CaMg = 0.013/0.198
-    AlMg = 0.018/0.198
+    #FeMg = .149 / .165
+    #SiMg = 0.158 / 0.198
+    #CaMg = 0.013/0.198
+    #AlMg = 0.018/0.198
+
+
     wt_frac_O_core = 0.
     wt_frac_S_core = 0.
 
@@ -42,10 +50,9 @@ if __name__ == "__main__":
     num_core_layers = 1000
     number_h2o_layers = 0
 
-    Mantle_potential_temp = 1500.
-    filename = 'Mars'+str(int(Mantle_potential_temp))+'_'+str(int(Radius_planet))+'.dat'
-    #Earth Mass, Earth Radius, array, array, array,2D grid
-    #Mass, Radius, pressure, temperature, density, composition =
+    Mantle_potential_temp = 1700.
+    filename = 'HIP99240_'+str(int(Mantle_potential_temp))+'_rad'+str(int(Radius_planet))
+
 
     compositional_params = [wt_frac_water,FeMg,SiMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, \
                           wt_frac_O_core,wt_frac_S_core]
@@ -54,7 +61,7 @@ if __name__ == "__main__":
     structure_params =  [Pressure_range_mantle,Temperature_range_mantle,resolution,Core_rad_frac_guess,Mantle_potential_temp]
 
     layers = [num_mantle_layers,num_core_layers,number_h2o_layers]
-    Planet = exo.run_planet_radius(Radius_planet,compositional_params,structure_params,layers)
+    Planet = exo.run_planet_radius(Radius_planet,compositional_params,structure_params,layers,filename)
 
     print
     print "Mass = ", '%.3f'%(Planet['mass'][-1]/5.97e24), "Earth masses"

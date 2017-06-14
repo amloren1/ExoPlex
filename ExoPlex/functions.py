@@ -335,11 +335,11 @@ def write(Planet,filename):
         line_name.append(str(i))
 
     string_element = '	'.join(line_name)
-    np.savetxt(filename, output, '%.5f', "\t", newline='\n',
+    np.savetxt(filename+'.dat', output, '%.5f', "\t", newline='\n',
                 header=string_element, footer='', comments='# ')
 
     print
-    print "file written to:", filename
+    print "file written to:", filename+'.dat'
     print
     return 0
 
