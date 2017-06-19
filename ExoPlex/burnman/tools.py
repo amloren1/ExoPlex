@@ -131,7 +131,7 @@ def linear_interpol(x, x1, x2, y1, y2):
 
 
 def read_table(filename):
-    datastream = pkgutil.get_data('burnman', 'data/' + filename)
+    datastream = pkgutil.get_data('ExoPlex', 'burnman/data/' + filename)
     datalines = [line.strip()
                  for line in datastream.decode('ascii').split('\n') if line.strip()]
     table = []
