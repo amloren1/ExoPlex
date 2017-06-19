@@ -140,6 +140,10 @@ def compress(*args):
         for i in range(len(Planet['density'])):
             if np.isnan(Planet['density'][i]) == True:
                 print i, Planet['pressure'][i],Planet['temperature'][i]
+                print "pressure range mantle",structural_params[0]
+                print "temperature range mantle",structural_params[1]
+                sys.exit()
+
         Planet['gravity'] = minphys.get_gravity(Planet)
 
         Planet['pressure'] = minphys.get_pressure(Planet)

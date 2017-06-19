@@ -19,17 +19,16 @@ if __name__ == "__main__":
     #First user must input the ratios
     Radius_planet = 1.
 
-    FeMg = 0.758578
-    SiMg = 0.933254
-
-    CaMg = 0.0501187
-    AlMg = 0.0794328
+    CaMg =0.0616595
+    SiMg =0.954993
+    AlMg = 0.0851138
+    FeMg = 0.812831
 
     wt_frac_Si_core = 0.
     wt_frac_water = 0.
     mol_frac_Fe_mantle = 0.0
     Pressure_range_mantle = '5000 2000000'
-    Temperature_range_mantle =  '1400 4000'
+    Temperature_range_mantle = '1400 4000'
 
     verbose = True
 
@@ -51,7 +50,7 @@ if __name__ == "__main__":
     number_h2o_layers = 0
 
     Mantle_potential_temp = 1700.
-    filename = 'HIP99240_'+str(int(Mantle_potential_temp))+'_rad'+str(int(Radius_planet))
+    filename = 'Sun_'+str(int(Mantle_potential_temp))+'_rad'+str(int(Radius_planet))
 
 
     compositional_params = [wt_frac_water,FeMg,SiMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, \
@@ -65,8 +64,8 @@ if __name__ == "__main__":
 
     print
     print "Mass = ", '%.3f'%(Planet['mass'][-1]/5.97e24), "Earth masses"
+    print "Core Mass Fraction = ", '%.3f'%(100.*Planet['mass'][num_core_layers]/Planet['mass'][-1])
 
-    print "CMB Pressure",'%.3f'%(Planet['pressure'][num_core_layers+1]/10000.)
     exo.functions.write(Planet,filename)
 
 

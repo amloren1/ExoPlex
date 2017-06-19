@@ -153,7 +153,7 @@ def get_pressure(Planet):
     gfunc = interpolate.UnivariateSpline(depths[::-1], gravity[::-1])
 
     # integrate the hydrostatic equation
-    pressure = np.ravel(odeint((lambda p, x: gfunc(x) * rhofunc(x)),1.e9, depths[::-1]))
+    pressure = np.ravel(odeint((lambda p, x: gfunc(x) * rhofunc(x)),5.e8, depths[::-1]))
 
     pressure = [((i/1.e9)*10000.) for i in pressure]
     return np.asarray(pressure[::-1])
@@ -198,6 +198,13 @@ def get_temperature(Planet,grids,structural_parameters,layers):
     adiabat = lambda p, x:  alpha_func(x)*grav_func(x) / spec_heat_func(x)
 
     gradient = np.ravel(odeint(adiabat, 0.,depths[::-1]))
+
+    for i in range(len(depths)):
+        if np.isnan(spec_heat[i]) == True:
+            print i, pressure[i], temperature[i]
+            print "pressure range mantle", structural_parameters[0]
+            print "temperature range mantle", structural_parameters[1]
+            sys.exit()
 
     mantle_temperatures = [math.exp(i)*Mantle_potential_temp for i in gradient][::-1]
 
