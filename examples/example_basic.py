@@ -45,8 +45,6 @@ if __name__ == "__main__":
 
     Mantle_potential_temp = 1700.
 
-
-
     compositional_params = [wt_frac_water,FeMg,SiMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, \
                           wt_frac_O_core,wt_frac_S_core]
 
