@@ -36,15 +36,6 @@ if __name__ == "__main__":
     Temperature_range_mantle_LM = '2500 5000'
     resolution_LM = '50 50'
 
-    #Feel free to change, but these are defaulted right now
-    #Do you want to pin Mass and solve Radius?
-
-    #FeMg = .149 / .165
-    #SiMg = 0.158 / 0.198
-    #CaMg = 0.013/0.198
-    #AlMg = 0.018/0.198
-
-
     wt_frac_O_core = 0.
     wt_frac_S_core = 0.
 
@@ -72,9 +63,9 @@ if __name__ == "__main__":
     print "Mass = ", '%.3f'%(Planet['mass'][-1]/5.97e24), "Earth masses"
     print "Core Mass Fraction = ", '%.3f'%(100.*Planet['mass'][num_core_layers]/Planet['mass'][-1])
     print "Core Radius Fraction = ", '%.3f'%(100.*Planet['radius'][num_core_layers]/Planet['radius'][-1])
-    print "CMB Pressure = " ,'%.3f' % (Planet['pressure'][num_core_layers]*(10000/1.e9))
-    filename = Star+"_"+str(int(Mantle_potential_temp))+'_rad_'+str(Radius_planet)
+    print "CMB Pressure = " ,'%.3f' % (Planet['pressure'][num_core_layers]/10000), "GPa"
 
+    filename = Star+"_"+str(int(Mantle_potential_temp))+'_rad_'+str(Radius_planet)
     exo.functions.write(Planet,filename)
 
     import matplotlib.pyplot as plt
