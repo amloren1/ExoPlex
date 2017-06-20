@@ -242,6 +242,7 @@ def get_temperature(Planet,grids,structural_parameters,layers):
 
     for i in range(len(depths)):
         if np.isnan(spec_heat[i]) == True:
+            print "There's a nan in Cp"
             print i, pressure[i], temperature[i]
             print "pressure range mantle", structural_parameters[0]
             print "temperature range mantle", structural_parameters[1]

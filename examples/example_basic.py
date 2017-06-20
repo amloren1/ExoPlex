@@ -17,7 +17,7 @@ import ExoPlex as exo
 if __name__ == "__main__":
 
     #First user must input the ratios
-    Radius_planet = 1.
+    Radius_planet = 1.5
 
     CaMg =0.0616595
     SiMg =0.954993
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     Temperature_range_mantle_UM = '1400 3000'
     resolution_UM = '125 150'
 
-    Pressure_range_mantle_LM = '1250000 5000000'
+    Pressure_range_mantle_LM = '1250000 7000000'
     Temperature_range_mantle_LM = '2500 5000'
     resolution_LM = '50 50'
 

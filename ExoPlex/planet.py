@@ -87,9 +87,9 @@ def initialize_by_radius(*args):
             mass_layers[i]= density_layers[i] * volume_layers[i]
             cumulative_mass[i]= cumulative_mass[i - 1] + mass_layers[i]
 
-            Temperature_layers[i] = 3000. + (float((Mantle_potential_temp-3000.))/float(num_mantle_layers))\
-                                                            *float((i-num_core_layers))
-
+            #Temperature_layers[i] = 4000. + (float((Mantle_potential_temp-4000.))/float(num_mantle_layers))\
+            #                                                *float((i-num_core_layers))
+            Temperature_layers[i] = 3000.
 
         else:
             radius_layers[i]=core_thickness_guess+mantle_thickness_guess+\
@@ -104,7 +104,7 @@ def initialize_by_radius(*args):
         if i > num_core_layers+num_mantle_layers:
             Pressure_layers[i] = 1
         else:
-            Pressure_layers[i] = (float((10000.-(300.*10000))/float(num_core_layers+num_mantle_layers))*float(i)
+            Pressure_layers[i] = (float((5000.-(300.*10000))/float(num_core_layers+num_mantle_layers))*float(i)
                                   + 300.*10000)
 
 
