@@ -8,11 +8,9 @@ import minphys
 # hack to allow scripts to be placed in subdirectories next to burnman:
 if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
     sys.path.insert(1, os.path.abspath('..'))
-from scipy import interpolate
 
 import functions
 import run_perplex
-import planet
 
 
 def run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename):

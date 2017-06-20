@@ -1,10 +1,7 @@
-import os
 import sys
 import numpy as np
 Earth_radius = 6.371e6
 import minphys
-import matplotlib.pyplot as plt
-from scipy import interpolate
 
 def initialize_by_radius(*args):
     radius_planet = args[0]

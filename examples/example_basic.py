@@ -6,7 +6,6 @@
 import os
 import sys
 import numpy as np
-import matplotlib.pyplot as plt
 # hack to allow scripts to be placed in subdirectories next to burnman:
 if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
     sys.path.insert(1, os.path.abspath('..'))
@@ -17,8 +16,9 @@ import ExoPlex as exo
 if __name__ == "__main__":
 
     #First user must input the ratios
-    Radius_planet = 1.5
+    Radius_planet = 1.3
 
+    Star = 'Sun'
     CaMg =0.0616595
     SiMg =0.954993
     AlMg = 0.0851138
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     Temperature_range_mantle_UM = '1400 3000'
     resolution_UM = '125 150'
 
-    Pressure_range_mantle_LM = '1250000 7000000'
+    Pressure_range_mantle_LM = '1250000 6500000'
     Temperature_range_mantle_LM = '2500 5000'
     resolution_LM = '50 50'
 
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     number_h2o_layers = 0
 
     Mantle_potential_temp = 1700.
-    filename = 'Sun_'+str(int(Mantle_potential_temp))+'_rad'+str(int(Radius_planet))
+
 
 
     compositional_params = [wt_frac_water,FeMg,SiMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, \
@@ -65,15 +65,19 @@ if __name__ == "__main__":
                          Core_rad_frac_guess,Mantle_potential_temp]
 
     layers = [num_mantle_layers,num_core_layers,number_h2o_layers]
+    filename = Star
     Planet = exo.run_planet_radius(Radius_planet,compositional_params,structure_params,layers,filename)
 
     print
     print "Mass = ", '%.3f'%(Planet['mass'][-1]/5.97e24), "Earth masses"
     print "Core Mass Fraction = ", '%.3f'%(100.*Planet['mass'][num_core_layers]/Planet['mass'][-1])
+    print "Core Radius Fraction = ", '%.3f'%(100.*Planet['radius'][num_core_layers]/Planet['radius'][-1])
+    print "CMB Pressure = " ,'%.3f' % (Planet['pressure'][num_core_layers]*(10000/1.e9))
+    filename = Star+"_"+str(int(Mantle_potential_temp))+'_rad_'+str(Radius_planet)
 
     exo.functions.write(Planet,filename)
 
-
+    import matplotlib.pyplot as plt
 
     figure = plt.figure(figsize = (12,10))
     # figure.suptitle('Your planet is %.3f Earth Masses with Average Density of %.1f kg/m$^3$' %((Plan.mass/5.97e24), \

@@ -290,7 +290,6 @@ def get_phases(Planet,grids,layers):
 
     Phases = np.concatenate((Core_phases,Mantle_phases),axis=0)
 
-    print Phases[num_mantle_layers+10]
     return Phases
 
 def get_speeds(Planet,core_wt_per,grids,layers):
@@ -400,7 +399,7 @@ def find_CRF(radius_planet, core_mass_frac, structure_params, compositional_para
         planet_mass = minphys.get_mass(Planet)
 
         CMF = core_mass[-1]/planet_mass[-1]
-        print "Diff in CRF = %3.f" % CMF_to_fit - CMF
+        print "Diff in Core Mass Fraction = ", '%.3e' % (CMF_to_fit - CMF)
         return (CMF_to_fit - CMF)
 
     from scipy.optimize import brentq

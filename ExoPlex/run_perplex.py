@@ -1,7 +1,6 @@
 import os
 import sys
 import pexpect as pe
-import shutil
 
 PerPlex_path = os.path.dirname(os.path.realpath(__file__))+"/PerPlex"
 
