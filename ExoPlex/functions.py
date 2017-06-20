@@ -217,9 +217,13 @@ def verbosity():
     #must rememer: the masfMan and Cor are wt%s
     return (masfCor,masfMan,MgOmwt,SiO2mwt,FeOmwt,CaOmwt, Al2O3mwt, Sicwt,Fecwt,O2cwt,S2cwt,solutionFileNameCor,solutionFileNameMan, plxMan,plxCor)
 
-def make_mantle_grid(Mantle_filename):
+def make_mantle_grid(Mantle_filename,LMUM):
 
-    file = open(Mantle_filename+'_1.tab','r')
+    if LMUM == True:
+        file = open(Mantle_filename+'_UM.tab','r')
+    else:
+        file = open(Mantle_filename+'_LM.tab','r')
+
     temp_file = file.readlines()
     num_rows = len(temp_file[13:])
     num_columns = len(temp_file[12].split())
@@ -264,17 +268,29 @@ def get_phases(Planet,grids,layers):
     core_pressures = Planet['pressure']
     core_temperatures = Planet['temperature']
 
-    Mantle_phases = interpolate.griddata((grids['pressure'], grids['temperature']), grids['phases'],
-                         (mantle_pressures, mantle_temperatures), method='linear')
+    P_points_UM = []
+    T_points_UM = []
 
-    Core_phases = interpolate.griddata((grids['pressure'], grids['temperature']), grids['phases'],
-                         ([0 for i in Planet['pressure']], [0 for i in Planet['temperature']]), method='linear')
+    for i in range(len(mantle_pressures)):
+        if mantle_pressures[i]<=1300000:
+            P_points_UM.append(mantle_pressures[i])
+            T_points_UM.append(mantle_temperatures[i])
 
 
-    #phases = np.append(Core_phases,Mantle_phases)
-    Core_phases[num_core_layers:] = Mantle_phases
-    Phases = Core_phases
 
+    Mantle_phases_UM = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']), grids[0]['phases'],
+                         (P_points_UM, T_points_UM), method='linear')
+
+    Mantle_phases_LM = [grids[0]['phases'][-1] for i in range(num_mantle_layers-len(P_points_UM))]
+
+    Mantle_phases = np.concatenate((Mantle_phases_LM,Mantle_phases_UM),axis=0)
+
+    Core_phases = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']), grids[0]['phases'],
+                         ([0 for i in range(num_core_layers)], [0 for i in range(num_core_layers)]), method='linear')
+
+    Phases = np.concatenate((Core_phases,Mantle_phases),axis=0)
+
+    print Phases[num_mantle_layers+10]
     return Phases
 
 def get_speeds(Planet,core_wt_per,grids,layers):
@@ -286,9 +302,27 @@ def get_speeds(Planet,core_wt_per,grids,layers):
     core_pressures = Planet['pressure']
     core_temperatures = Planet['temperature']
 
-    Mantle_speeds = interpolate.griddata((grids['pressure'], grids['temperature']), grids['speeds'],
-                         (mantle_pressures, mantle_temperatures), method='linear')
+    P_points_UM = []
+    T_points_UM = []
+    P_points_LM = []
+    T_points_LM = []
 
+    for i in range(len(mantle_pressures)):
+        if mantle_pressures[i]<=1300000:
+            P_points_UM.append(mantle_pressures[i])
+            T_points_UM.append(mantle_temperatures[i])
+        else:
+            P_points_LM.append(mantle_pressures[i])
+            T_points_LM.append(mantle_temperatures[i])
+
+    Mantle_speeds_UM = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']), grids[0]['speeds'],
+                         (P_points_UM, T_points_UM), method='linear')
+
+    Mantle_speeds_LM = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']), grids[1]['speeds'],
+                         (P_points_LM, T_points_LM), method='linear')
+
+
+    Mantle_speeds = np.concatenate((Mantle_speeds_LM,Mantle_speeds_UM),axis=0)
 
     Core_speeds = minphys.get_core_speeds(core_pressures,core_temperatures,core_wt_per)
 
@@ -357,9 +391,10 @@ def find_CRF(radius_planet, core_mass_frac, structure_params, compositional_para
         Core_wt_per = args[5]
         CMF_to_fit = args[6]
 
-        structure_params[3] = value
+        structure_params[-2] = value
         Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
         Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
+
         mod_plan = {'radius': Planet['radius'][:num_core_layers], 'density': Planet['density'][:num_core_layers]}
         core_mass = minphys.get_mass(mod_plan)
         planet_mass = minphys.get_mass(Planet)
@@ -371,10 +406,11 @@ def find_CRF(radius_planet, core_mass_frac, structure_params, compositional_para
     from scipy.optimize import brentq
 
     args = [radius_planet, structure_params, compositional_params, layers,grids,Core_wt_per,core_mass_frac]
-    structure_params[3] = brentq(calc_CRF,.4,.75,args=args,xtol=1e-4)
+    structure_params[-2] = brentq(calc_CRF,.4,.75,args=args,xtol=1e-4)
 
     Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
     Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
+
 
     return Planet
 

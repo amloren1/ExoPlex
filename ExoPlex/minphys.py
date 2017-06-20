@@ -21,24 +21,39 @@ def get_rho(Planet,grids,Core_wt_per,layers):
 
     num_layers = num_mantle_layers+num_core_layers+number_h2o_layers
 
-    P_points_mantle = np.zeros(num_mantle_layers)
-    T_points_mantle = np.zeros(num_mantle_layers)
+    #P_points_mantle = np.zeros(num_mantle_layers)
+    #T_points_mantle = np.zeros(num_mantle_layers)
 
     for i in range(num_core_layers):
         if i <= num_core_layers:
             rho_layers[i] = get_core_rho(Pressure_layers[i],Temperature_layers[i],Core_wt_per)
 
-    for i in range(num_mantle_layers):
-        P_points_mantle[i] = Pressure_layers[i+num_core_layers]
-        T_points_mantle[i] = Temperature_layers[i+num_core_layers]
+    P_points_UM = []
+    T_points_UM = []
+    P_points_LM = []
+    T_points_LM = []
 
-    mantle_data = interpolate.griddata((grids['pressure'], grids['temperature']),
-                                           grids['density'],(P_points_mantle, T_points_mantle), method='linear')
+    for i in range(num_mantle_layers):
+        if Pressure_layers[i+num_core_layers] >=1300000:
+            P_points_LM.append(Pressure_layers[i+num_core_layers])
+            T_points_LM.append(Temperature_layers[i+num_core_layers])
+        else:
+            P_points_UM.append(Pressure_layers[i+num_core_layers])
+            T_points_UM.append(Temperature_layers[i+num_core_layers])
+
+
+    UM_data = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']),
+                                           grids[0]['density'],(P_points_UM, T_points_UM), method='linear')
+
+    LM_data = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']),
+                                           grids[1]['density'],(P_points_LM, T_points_LM), method='linear')
+
+
+    mantle_data = np.append(LM_data,UM_data)
 
     rho_layers[num_core_layers:num_core_layers+num_mantle_layers] = mantle_data
     #else:
     #    rho_layers[i] = get_water_rho(Pressure_layers[i],Temperature_layers[i])
-
     return rho_layers
 
 def get_core_rho(Pressure,Temperature,Core_wt_per):
@@ -185,11 +200,37 @@ def get_temperature(Planet,grids,structural_parameters,layers):
     temperature = temperature[num_core_layers:]
     depths = radii[-1] - radii
 
-    spec_heat= interpolate.griddata((grids['pressure'],grids['temperature']),grids['cp'],
-                                    (pressure,temperature),method='linear')
-    alpha= interpolate.griddata((grids['pressure'],grids['temperature']),grids['alpha'],
-                                (pressure,temperature),method='linear')
+    P_points_UM = []
+    T_points_UM = []
+    P_points_LM = []
+    T_points_LM = []
 
+    for i in range(num_mantle_layers):
+        if pressure[i] >=1300000:
+            P_points_LM.append(pressure[i])
+            T_points_LM.append(temperature[i])
+        else:
+            P_points_UM.append(pressure[i])
+            T_points_UM.append(temperature[i])
+
+
+    UM_cp_data = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']),
+                                           grids[0]['cp'],(P_points_UM, T_points_UM), method='linear')
+
+    LM_cp_data = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']),
+                                           grids[1]['cp'],(P_points_LM, T_points_LM), method='linear')
+
+    spec_heat = np.append(LM_cp_data,UM_cp_data)
+
+
+    UM_alpha_data = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']),
+                                           grids[0]['alpha'],(P_points_UM, T_points_UM), method='linear')
+
+    LM_alpha_data = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']),
+                                           grids[1]['alpha'],(P_points_LM, T_points_LM), method='linear')
+
+
+    alpha = np.append(LM_alpha_data,UM_alpha_data)
 
     grav_func = interpolate.UnivariateSpline(depths[::-1],gravity[::-1])
     spec_heat_func = interpolate.UnivariateSpline(depths[::-1],spec_heat[::-1])

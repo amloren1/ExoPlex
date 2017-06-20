@@ -87,7 +87,7 @@ def initialize_by_radius(*args):
             mass_layers[i]= density_layers[i] * volume_layers[i]
             cumulative_mass[i]= cumulative_mass[i - 1] + mass_layers[i]
 
-            Temperature_layers[i] = 3999. + (float((Mantle_potential_temp-3999.))/float(num_mantle_layers))\
+            Temperature_layers[i] = 3000. + (float((Mantle_potential_temp-3000.))/float(num_mantle_layers))\
                                                             *float((i-num_core_layers))
 
 

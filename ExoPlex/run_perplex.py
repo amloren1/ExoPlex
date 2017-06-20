@@ -25,6 +25,7 @@ def run_perplex(*args):
     resolution = args[2][2]
 
     filename = args[3]
+    UMLM = args[4]
 
     plxMan = str(Mantle_wt_per.get('MgO')) + ' ' + str(Mantle_wt_per.get('SiO2')) + ' ' \
              + str(Mantle_wt_per.get('FeO')) + ' ' + str(Mantle_wt_per.get('CaO')) \
@@ -40,13 +41,20 @@ def run_perplex(*args):
 
     solutionFileNameMan = 'SiMg_FeMg_CaMg_AlMg_XFeO_fSic' + solfileparamsString + '_MANTLE'
 
-    if os.path.isfile('../Solutions/'+filename+'_1.tab'):
-        print '\nThe mantle .tab already exists, please wait briefly for solution\n'
-        print 'Mantle File name: '+ '../Solutions/'+filename+'\n'
-        return '../Solutions/'+filename
+    if os.path.isfile('../Solutions/'+filename+'_UM.tab') and UMLM == True:
+        print 'The Upper mantle .tab already exists, please wait briefly for solution\n'
+        return '../Solutions/' + filename
+
+    if os.path.isfile('../Solutions/'+filename+'_LM.tab') and UMLM == False:
+        print 'The Lower mantle .tab already exists, please wait briefly for solution\n'
+        return '../Solutions/' + filename
 
     else:
-        print '\n Making Mantle PerPlex phase file. \n This will be stored in: ../Solutions/'+ filename
+        if UMLM == True:
+            print 'Making upper mantle PerPlex phase file. \n This will be stored in: ../Solutions/'+ filename+'_UM.tab'
+        else:
+            print 'Making lower mantle PerPlex phase file. \n This will be stored in: ../Solutions/'+ filename+'_LM.tab'
+
         #we need to shorten the file name for PerPlex to accept it
         solutionFileNameMan_short = list(solutionFileNameMan)
         solutionFileNameMan_short[0:30] = []
@@ -229,7 +237,11 @@ def run_perplex(*args):
     p.terminate()
     print "Done with PerPlex"
 
-    os.rename(solutionFileNameMan+'_1.tab','../Solutions/'+filename+'_1.tab')
+    if UMLM == True:
+        os.rename(solutionFileNameMan+'_1.tab','../Solutions/'+filename+'_UM.tab')
+    else:
+        os.rename(solutionFileNameMan + '_1.tab', '../Solutions/' + filename + '_LM.tab')
+
     os.rename(solutionFileNameMan+'.arf','../Solutions/'+filename+'.arf')
     os.rename(solutionFileNameMan+'.blk','../Solutions/'+filename+'.blk')
     os.rename(solutionFileNameMan+'.dat','../Solutions/'+filename+'.dat')
@@ -240,5 +252,6 @@ def run_perplex(*args):
     os.remove(solutionFileNameMan+'_auto_refine.txt')
 
     filename = '../Solutions/'+filename
+
     return filename
 

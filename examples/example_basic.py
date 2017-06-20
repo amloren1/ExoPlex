@@ -27,14 +27,17 @@ if __name__ == "__main__":
     wt_frac_Si_core = 0.
     wt_frac_water = 0.
     mol_frac_Fe_mantle = 0.0
-    Pressure_range_mantle = '5000 2000000'
-    Temperature_range_mantle = '1400 4000'
 
-    verbose = True
+    Pressure_range_mantle_UM = '3000 1400000'
+    Temperature_range_mantle_UM = '1400 3000'
+    resolution_UM = '125 150'
+
+    Pressure_range_mantle_LM = '1250000 5000000'
+    Temperature_range_mantle_LM = '2500 5000'
+    resolution_LM = '50 50'
 
     #Feel free to change, but these are defaulted right now
     #Do you want to pin Mass and solve Radius?
-    resolution = '100 125'
 
     #FeMg = .149 / .165
     #SiMg = 0.158 / 0.198
@@ -45,7 +48,7 @@ if __name__ == "__main__":
     wt_frac_O_core = 0.
     wt_frac_S_core = 0.
 
-    num_mantle_layers = 1000
+    num_mantle_layers = 2000
     num_core_layers = 1000
     number_h2o_layers = 0
 
@@ -57,7 +60,9 @@ if __name__ == "__main__":
                           wt_frac_O_core,wt_frac_S_core]
 
     Core_rad_frac_guess = .54
-    structure_params =  [Pressure_range_mantle,Temperature_range_mantle,resolution,Core_rad_frac_guess,Mantle_potential_temp]
+    structure_params =  [Pressure_range_mantle_UM,Temperature_range_mantle_UM,resolution_UM,
+                         Pressure_range_mantle_LM, Temperature_range_mantle_LM, resolution_LM,
+                         Core_rad_frac_guess,Mantle_potential_temp]
 
     layers = [num_mantle_layers,num_core_layers,number_h2o_layers]
     Planet = exo.run_planet_radius(Radius_planet,compositional_params,structure_params,layers,filename)
