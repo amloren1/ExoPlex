@@ -86,7 +86,7 @@ def initialize_by_radius(*args):
 
             #Temperature_layers[i] = 4000. + (float((Mantle_potential_temp-4000.))/float(num_mantle_layers))\
             #                                                *float((i-num_core_layers))
-            Temperature_layers[i] = 3000.
+            Temperature_layers[i] = 2700.
 
         else:
             radius_layers[i]=core_thickness_guess+mantle_thickness_guess+\
@@ -136,9 +136,11 @@ def compress(*args):
 
         for i in range(len(Planet['density'])):
             if np.isnan(Planet['density'][i]) == True:
+                print "Density has a nan"
                 print i, Planet['pressure'][i],Planet['temperature'][i]
-                print "pressure range mantle",structural_params[0]
-                print "temperature range mantle",structural_params[1]
+                print
+                #print "pressure range mantle",structural_params[0]
+                #print "temperature range mantle",structural_params[1]
                 sys.exit()
 
         Planet['gravity'] = minphys.get_gravity(Planet)

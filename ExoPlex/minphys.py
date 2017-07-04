@@ -34,7 +34,7 @@ def get_rho(Planet,grids,Core_wt_per,layers):
     T_points_LM = []
 
     for i in range(num_mantle_layers):
-        if Pressure_layers[i+num_core_layers] >=1300000:
+        if Pressure_layers[i+num_core_layers] >=1250000:
             P_points_LM.append(Pressure_layers[i+num_core_layers])
             T_points_LM.append(Temperature_layers[i+num_core_layers])
         else:
@@ -206,7 +206,7 @@ def get_temperature(Planet,grids,structural_parameters,layers):
     T_points_LM = []
 
     for i in range(num_mantle_layers):
-        if pressure[i] >=1300000:
+        if pressure[i] >=1250000:
             P_points_LM.append(pressure[i])
             T_points_LM.append(temperature[i])
         else:

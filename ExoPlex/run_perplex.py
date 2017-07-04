@@ -241,11 +241,11 @@ def run_perplex(*args):
     else:
         os.rename(solutionFileNameMan + '_1.tab', '../Solutions/' + filename + '_LM.tab')
 
-    os.rename(solutionFileNameMan+'.arf','../Solutions/'+filename+'.arf')
-    os.rename(solutionFileNameMan+'.blk','../Solutions/'+filename+'.blk')
-    os.rename(solutionFileNameMan+'.dat','../Solutions/'+filename+'.dat')
-    os.rename(solutionFileNameMan+'.plt','../Solutions/'+filename+'.plt')
-    os.rename(solutionFileNameMan+'.tof','../Solutions/'+filename+'.tof')
+    os.remove(solutionFileNameMan+'.arf')
+    os.remove(solutionFileNameMan+'.blk')
+    os.remove(solutionFileNameMan+'.dat')
+    os.remove(solutionFileNameMan+'.plt')
+    os.remove(solutionFileNameMan+'.tof')
     os.remove(solutionFileNameMan+'_VERTEX_options.txt')
     os.remove(solutionFileNameMan+'_WERAMI_options.txt')
     os.remove(solutionFileNameMan+'_auto_refine.txt')

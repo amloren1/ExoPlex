@@ -272,7 +272,7 @@ def get_phases(Planet,grids,layers):
     T_points_UM = []
 
     for i in range(len(mantle_pressures)):
-        if mantle_pressures[i]<=1300000:
+        if mantle_pressures[i]<=1250000.:
             P_points_UM.append(mantle_pressures[i])
             T_points_UM.append(mantle_temperatures[i])
 
@@ -283,8 +283,11 @@ def get_phases(Planet,grids,layers):
 
     Mantle_phases_LM = [grids[0]['phases'][-1] for i in range(num_mantle_layers-len(P_points_UM))]
 
-    Mantle_phases = np.concatenate((Mantle_phases_LM,Mantle_phases_UM),axis=0)
+    if (num_mantle_layers-len(P_points_UM)) > 0:
+        Mantle_phases = np.concatenate((Mantle_phases_LM,Mantle_phases_UM),axis=0)
 
+    else:
+        Mantle_phases = Mantle_phases_UM
     Core_phases = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']), grids[0]['phases'],
                          ([0 for i in range(num_core_layers)], [0 for i in range(num_core_layers)]), method='linear')
 
@@ -307,7 +310,7 @@ def get_speeds(Planet,core_wt_per,grids,layers):
     T_points_LM = []
 
     for i in range(len(mantle_pressures)):
-        if mantle_pressures[i]<=1300000:
+        if mantle_pressures[i]<=1250000:
             P_points_UM.append(mantle_pressures[i])
             T_points_UM.append(mantle_temperatures[i])
         else:
@@ -405,7 +408,7 @@ def find_CRF(radius_planet, core_mass_frac, structure_params, compositional_para
     from scipy.optimize import brentq
 
     args = [radius_planet, structure_params, compositional_params, layers,grids,Core_wt_per,core_mass_frac]
-    structure_params[-2] = brentq(calc_CRF,.4,.75,args=args,xtol=1e-4)
+    structure_params[-2] = brentq(calc_CRF,.40,.75,args=args,xtol=1e-4)
 
     Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
     Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
