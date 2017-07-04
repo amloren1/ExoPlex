@@ -25,11 +25,11 @@ if __name__ == "__main__":
 
     Pressure_range_mantle_UM = '3000 1400000'
     Temperature_range_mantle_UM = '1400 3500'
-    resolution_UM = '80 140'
+    resolution_UM = '80 140' #11200
 
-    Pressure_range_mantle_LM = '1250000 6400000'
-    Temperature_range_mantle_LM = '2000 5000'
-    resolution_LM = '50 50'
+    Pressure_range_mantle_LM = '1250000 6200000'
+    Temperature_range_mantle_LM = '2200 5000'
+    resolution_LM = '80 80' #6400
 
     wt_frac_O_core = 0.
     wt_frac_S_core = 0.
@@ -44,17 +44,17 @@ if __name__ == "__main__":
 
     Radius_planet = [0.5,.6,.7,.8,.9,1.,1.1,1.2,1.3,1.4,1.5]
 
-    Mantle_potential_temp = 1500.
+    Mantle_potential_temp = 1700.
 
     Mass = []
     CRF = []
     CMF = []
 
-    Star = 'HIP108870'
+    Star = 'Sun'
     CaMg = 0.0616595
-    SiMg = 0.870964
-    AlMg = 0.0933254
-    FeMg = 0.831764
+    SiMg = 0.954993
+    AlMg = 0.0851138
+    FeMg = 0.812831
 
     compositional_params = [wt_frac_water,FeMg,SiMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, \
                           wt_frac_O_core,wt_frac_S_core]
@@ -81,12 +81,11 @@ if __name__ == "__main__":
         filename = Star+'_'+ str(int(Mantle_potential_temp)) + '_rad_' + str(i)
         exo.functions.write(Planet,filename)
 
-    output_file = Star+str(int(Mantle_potential_temp))+'_massCRF.dat'
+    output_file = Star+"_"+str(int(Mantle_potential_temp))+'_massCRF.dat'
     output = [[Radius_planet[i], Mass[i],CRF[i],CMF[i]] for i in range(len(Mass))]
 
     np.savetxt(output_file,output , '%.5f', "\t", newline='\n',
                header='Radius\tMass\tCRF\tCMF', footer='', comments='# ')
-
 
     #exo.functions.write(Planet,filename)
 

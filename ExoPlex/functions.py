@@ -408,7 +408,7 @@ def find_CRF(radius_planet, core_mass_frac, structure_params, compositional_para
     from scipy.optimize import brentq
 
     args = [radius_planet, structure_params, compositional_params, layers,grids,Core_wt_per,core_mass_frac]
-    structure_params[-2] = brentq(calc_CRF,.4,.75,args=args,xtol=1e-4)
+    structure_params[-2] = brentq(calc_CRF,.40,.75,args=args,xtol=1e-4)
 
     Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
     Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
