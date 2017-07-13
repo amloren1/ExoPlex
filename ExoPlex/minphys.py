@@ -154,22 +154,37 @@ def get_gravity(Planet):
 
     return gravity_layers
 
-def get_pressure(Planet):
+def get_pressure(Planet,layers):
     radii = Planet.get('radius')
     density = Planet.get('density')
     gravity = Planet.get('gravity')
+    num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
-    density = density
+
     # convert radii to depths
     depths = radii[-1] - radii
+    depths_core = depths[:num_core_layers]
+    gravity_core = gravity[:num_core_layers]
+    density_core = density[:num_core_layers]
+
+    depths_mant = depths[num_core_layers:]
+    gravity_mant = gravity[num_core_layers:]
+    density_mant = density[num_core_layers:]
+
     # Make a spline fit of density as a function of depth
-    rhofunc = interpolate.UnivariateSpline(depths[::-1], density[::-1])
+    rhofunc_mant = interpolate.UnivariateSpline(depths_mant[::-1], density_mant[::-1])
     # Make a spline fit of gravity as a function of depth
-    gfunc = interpolate.UnivariateSpline(depths[::-1], gravity[::-1])
+    gfunc_mant = interpolate.UnivariateSpline(depths_mant[::-1], gravity_mant[::-1])
+
+    rhofunc_core = interpolate.UnivariateSpline(depths_core[::-1], density_core[::-1])
+    gfunc_core = interpolate.UnivariateSpline(depths_core[::-1], gravity_core[::-1])
 
     # integrate the hydrostatic equation
-    pressure = np.ravel(odeint((lambda p, x: gfunc(x) * rhofunc(x)),5.e8, depths[::-1]))
+    pressure_mant = np.ravel(odeint((lambda p, x: gfunc_mant(x) * rhofunc_mant(x)),5.e8, depths_mant[::-1]))
+    CMB_pres = pressure_mant[-1]
+    pressure_core = np.ravel(odeint((lambda p, x: gfunc_core(x) * rhofunc_core(x)),CMB_pres, depths_core[::-1]))
 
+    pressure = np.concatenate((pressure_mant,pressure_core),axis=0)
     pressure = [((i/1.e9)*10000.) for i in pressure]
     return np.asarray(pressure[::-1])
 

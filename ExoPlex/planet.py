@@ -145,7 +145,7 @@ def compress(*args):
 
         Planet['gravity'] = minphys.get_gravity(Planet)
 
-        Planet['pressure'] = minphys.get_pressure(Planet)
+        Planet['pressure'] = minphys.get_pressure(Planet,layers)
 
         Planet['temperature'] = minphys.get_temperature(Planet,grids,structural_params,layers)
         converge,old_rho = minphys.check_convergence(Planet['density'],old_rho)
