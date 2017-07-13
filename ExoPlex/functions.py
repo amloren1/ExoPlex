@@ -288,6 +288,14 @@ def get_phases(Planet,grids,layers):
 
     else:
         Mantle_phases = Mantle_phases_UM
+
+    for i in range(len(Mantle_phases)):
+        entry = np.zeros(len(Mantle_phases[i]))
+        tot = sum(Mantle_phases[i])
+        for j in range(len(Mantle_phases[i])):
+            entry[j] = 100.*Mantle_phases[i][j]/tot
+        Mantle_phases[i] = entry
+
     Core_phases = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']), grids[0]['phases'],
                          ([0 for i in range(num_core_layers)], [0 for i in range(num_core_layers)]), method='linear')
 
