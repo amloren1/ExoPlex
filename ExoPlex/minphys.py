@@ -139,16 +139,29 @@ def get_core_speeds(Pressure,Temperature,Core_wt_per):
 def get_water_rho(Pressure,Temperature):
     return 0
 
-def get_gravity(Planet):
+def get_gravity(Planet,layers):
     radii = Planet.get('radius')
     density = Planet.get('density')
-    rhofunc = interpolate.UnivariateSpline(radii, density)
+    num_mantle_layers, num_core_layers, number_h2o_layers = layers
+
+    radii_core =  radii[:num_core_layers]
+    density_core = density[:num_core_layers]
+
+    radii_mantle = radii[num_core_layers:]
+    density_mantle = density[num_core_layers:]
+
+    rhofunc_core = interpolate.UnivariateSpline(radii_core, density_core)
+    rhofunc_mantle = interpolate.UnivariateSpline(radii_mantle, density_mantle)
     # Create a spline fit of density as a function of radius
 
     # Numerically integrate Poisson's equation
-    poisson = lambda p, x: 4.0 * np.pi * G * rhofunc(x) * x * x
+    poisson_core = lambda p, x: 4.0 * np.pi * G * rhofunc_core(x) * x * x
+    poisson_mantle = lambda p, x: 4.0 * np.pi * G * rhofunc_mantle(x) * x * x
 
-    gravity_layers = np.ravel(odeint(poisson, 0., radii))
+    gravity_layers_core = np.ravel(odeint(poisson_core, 0., radii_core))
+    gravity_layers_mantle = np.ravel(odeint(poisson_mantle,gravity_layers_core[-1],radii_mantle))
+
+    gravity_layers = np.concatenate((gravity_layers_core,gravity_layers_mantle),axis=0)
     gravity_layers[1:] = gravity_layers[1:]/radii[1:]/radii[1:]
     gravity_layers[0] = 0
 
@@ -258,9 +271,17 @@ def get_temperature(Planet,grids,structural_parameters,layers):
     for i in range(len(depths)):
         if np.isnan(spec_heat[i]) == True:
             print "There's a nan in Cp"
-            print i, pressure[i], temperature[i]
+            print i, pressure[i]/(1e5), temperature[i],depths[i]/depths[0]
             print "pressure range mantle", structural_parameters[0]
             print "temperature range mantle", structural_parameters[1]
+#            print "LM", LM_cp_data
+#            print "UM", UM_cp_data
+            print len(LM_cp_data)+len(UM_cp_data)
+            for j in range(len(LM_cp_data)):
+                print P_points_LM[j]/1e5,LM_cp_data[j]
+            import matplotlib.pyplot as plt
+            plt.plot(pressure,temperature)
+            plt.show()
             sys.exit()
 
     mantle_temperatures = [math.exp(i)*Mantle_potential_temp for i in gradient][::-1]

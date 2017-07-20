@@ -39,18 +39,18 @@ def get_percents(*args):
     #Double checks
     #Return only moles of elements, no molecules
     A = np.array([ [0., 0., 0. , 0. , -1. ,-1., -2. , 1. , -1., -1.5] ,
-            [1. , -FeSi , 0. , 0. , 1. , 0. , -FeSi , 0.,0.,0.] ,
-           [0., -MgSi, 0., 0. ,0. ,1. ,-MgSi ,0.,0.,0.] ,
-            [0., -CaSi, 0., 0. ,0. ,0. ,-CaSi ,0., 1. ,0.] ,
-        [0., -AlSi, 0., 0. ,0. ,0. ,-AlSi ,0.,0., 1.] ,
+            [1. , -1.*FeSi , 0. , 0. , 1. , 0. , -1.*FeSi , 0.,0.,0.] ,
+           [0., -1.*MgSi, 0., 0. ,0. ,1. ,-1.*MgSi ,0.,0.,0.] ,
+            [0., -1.*CaSi, 0., 0. ,0. ,0. ,-1.*CaSi ,0., 1. ,0.] ,
+        [0., -1.*AlSi, 0., 0. ,0. ,0. ,-1.*AlSi ,0.,0., 1.] ,
           [mol_frac_Fe_mantle , 0. , 0. ,0., (mol_frac_Fe_mantle-1.) ,  0. , 0. , 0. ,0., 0.] ,
           [wt_frac_Si_core*mFe , (wt_frac_Si_core-1.)*mSi , wt_frac_Si_core*mO , wt_frac_Si_core*mS \
                        , 0. , 0. , 0. , 0. , 0., 0.] ,
-          [wt_frac_O_core*mFe , (wt_frac_O_core)*mSi , (wt_frac_O_core-1)*mO , wt_frac_O_core*mS
+          [wt_frac_O_core*mFe , (wt_frac_O_core)*mSi , (wt_frac_O_core-1.)*mO , wt_frac_O_core*mS
                        , 0. , 0. , 0. , 0. , 0., 0.]  ,
-          [wt_frac_S_core*mFe , (wt_frac_S_core)*mSi , (wt_frac_S_core)*mO , (wt_frac_S_core-1)*mS
+          [wt_frac_S_core*mFe , (wt_frac_S_core)*mSi , (wt_frac_S_core)*mO , (wt_frac_S_core-1.)*mS
                        , 0. , 0. , 0. , 0. , 0., 0.] ,
-          [mFe , mSi , mO, mS ,  mFe , mMg , mSi ,mO, mCa, mAl]   ])
+          [mFe , mSi , mO, mS ,  mFe , mMg , mSi ,mO, mCa, mAl]])
 
 
     #returns number of moles of each element between core and mantle.
@@ -94,8 +94,9 @@ def get_percents(*args):
 
     #Throw exception, not if statement
     #make inequality not, absolute if. Use machine precision
-    if abs(float(FeO_mant_wt+MgO_mant_wt+SiO2_mant_wt+CaO_mant_wt+Al2O3_mant_wt)-1.) > np.finfo(float).eps:
-        print abs(float(FeO_mant_wt+MgO_mant_wt+SiO2_mant_wt+CaO_mant_wt+Al2O3_mant_wt)-1.)
+    total = float(FeO_mant_wt+MgO_mant_wt+SiO2_mant_wt+CaO_mant_wt+Al2O3_mant_wt)
+    if total > 1.+(5.*np.finfo(float).eps) or total < 1.-(5.*np.finfo(float).eps):
+        print total
         print '\n\n Mantle wt% don\'t add to 1'
         sys.exit()
 

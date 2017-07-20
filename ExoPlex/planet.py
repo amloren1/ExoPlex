@@ -143,7 +143,7 @@ def compress(*args):
                 #print "temperature range mantle",structural_params[1]
                 sys.exit()
 
-        Planet['gravity'] = minphys.get_gravity(Planet)
+        Planet['gravity'] = minphys.get_gravity(Planet,layers)
 
         Planet['pressure'] = minphys.get_pressure(Planet,layers)
 
