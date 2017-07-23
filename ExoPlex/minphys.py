@@ -5,6 +5,7 @@ from scipy import interpolate
 import math
 from scipy.integrate import odeint
 import sys
+import functions
 
 
 ToPa = 100000.
@@ -27,6 +28,15 @@ def get_rho(Planet,grids,Core_wt_per,layers):
     for i in range(num_core_layers):
         if i <= num_core_layers:
             rho_layers[i] = get_core_rho(Pressure_layers[i],Temperature_layers[i],Core_wt_per)
+
+    if number_h2o_layers >0:
+        P_points_water = Pressure_layers[(num_mantle_layers+num_core_layers):]
+        T_points_water = Temperature_layers[(num_mantle_layers+num_core_layers):]
+
+
+        water_rho = get_water_rho(P_points_water, T_points_water)
+
+        rho_layers[num_core_layers+num_mantle_layers:] = water_rho
 
     P_points_UM = []
     T_points_UM = []
@@ -51,10 +61,129 @@ def get_rho(Planet,grids,Core_wt_per,layers):
 
     mantle_data = np.append(LM_data,UM_data)
 
+
     rho_layers[num_core_layers:num_core_layers+num_mantle_layers] = mantle_data
-    #else:
-    #    rho_layers[i] = get_water_rho(Pressure_layers[i],Temperature_layers[i])
+
+
     return rho_layers
+
+def get_water_rho(Pressure,Temperature):
+    phase = []
+    P_water = []
+    T_water = []
+    P_ice = []
+    T_ice = []
+    density_ice = []
+    for i in range(len(Pressure)):
+        if (functions.find_water_phase(Pressure[i],Temperature[i]) == 'Water'):
+            P_water.append(Pressure[i]*(1.e9/10000.)-((73.5e-5)*2.06e9*(Temperature[i]-373.)))
+            T_water.append(Temperature[i])
+
+        else:
+            phase.append(functions.find_water_phase(Pressure[i],Temperature[i]))
+            P_ice.append(Pressure[i])
+            T_ice.append(Temperature[i])
+
+    #cols = np.arange(1, 701)
+    #liqDat = np.genfromtxt('../ExoPlex/water_table.dat', usecols=cols)
+    #Twat = np.arange(300, 1000)
+    #Pwat = np.genfromtxt('../ExoPlex/water_table.dat', usecols=(0,))
+    #tab = np.zeros((len(Twat)*len(Pwat),3))
+    #for i in range(len(Twat)):
+
+    #for j in range(len(Pwat)):
+    #        tab[((i*len(Pwat)))+j] = [Pwat[j],Twat[i],liqDat[j][i]]
+
+    rock=burnman.minerals.other.water()
+    density_water = rock.evaluate(['density'],P_water,T_water)[0]
+    for i in range(len(phase)):
+        if phase[i] == 'Ice_VII':
+            class Ice_VII(burnman.Mineral):
+
+                def __init__(self):
+                    self.params = {
+                        'name': 'ice_VII',
+                        'equation_of_state': 'bm2',
+                        'V_0':12.49e-6,
+                        'K_0': 20.15e9,
+                        'Kprime_0':4.,
+                        'molar_mass': 0.01801528,
+                    }
+                    burnman.Mineral.__init__(self)
+
+            rock = Ice_VII()
+            density_ice.append(rock.evaluate(['density'], 1.e9 * (P_ice[i] / 10000.), T_ice[i])[0])
+
+        if phase[i] == 'Ice_VI':
+            class Ice_VI(burnman.Mineral):
+                def __init__(self):
+                    self.params = {
+                        'name': 'ice_VI',
+                        'equation_of_state': 'bm2',
+                        'V_0': 14.17e-6,
+                        'K_0': 14.01e9,
+                        'Kprime_0': 4.,
+                        'molar_mass': 0.01801528,
+                    }
+                    burnman.Mineral.__init__(self)
+
+            rock = Ice_VI()
+            density_ice.append(rock.evaluate(['density'], 1.e9 * (P_ice[i] / 10000.), T_ice[i])[0])
+
+        if phase[i] == 'Ice_Ih':
+            class Ice_Ih(burnman.Mineral):
+
+                def __init__(self):
+                    self.params = {
+                        'name': 'Ice_Ih',
+                        'equation_of_state': 'bm3',
+                        'V_0': 1./(916.72/0.01801528),
+                        'K_0': 9.2e9,
+                        'Kprime_0': 5.5,
+                        'molar_mass': 0.01801528,
+                    }
+                    burnman.Mineral.__init__(self)
+
+            rock = Ice_Ih()
+            print "uh oh"
+            density_ice.append(rock.evaluate(['density'], 1.e9 * (P_ice[i] / 10000.), T_ice[i])[0])
+
+    density = np.concatenate((density_ice,density_water),axis=0)
+    return density
+
+def get_water_Cp(Pressure, Temperature):
+    phase = functions.find_water_phase(Pressure,Temperature)
+    Pressure = Pressure/10000.
+    if phase == 'Water':
+        return 4.184e3
+
+    if phase == 'Ice_VII' or phase=='Ice_VI':
+        cp = 3.3 + 22.1 * np.exp(-0.058 * Pressure)  # Asahara 2010
+        return 1000.*cp
+
+    if phase == 'Ice_Ih':
+        return 4.184e3
+
+
+def get_water_alpha(Pressure,Temperature):
+    phase = functions.find_water_phase(Pressure, Temperature)
+    Pressure = Pressure / 10000.
+    if phase == 'Water':
+        return 214.e-6
+
+    if phase == 'Ice_VII' or phase=='Ice_VI':
+        Ks = 23.7
+        Ksp = 4.15
+        a0 = -3.9e-4
+        a1 = 1.5e-6
+        at = a0 + a1 * Temperature
+        alpha = at * (1 + (Ksp / Ks) * Pressure) ** (-0.9)  # fei 1993
+        return alpha
+
+    if phase == 'Ice_Ih':
+        return 214.e-6
+
+    return 0
 
 def get_core_rho(Pressure,Temperature,Core_wt_per):
     wt_frac_Si = Core_wt_per.get('Si')
@@ -136,8 +265,6 @@ def get_core_speeds(Pressure,Temperature,Core_wt_per):
 
     return speeds
 
-def get_water_rho(Pressure,Temperature):
-    return 0
 
 def get_gravity(Planet,layers):
     radii = Planet.get('radius')
@@ -147,11 +274,15 @@ def get_gravity(Planet,layers):
     radii_core =  radii[:num_core_layers]
     density_core = density[:num_core_layers]
 
-    radii_mantle = radii[num_core_layers:]
-    density_mantle = density[num_core_layers:]
+    radii_mantle = radii[num_core_layers:(num_core_layers+num_mantle_layers)]
+    density_mantle = density[num_core_layers:(num_core_layers+num_mantle_layers)]
+
+    radii_water = radii [(num_core_layers+num_mantle_layers):]
+    density_water = density[(num_core_layers+num_mantle_layers):]
 
     rhofunc_core = interpolate.UnivariateSpline(radii_core, density_core)
     rhofunc_mantle = interpolate.UnivariateSpline(radii_mantle, density_mantle)
+
     # Create a spline fit of density as a function of radius
 
     # Numerically integrate Poisson's equation
@@ -161,7 +292,15 @@ def get_gravity(Planet,layers):
     gravity_layers_core = np.ravel(odeint(poisson_core, 0., radii_core))
     gravity_layers_mantle = np.ravel(odeint(poisson_mantle,gravity_layers_core[-1],radii_mantle))
 
-    gravity_layers = np.concatenate((gravity_layers_core,gravity_layers_mantle),axis=0)
+    if number_h2o_layers>0:
+        rhofunc_water = interpolate.UnivariateSpline(radii_water, density_water)
+        poisson_water = lambda p, x: 4.0 * np.pi * G * rhofunc_water(x) * x * x
+        gravity_layers_water = np.ravel(odeint(poisson_water,gravity_layers_mantle[-1],radii_water))
+        gravity_layers = np.concatenate((gravity_layers_core,gravity_layers_mantle,gravity_layers_water),axis=0)
+
+    else:
+        gravity_layers = np.concatenate((gravity_layers_core, gravity_layers_mantle), axis=0)
+
     gravity_layers[1:] = gravity_layers[1:]/radii[1:]/radii[1:]
     gravity_layers[0] = 0
 
@@ -180,9 +319,11 @@ def get_pressure(Planet,layers):
     gravity_core = gravity[:num_core_layers]
     density_core = density[:num_core_layers]
 
-    depths_mant = depths[num_core_layers:]
-    gravity_mant = gravity[num_core_layers:]
-    density_mant = density[num_core_layers:]
+    depths_mant = depths[num_core_layers:(num_core_layers+num_mantle_layers)]
+    gravity_mant = gravity[num_core_layers:(num_core_layers+num_mantle_layers)]
+    density_mant = density[num_core_layers:(num_core_layers+num_mantle_layers)]
+
+
 
     # Make a spline fit of density as a function of depth
     rhofunc_mant = interpolate.UnivariateSpline(depths_mant[::-1], density_mant[::-1])
@@ -192,23 +333,88 @@ def get_pressure(Planet,layers):
     rhofunc_core = interpolate.UnivariateSpline(depths_core[::-1], density_core[::-1])
     gfunc_core = interpolate.UnivariateSpline(depths_core[::-1], gravity_core[::-1])
 
+    if number_h2o_layers >0:
+        depths_water = depths[(num_core_layers + num_mantle_layers):]
+        gravity_water = gravity[(num_core_layers + num_mantle_layers):]
+        density_water = density[(num_core_layers + num_mantle_layers):]
+
+        rhofunc_water = interpolate.UnivariateSpline(depths_water[::-1], density_water[::-1])
+        gfunc_water = interpolate.UnivariateSpline(depths_water[::-1], gravity_water[::-1])
+        #integrate from 1 bar
+        pressure_water = np.ravel(odeint((lambda p, x: gfunc_water(x) * rhofunc_water(x)),(1./10000.)*1.e9, depths_water[::-1]))
+        WMB_pres = pressure_water[-1]
+
+    else:
+        WMB_pres = 5.e8
+
     # integrate the hydrostatic equation
-    pressure_mant = np.ravel(odeint((lambda p, x: gfunc_mant(x) * rhofunc_mant(x)),5.e8, depths_mant[::-1]))
+    pressure_mant = np.ravel(odeint((lambda p, x: gfunc_mant(x) * rhofunc_mant(x)),WMB_pres, depths_mant[::-1]))
     CMB_pres = pressure_mant[-1]
     pressure_core = np.ravel(odeint((lambda p, x: gfunc_core(x) * rhofunc_core(x)),CMB_pres, depths_core[::-1]))
 
-    pressure = np.concatenate((pressure_mant,pressure_core),axis=0)
-    pressure = [((i/1.e9)*10000.) for i in pressure]
-    return np.asarray(pressure[::-1])
+    if number_h2o_layers > 0:
+        pressure = np.concatenate((pressure_water,pressure_mant,pressure_core),axis=0)
+        pressure = [((i/1.e9)*10000.) for i in pressure]
+        return np.asarray(pressure[::-1])
+    else:
+        pressure = np.concatenate((pressure_mant,pressure_core),axis=0)
+        pressure = [((i/1.e9)*10000.) for i in pressure]
+        return np.asarray(pressure[::-1])
 
-def get_mass(Planet):
+
+def get_mass(Planet,layers):
     radii = Planet.get('radius')
     density = Planet.get('density')
-    rhofunc = interpolate.UnivariateSpline(radii, density)
-    mass_in_sphere = lambda p, x: 4.0 * np.pi * rhofunc(x) * x * x
+    num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
-    mass = np.ravel(odeint(mass_in_sphere,0.,radii))
-    return mass
+    if len(radii)<=num_core_layers:
+
+        rhofunc = interpolate.UnivariateSpline(radii, density)
+        mass_in_sphere = lambda p, x: 4.0 * np.pi * rhofunc(x) * x * x
+
+        mass = np.ravel(odeint(mass_in_sphere,0.,radii))
+        return mass
+
+    elif len(radii) > (num_core_layers+num_mantle_layers):
+        radii_core = radii[:num_core_layers]
+        density_core = density[:num_core_layers]
+        rhofunc_core = interpolate.UnivariateSpline(radii_core, density_core)
+        mass_in_core = lambda p, x: 4.0 * np.pi * rhofunc_core(x) * x * x
+
+        mass_core = np.ravel(odeint(mass_in_core, 0., radii_core))
+
+        radii_mantle = radii[num_core_layers:num_core_layers + num_mantle_layers]
+        density_mantle = density[num_core_layers:num_core_layers + num_mantle_layers]
+        rhofunc_mantle = interpolate.UnivariateSpline(radii_mantle, density_mantle)
+        mass_in_mantle = lambda p, x: 4.0 * np.pi * rhofunc_mantle(x) * x * x
+
+        mass_mantle = np.ravel(odeint(mass_in_mantle,mass_core[-1],radii_mantle))
+
+        radii_water = radii[num_core_layers + num_mantle_layers:]
+        density_water = density[num_core_layers + num_mantle_layers:]
+        rhofunc_water = interpolate.UnivariateSpline(radii_water, density_water)
+
+        mass_in_water = lambda p, x: 4.0 * np.pi * rhofunc_water(x) * x * x
+
+        mass_water= np.ravel(odeint(mass_in_water, mass_mantle[-1], radii_water))
+
+        return np.concatenate((mass_core,mass_mantle,mass_water),axis=0)
+    else:
+        radii_core = radii[:num_core_layers]
+        density_core = density[:num_core_layers]
+        rhofunc_core = interpolate.UnivariateSpline(radii_core, density_core)
+        mass_in_core = lambda p, x: 4.0 * np.pi * rhofunc_core(x) * x * x
+
+        mass_core = np.ravel(odeint(mass_in_core, 0., radii_core))
+
+        radii_mantle = radii[num_core_layers:(num_core_layers + num_mantle_layers)]
+        density_mantle = density[num_core_layers:(num_core_layers + num_mantle_layers)]
+        rhofunc_mantle = interpolate.UnivariateSpline(radii_mantle, density_mantle)
+        mass_in_mantle = lambda p, x: 4.0 * np.pi * rhofunc_mantle(x) * x * x
+
+        mass_mantle = np.ravel(odeint(mass_in_mantle,mass_core[-1],radii_mantle))
+
+        return np.concatenate((mass_core,mass_mantle),axis=0)
 
 def get_temperature(Planet,grids,structural_parameters,layers):
     radii = Planet.get('radius')
@@ -218,7 +424,8 @@ def get_temperature(Planet,grids,structural_parameters,layers):
 
     num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
-    Mantle_potential_temp = structural_parameters[-1]
+    Mantle_potential_temp = structural_parameters[7]
+    Water_potential_temp = structural_parameters[9]
 
     radii = radii[num_core_layers:]
     gravity =  gravity[num_core_layers:]
@@ -233,6 +440,16 @@ def get_temperature(Planet,grids,structural_parameters,layers):
     P_points_LM = []
     T_points_LM = []
 
+    P_points_water = pressure[num_mantle_layers:]
+    T_points_water = temperature[num_mantle_layers:]
+
+    spec_heat_water = []
+    alpha_water =[]
+
+    for i in range(len(P_points_water)):
+        spec_heat_water.append(get_water_Cp(P_points_water[i],T_points_water[i]))
+        alpha_water.append(get_water_alpha(P_points_water[i],T_points_water[i]))
+
     for i in range(num_mantle_layers):
         if pressure[i] >=1250000:
             P_points_LM.append(pressure[i])
@@ -241,6 +458,11 @@ def get_temperature(Planet,grids,structural_parameters,layers):
             P_points_UM.append(pressure[i])
             T_points_UM.append(temperature[i])
 
+    depths_mantle = depths[:num_mantle_layers]
+    gravity_mantle = gravity[:num_mantle_layers]
+
+    depths_water = depths[num_mantle_layers:]
+    gravity_water = gravity[num_mantle_layers:]
 
     UM_cp_data = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']),
                                            grids[0]['cp'],(P_points_UM, T_points_UM), method='linear')
@@ -248,7 +470,7 @@ def get_temperature(Planet,grids,structural_parameters,layers):
     LM_cp_data = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']),
                                            grids[1]['cp'],(P_points_LM, T_points_LM), method='linear')
 
-    spec_heat = np.append(LM_cp_data,UM_cp_data)
+    spec_heat_mantle = np.append(LM_cp_data,UM_cp_data)
 
 
     UM_alpha_data = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']),
@@ -258,18 +480,20 @@ def get_temperature(Planet,grids,structural_parameters,layers):
                                            grids[1]['alpha'],(P_points_LM, T_points_LM), method='linear')
 
 
-    alpha = np.append(LM_alpha_data,UM_alpha_data)
+    alpha_mantle = np.append(LM_alpha_data,UM_alpha_data)
 
-    grav_func = interpolate.UnivariateSpline(depths[::-1],gravity[::-1])
-    spec_heat_func = interpolate.UnivariateSpline(depths[::-1],spec_heat[::-1])
-    alpha_func = interpolate.UnivariateSpline(depths[::-1],alpha[::-1])
+    grav_func = interpolate.UnivariateSpline(depths_mantle[::-1],gravity_mantle[::-1])
+    spec_heat_func = interpolate.UnivariateSpline(depths_mantle[::-1],spec_heat_mantle[::-1])
+    alpha_func = interpolate.UnivariateSpline(depths_mantle[::-1],alpha_mantle[::-1])
 
-    adiabat = lambda p, x:  alpha_func(x)*grav_func(x) / spec_heat_func(x)
+    adiabat_mantle = lambda p, x:  alpha_func(x)*grav_func(x) / spec_heat_func(x)
 
-    gradient = np.ravel(odeint(adiabat, 0.,depths[::-1]))
+    gradient_mantle = np.ravel(odeint(adiabat_mantle, 0.,depths_mantle[::-1]))
 
-    for i in range(len(depths)):
-        if np.isnan(spec_heat[i]) == True:
+
+    """
+    for i in range(len(depths_mantle)):
+        if np.isnan(spec_heat_mantle[i]) == True:
             print "There's a nan in Cp"
             print i, pressure[i]/(1e5), temperature[i],depths[i]/depths[0]
             print "pressure range mantle", structural_parameters[0]
@@ -283,14 +507,25 @@ def get_temperature(Planet,grids,structural_parameters,layers):
             plt.plot(pressure,temperature)
             plt.show()
             sys.exit()
-
-    mantle_temperatures = [math.exp(i)*Mantle_potential_temp for i in gradient][::-1]
+    """
+    mantle_temperatures = [math.exp(i)*Mantle_potential_temp for i in gradient_mantle][::-1]
 
     core_temperatures = Planet['temperature'][:num_core_layers]
-    temperatures = np.append(core_temperatures,mantle_temperatures)
 
-    return temperatures
+    if number_h2o_layers > 0:
+        grav_func = interpolate.UnivariateSpline(depths_water[::-1], gravity_water[::-1])
+        spec_heat_func = interpolate.UnivariateSpline(depths_water[::-1], spec_heat_water[::-1])
+        alpha_func = interpolate.UnivariateSpline(depths_water[::-1], alpha_water[::-1])
 
+        adiabat_water = lambda p, x: alpha_func(x) * grav_func(x) / spec_heat_func(x)
+
+        gradient_water = np.ravel(odeint(adiabat_water, 0., depths_water[::-1]))
+        water_temperatures = [math.exp(i)*Water_potential_temp for i in gradient_water][::-1]
+
+        return np.concatenate((core_temperatures,mantle_temperatures,water_temperatures),axis=0)
+
+    else:
+        return np.concatenate((core_temperatures, mantle_temperatures),axis=0)
 
 def check_convergence(new_rho,old_rho):
 

@@ -165,7 +165,7 @@ class water(Mineral):
             'V_0': 18.797e-6,
             'K_0': 2.06e9,
             'Kprime_0': 6.29,
-            'molar_mass': 0.018,
-            'Kprime_prime_0': -1.89e-9,
+            'molar_mass': 0.01801528,
+            'Kprime_prime_0': (-1.89/2.06e9),
             'n': 1}
         Mineral.__init__(self)

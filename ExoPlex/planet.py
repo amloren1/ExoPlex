@@ -12,8 +12,10 @@ def initialize_by_radius(*args):
     wt_frac_water, FeMg, SiMg, CaMg, AlMg, mol_frac_Fe_mantle, wt_frac_Si_core, \
      wt_frac_O_core, wt_frac_S_core = compositional_params
 
-    core_rad_frac,Mantle_potential_temp = structural_params[-2:]
-
+    core_rad_frac = structural_params[6]
+    Mantle_potential_temp = structural_params[7]
+    water_rad_frac = structural_params[8]
+    water_potential_temp = structural_params[9]
 
     #def Setup(Mp, masMan, masCor, masH2O, nr, tCrstMan, dtManCor):
     # global Th,Tss
@@ -25,19 +27,11 @@ def initialize_by_radius(*args):
     # if there is a water layer, the imput temperature is lowered because that temperature is for the crustal layer
     # also 50 shells are used for the water layer hence the nh20 vaiable
 
-    if wt_frac_water > 0:
-
-        Surface_temp = 300
-
-    else:
-        Surface_temp = Mantle_potential_temp
-
-
     if wt_frac_water == 0. and number_h2o_layers > 0:
        print "You have layers of water but no water!"
        number_h2o_layers = 0
 
-    num_layers = num_core_layers+num_mantle_layers + number_h2o_layers  # add 50 shells if there is an h2O layer
+    num_layers = num_core_layers+num_mantle_layers + number_h2o_layers # add 50 shells if there is an h2O layer
     # arrays to be used
 
     # these grids are initialized in this function and are then a passed around through the other routines and edited each iteration
@@ -47,7 +41,6 @@ def initialize_by_radius(*args):
     mass_layers = np.zeros(num_layers)
     cumulative_mass = np.zeros(num_layers)
     Temperature_layers = np.zeros(num_layers)
-    ########################################################################################################## Move to compression function and set as outputs
     # used for compressiofh2on funciton
     gravity_layers = np.zeros(num_layers)
     Pressure_layers = np.zeros(num_layers)
@@ -61,40 +54,28 @@ def initialize_by_radius(*args):
 
     # 15 mineral phases + 2ice + liquid water #phasechange
     planet_radius_guess = radius_planet*Earth_radius
-    core_thickness_guess = core_rad_frac * planet_radius_guess
-    mantle_thickness_guess = planet_radius_guess - (wt_frac_water*planet_radius_guess) - core_thickness_guess
+    water_thickness_guess = water_rad_frac*planet_radius_guess
+    core_thickness_guess = core_rad_frac * (planet_radius_guess-water_thickness_guess)
+    mantle_thickness_guess = planet_radius_guess - water_thickness_guess - core_thickness_guess
 
-    water_thickness_guess = planet_radius_guess - mantle_thickness_guess - core_thickness_guess
 
 
     for i in range(num_layers):
         if i <num_core_layers:
             radius_layers[i]=((float(i)/num_core_layers)*core_thickness_guess)
             density_layers[i]=8280.0
-            volume_layers[i]=(4.0 / 3.) * np.pi * (pow(radius_layers[i],3.)- pow(radius_layers[i - 1],3.))
-            mass_layers[i]=density_layers[i] * volume_layers[i]
-            cumulative_mass[i]=cumulative_mass[i - 1] + mass_layers[i]
             Temperature_layers[i] = 4500.+ (float((3000.-4500.))/float(num_core_layers))\
                                                             *float((i))
 
-        elif i <= (num_core_layers+num_mantle_layers):
+        elif i < (num_core_layers+num_mantle_layers):
             radius_layers[i]=(core_thickness_guess+((float(i-num_core_layers)/num_mantle_layers)*mantle_thickness_guess))
             density_layers[i]=4100.
-            volume_layers[i]= (4.0 / 3.) * np.pi * (pow(radius_layers[i],3.)- pow(radius_layers[i - 1],3.))
-            mass_layers[i]= density_layers[i] * volume_layers[i]
-            cumulative_mass[i]= cumulative_mass[i - 1] + mass_layers[i]
-
-            #Temperature_layers[i] = 4000. + (float((Mantle_potential_temp-4000.))/float(num_mantle_layers))\
-            #                                                *float((i-num_core_layers))
             Temperature_layers[i] = 2700.
 
         else:
             radius_layers[i]=core_thickness_guess+mantle_thickness_guess+\
                              ((float(i-num_core_layers-num_mantle_layers)/number_h2o_layers)*water_thickness_guess)
-            density_layers[i]=1000.
-            volume_layers[i]=(4.0 / 3.) * np.pi * (pow(radius_layers[i],3.)- pow(radius_layers[i - 1],3.))
-            mass_layers[i]=density_layers[i] * volume_layers[i]
-            cumulative_mass[i]=cumulative_mass[i - 1] + mass_layers[i]
+            density_layers[i]=1100.
             Temperature_layers[i] = 300.
 
     for i in range(num_layers):
@@ -103,10 +84,6 @@ def initialize_by_radius(*args):
         else:
             Pressure_layers[i] = (float((5000.-(300.*10000))/float(num_core_layers+num_mantle_layers))*float(i)
                                   + 300.*10000)
-
-
-    Pressure_layers[num_core_layers+num_mantle_layers-1] = 10000
-
 
     #initial temperature guess of 0.5 K per km
     keys = ['radius','density','temperature','gravity','pressure',\
