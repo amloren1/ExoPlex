@@ -574,9 +574,9 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
         structure_params[8] = values[1]
         print values
         if values[0] < 0 or values[1] < 0 or values[0] > 1 or values[1] >1:
-            return (1e99,1e99)
+            return (10,-10)
         if (values[0]+values[1]) >= 1:
-            return (1e99,1e99)
+            return (10.,-10.)
 
         Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
         Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
