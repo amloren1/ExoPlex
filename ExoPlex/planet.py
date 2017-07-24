@@ -89,6 +89,7 @@ def initialize_by_radius(*args):
     keys = ['radius','density','temperature','gravity','pressure',\
             'alpha','cp','Vphi''Vp','Vs','K']
 
+
     return dict(zip(keys,[radius_layers, density_layers,Temperature_layers,gravity_layers, Pressure_layers,
                           alpha, cp,Vphi,Vp,Vs,K]))
 
@@ -111,6 +112,7 @@ def compress(*args):
         print "iteration #",n_iterations
         Planet['density'] = minphys.get_rho(Planet,grids,Core_wt_per,layers)
 
+
         for i in range(len(Planet['density'])):
             if np.isnan(Planet['density'][i]) == True:
                 print "Density has a nan"
@@ -121,7 +123,6 @@ def compress(*args):
                 sys.exit()
 
         Planet['gravity'] = minphys.get_gravity(Planet,layers)
-
         Planet['pressure'] = minphys.get_pressure(Planet,layers)
 
         Planet['temperature'] = minphys.get_temperature(Planet,grids,structural_params,layers)

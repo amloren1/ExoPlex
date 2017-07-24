@@ -135,7 +135,6 @@ def get_percents(*args):
     Core_mol_per ={'Fe':Core_moles[0]/tot_moles_core,'Si':Core_moles[1]/tot_moles_core,\
                   'O':Core_moles[2]/tot_moles_core,'S':Core_moles[3]/tot_moles_core}
 
-    print Core_wt_per,core_mass_frac
     return(Core_wt_per,Mantle_wt_per,Core_mol_per,core_mass_frac)
 
 
@@ -555,11 +554,10 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
         planet_mass = minphys.get_mass(Planet,layers)
 
         CMF = planet_mass[num_core_layers]/planet_mass[-1]
-        print CMF
         print "Diff in Core Mass Fraction = ", '%.3e' % (CMF_to_fit - CMF)
         return (CMF_to_fit - CMF)
 
-    def calc_CRF_WRF(values, args):
+    def calc_CRF_WRF(values, *args):
         radius_planet = args[0]
         structure_params = args[1]
         compositional_params = args[2]
@@ -595,19 +593,17 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
         print "Diff in Core Mass percent = ", '%.3f' % (100.*CMF_to_fit - 100.*CMF)
         print "Diff in Water Mass percent = ", '%.3f' % (100.*WMF_to_fit - 100.*WMF)
 
-        print CMF_to_fit
-        print CMF
-        print WMF_to_fit
-        print WMF
+
         return (100.*CMF_to_fit - 100.*CMF,100.*WMF_to_fit - 100.*WMF)
 
 
     if layers[2] > 0:
-        from scipy.optimize import fsolve
-        water_mass_frac = compositional_params[0]
-        args = [radius_planet, structure_params, compositional_params, layers, grids, Core_wt_per, core_mass_frac,water_mass_frac]
-        structure_params[6],structure_params[8] = fsolve(calc_CRF_WRF, [.5,water_mass_frac],args=args,xtol=1.e-5)
+        from scipy.optimize import root
 
+        water_mass_frac = compositional_params[0]
+        args = (radius_planet, structure_params, compositional_params, layers, grids, Core_wt_per, core_mass_frac,water_mass_frac)
+        solution = root(calc_CRF_WRF, [.5,water_mass_frac],args=args,tol=1.e-4,method='anderson')
+        structure_params[6], structure_params[8] = solution.x
         Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
         Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
 
@@ -615,10 +611,8 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
 
     else:
         from scipy.optimize import brentq
-
         args = [radius_planet, structure_params, compositional_params, layers,grids,Core_wt_per,core_mass_frac]
         structure_params[6] = brentq(calc_CRF,.40,.75,args=args,xtol=1e-4)
-
         Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
         Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
 
