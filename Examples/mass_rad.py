@@ -6,6 +6,7 @@
 import os
 import sys
 import numpy as np
+import matplotlib.pyplot as plt
 # hack to allow scripts to be placed in subdirectories next to burnman:
 if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
     sys.path.insert(1, os.path.abspath('..'))
@@ -16,57 +17,79 @@ import ExoPlex as exo
 if __name__ == "__main__":
 
     #First user must input the ratios
-    Radius_planet = 1.3
-
-    Star = 'Sun'
-    CaMg =0.0616595
-    SiMg =0.954993
-    AlMg = 0.0851138
-    FeMg = 0.812831
+    #Radius_planet = 1.
 
     wt_frac_Si_core = 0.
     wt_frac_water = 0.
     mol_frac_Fe_mantle = 0.0
 
     Pressure_range_mantle_UM = '3000 1400000'
-    Temperature_range_mantle_UM = '1400 3000'
-    resolution_UM = '125 150'
+    Temperature_range_mantle_UM = '1400 3500'
+    resolution_UM = '80 140' #11200
 
-    Pressure_range_mantle_LM = '1250000 6500000'
-    Temperature_range_mantle_LM = '2500 5000'
-    resolution_LM = '50 50'
+    Pressure_range_mantle_LM = '1250000 6200000'
+    Temperature_range_mantle_LM = '2200 5000'
+    resolution_LM = '80 80' #6400
 
     wt_frac_O_core = 0.
     wt_frac_S_core = 0.
 
-    num_mantle_layers = 2000
+    num_mantle_layers = 1500
     num_core_layers = 1000
     number_h2o_layers = 0
 
+    Core_rad_frac_guess = .54
+
+    layers = [num_mantle_layers,num_core_layers,number_h2o_layers]
+
+    Radius_planet = [0.5,.6,.7,.8,.9,1.,1.1,1.2,1.3,1.4,1.5]
+
     Mantle_potential_temp = 1700.
+
+    Mass = []
+    CRF = []
+    CMF = []
+
+    Star = 'Sun'
+    CaMg = 0.0616595
+    SiMg = 0.954993
+    AlMg = 0.0851138
+    FeMg = 0.812831
 
     compositional_params = [wt_frac_water,FeMg,SiMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, \
                           wt_frac_O_core,wt_frac_S_core]
 
-    Core_rad_frac_guess = .54
-    structure_params =  [Pressure_range_mantle_UM,Temperature_range_mantle_UM,resolution_UM,
-                         Pressure_range_mantle_LM, Temperature_range_mantle_LM, resolution_LM,
-                         Core_rad_frac_guess,Mantle_potential_temp]
+    structure_params = [Pressure_range_mantle_UM, Temperature_range_mantle_UM, resolution_UM,
+                        Pressure_range_mantle_LM, Temperature_range_mantle_LM, resolution_LM,
+                        Core_rad_frac_guess, Mantle_potential_temp]
+    for i in Radius_planet:
+        filename = Star
 
-    layers = [num_mantle_layers,num_core_layers,number_h2o_layers]
-    filename = Star
-    Planet = exo.run_planet_radius(Radius_planet,compositional_params,structure_params,layers,filename)
+        print "Radius", '%.3f' % i
 
-    print
-    print "Mass = ", '%.3f'%(Planet['mass'][-1]/5.97e24), "Earth masses"
-    print "Core Mass Fraction = ", '%.3f'%(100.*Planet['mass'][num_core_layers]/Planet['mass'][-1])
-    print "Core Radius Fraction = ", '%.3f'%(100.*Planet['radius'][num_core_layers]/Planet['radius'][-1])
-    print "CMB Pressure = " ,'%.3f' % (Planet['pressure'][num_core_layers]/10000), "GPa"
+        Planet = exo.run_planet_radius(i,compositional_params,structure_params,layers,filename)
+        print
+        print "Mass = ", '%.3f' % (Planet['mass'][-1] / 5.97e24), "Earth masses"
+        print "Core Mass Fraction = ", '%.3f' % (100. * Planet['mass'][num_core_layers] / Planet['mass'][-1])
+        print "Core Radius Fraction = ", '%.3f' % (100. * Planet['radius'][num_core_layers] / Planet['radius'][-1])
+        print "CMB Pressure = ", '%.3f' % (Planet['pressure'][num_core_layers] / 10000), "GPa"
 
-    filename = Star+"_"+str(int(Mantle_potential_temp))+'_rad_'+str(Radius_planet)
-    exo.functions.write(Planet,filename)
+        Mass.append(Planet['mass'][-1]/5.97e24)
+        CRF.append(100.*Planet['radius'][num_core_layers]/Planet['radius'][-1])
+        CMF.append(100.* Planet['mass'][num_core_layers] / Planet['mass'][-1])
 
-    import matplotlib.pyplot as plt
+        filename = Star+'_'+ str(int(Mantle_potential_temp)) + '_rad_' + str(i)
+        exo.functions.write(Planet,filename)
+
+    output_file = Star+"_"+str(int(Mantle_potential_temp))+'_massCRF.dat'
+    output = [[Radius_planet[i], Mass[i],CRF[i],CMF[i]] for i in range(len(Mass))]
+
+    np.savetxt(output_file,output , '%.5f', "\t", newline='\n',
+               header='Radius\tMass\tCRF\tCMF', footer='', comments='# ')
+
+    #exo.functions.write(Planet,filename)
+
+
 
     figure = plt.figure(figsize = (12,10))
     # figure.suptitle('Your planet is %.3f Earth Masses with Average Density of %.1f kg/m$^3$' %((Plan.mass/5.97e24), \
@@ -102,4 +125,4 @@ if __name__ == "__main__":
     ax4.set_xlim(0., max(Planet['radius']) / 1.e3)
     ax4.set_ylim(0., max(Planet['temperature']) + 100)
 
-    plt.show()
+    #plt.show()
