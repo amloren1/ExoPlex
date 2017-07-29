@@ -477,7 +477,12 @@ def iceVI(Temperature,Pressure):
     Theta = Temperature/273.31
     P_test = 632.4e6 * (1.-1.07476*(1.-pow(Theta,4.6)))
     if (Pressure*1e9) > P_test:
-        return 'Ice_VI'
+        Theta_VII = Temperature/355.
+        P_test_VII = (1./1000.)*(2210.+534.2*((pow(Theta_VII,5.22)-1)))
+        if Pressure > P_test_VII:
+            return 'Ice_VII'
+        else:
+            return 'Ice_VI'
     else:
         return 'Water'
 
