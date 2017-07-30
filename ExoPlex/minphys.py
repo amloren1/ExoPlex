@@ -58,6 +58,52 @@ def get_rho(Planet,grids,Core_wt_per,layers):
     LM_data = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']),
                                            grids[1]['density'],(P_points_LM, T_points_LM), method='linear')
 
+    to_switch_P = []
+    to_switch_T = []
+    to_switch_index = []
+    for i in range(len(UM_data)):
+        if np.isnan(UM_data[i]) == True:
+            #try lower mantle:
+            to_switch_P.append(P_points_UM[i])
+            to_switch_T.append(T_points_UM[i])
+            to_switch_index.append(i)
+
+    if len(to_switch_P) >0:
+        test = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']),
+                                    grids[1]['density'], (to_switch_P, to_switch_T), method='linear')
+
+        for i in range(len(test)):
+
+            if np.isnan(test[i]) == True:
+                print to_switch_P[i] / 1e5, to_switch_T[i]
+                print "UM Rho Outside of range!"
+                sys.exit()
+            else:
+                UM_data[to_switch_index[i]] = test[i]
+
+    to_switch_P = []
+    to_switch_T = []
+    to_switch_index = []
+
+    for i in range(len(LM_data)):
+        if np.isnan(LM_data[i]) == True:
+            # try lower mantle:
+            to_switch_P.append(P_points_LM[i])
+            to_switch_T.append(T_points_LM[i])
+            to_switch_index.append(i)
+
+    if len(to_switch_P) > 0:
+        test = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']),
+                                    grids[0]['density'], (to_switch_P, to_switch_T), method='linear')
+
+        for i in range(len(test)):
+
+            if np.isnan(test[i]) == True:
+                print to_switch_P[i] / 1e5, to_switch_T[i]
+                print "LM Rho Outside of range!"
+                sys.exit()
+            else:
+                LM_data[to_switch_index[i]] = test[i]
 
     mantle_data = np.append(LM_data,UM_data)
 
@@ -470,8 +516,53 @@ def get_temperature(Planet,grids,structural_parameters,layers):
     LM_cp_data = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']),
                                            grids[1]['cp'],(P_points_LM, T_points_LM), method='linear')
 
-    spec_heat_mantle = np.append(LM_cp_data,UM_cp_data)
+    to_switch_P = []
+    to_switch_T = []
+    to_switch_index = []
+    for i in range(len(UM_cp_data)):
+        if np.isnan(UM_cp_data[i]) == True:
+            # try lower mantle:
+            to_switch_P.append(P_points_UM[i])
+            to_switch_T.append(T_points_UM[i])
+            to_switch_index.append(i)
 
+    if len(to_switch_P) > 0:
+        test = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']),
+                                    grids[1]['cp'], (to_switch_P, to_switch_T), method='linear')
+
+        for i in range(len(test)):
+
+            if np.isnan(test[i]) == True:
+                print to_switch_P[i] / 1e5, to_switch_T[i]
+                print "UM Cp Outside of range!"
+                sys.exit()
+            else:
+                UM_cp_data[to_switch_index[i]] = test[i]
+
+    to_switch_P = []
+    to_switch_T = []
+    to_switch_index = []
+
+    for i in range(len(LM_cp_data)):
+        if np.isnan(LM_cp_data[i]) == True:
+            # try lower mantle:
+            to_switch_P.append(P_points_LM[i])
+            to_switch_T.append(T_points_LM[i])
+            to_switch_index.append(i)
+
+    if len(to_switch_P) > 0:
+        test = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']),
+                                    grids[0]['cp'], (to_switch_P, to_switch_T), method='linear')
+
+        for i in range(len(test)):
+            if np.isnan(test[i]) == True:
+                print to_switch_P[i], to_switch_T[i]
+                print "LM Cp Outside of range!"
+                sys.exit()
+            else:
+                LM_cp_data[to_switch_index[i]] = test[i]
+
+    spec_heat_mantle = np.append(LM_cp_data,UM_cp_data)
 
     UM_alpha_data = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']),
                                            grids[0]['alpha'],(P_points_UM, T_points_UM), method='linear')
@@ -479,6 +570,51 @@ def get_temperature(Planet,grids,structural_parameters,layers):
     LM_alpha_data = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']),
                                            grids[1]['alpha'],(P_points_LM, T_points_LM), method='linear')
 
+    to_switch_P = []
+    to_switch_T = []
+    to_switch_index = []
+    for i in range(len(UM_alpha_data)):
+        if np.isnan(UM_alpha_data[i]) == True:
+            # try lower mantle:
+            to_switch_P.append(P_points_UM[i])
+            to_switch_T.append(T_points_UM[i])
+            to_switch_index.append(i)
+
+    if len(to_switch_P) > 0:
+        test = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']),
+                                    grids[1]['alpha'], (to_switch_P, to_switch_T), method='linear')
+
+        for i in range(len(test)):
+
+            if np.isnan(test[i]) == True:
+                print to_switch_P[i] / 1e5, to_switch_T[i]
+                print "UM Alpha Outside of range!"
+                sys.exit()
+            else:
+                UM_alpha_data[to_switch_index[i]] = test[i]
+
+    to_switch_P = []
+    to_switch_T = []
+    to_switch_index = []
+    for i in range(len(LM_alpha_data)):
+        if np.isnan(LM_alpha_data[i]) == True:
+            # try lower mantle:
+            to_switch_P.append(P_points_LM[i])
+            to_switch_T.append(T_points_LM[i])
+            to_switch_index.append(i)
+
+    if len(to_switch_P) > 0:
+        test = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']),
+                                    grids[0]['alpha'], (to_switch_P, to_switch_T), method='linear')
+
+        for i in range(len(test)):
+
+            if np.isnan(test[i]) == True:
+                print to_switch_P[i] / 1e5, to_switch_T[i]
+                print "LM Alpha Outside of range!"
+                sys.exit()
+            else:
+                LM_alpha_data[to_switch_index[i]] = test[i]
 
     alpha_mantle = np.append(LM_alpha_data,UM_alpha_data)
 
@@ -508,7 +644,7 @@ def get_temperature(Planet,grids,structural_parameters,layers):
             plt.show()
             sys.exit()
     """
-    mantle_temperatures = [math.exp(i)*Mantle_potential_temp for i in gradient_mantle][::-1]
+    mantle_temperatures = [math.exp(k)*Mantle_potential_temp for k in gradient_mantle][::-1]
 
     core_temperatures = Planet['temperature'][:num_core_layers]
 
