@@ -17,18 +17,25 @@ import run_perplex
 def run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename):
     Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac = functions.get_percents(*compositional_params)
 
-    #Run fine mesh grid
+    #(Perplex)Run fine mesh grid, Upper mantle mineralogy
     Mantle_filename = run_perplex.run_perplex(*[Mantle_wt_per,compositional_params,[structure_params[0],structure_params[1],structure_params[2]],filename,True])
+
+    sys.exit()
     grids_low, names = functions.make_mantle_grid(Mantle_filename,True)
     names.append('Fe')
+
+    #if there is a water mass fraction !=0, then append h2o phases to phase list
     if layers[-1] > 0:
         names.append('liq_water')
         names.append('ice_VII')
         names.append('ice_VI')
         names.append('ice_Ih')
+
+    #(Perplex) run the lower mantle grid. Coarse mesh
     Mantle_filename = run_perplex.run_perplex(*[Mantle_wt_per,compositional_params,[structure_params[3],structure_params[4],structure_params[5]],filename,False])
     grids_high = functions.make_mantle_grid(Mantle_filename,False)[0]
 
+    #grids are rho, alpha, Cp, T,P from perplex solution
     grids = [grids_low,grids_high]
     Planet = functions.find_Planet_radius(radius_planet, core_mass_frac,structure_params, compositional_params, grids, Core_wt_per, layers)
 

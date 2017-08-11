@@ -37,8 +37,13 @@ def run_perplex(*args):
 
     # changes periods to commas
     solfileparamsString = solfileparamsString0.replace('.', ',')
-
     solutionFileNameMan = 'SiMg_FeMg_CaMg_AlMg_XFeO_fSic' + solfileparamsString + '_MANTLE'
+
+    #RENAME FILENAME
+    #TODO: come up with a better way to handle the filenames
+    #
+    filename = solutionFileNameMan
+    sys.exit()
 
     if os.path.isfile('../Solutions/'+filename+'_UM.tab') and UMLM == True:
         print 'The Upper mantle .tab already exists, please wait briefly for solution\n'
