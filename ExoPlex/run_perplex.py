@@ -43,7 +43,6 @@ def run_perplex(*args):
     #TODO: come up with a better way to handle the filenames
     #
     filename = solutionFileNameMan
-    sys.exit()
 
     if os.path.isfile('../Solutions/'+filename+'_UM.tab') and UMLM == True:
         print 'The Upper mantle .tab already exists, please wait briefly for solution\n'

@@ -24,7 +24,7 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
     grids_low, names = functions.make_mantle_grid(Mantle_filename,True)
     names.append('Fe')
 
-    #if there is a water mass fraction !=0, then append h2o phases to phase list
+    #if there is a water mass fraction 0, then append h2o phases to phase list
     if layers[-1] > 0:
         names.append('liq_water')
         names.append('ice_VII')
