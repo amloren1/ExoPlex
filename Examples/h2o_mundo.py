@@ -8,7 +8,7 @@ if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
 
 import ExoPlex as exo
 
-
+run = False
 MEarth = 5.972e24 #kg
 REarth = 6371   #KM
 def rho_bulk(M, R):
@@ -18,8 +18,8 @@ def rho_bulk(M, R):
     return rho
 
 
-'''
-if __name__ == "__main__":
+
+if __name__ == "__main__" and run == True:
     #First user must input the ratios
     Radius_planet = 1.3
 
@@ -67,6 +67,21 @@ if __name__ == "__main__":
     #temperature at surface if no water layer. Essentially temperature below the crust
     Mantle_potential_temp = 1700.
 
+    #h2o potential Temp, surface temperature if there exists an h2o layer
+    T_surface_h2o = 300. # K
+
+    #initialize planet with these guesses for radial fraction of core and water layer
+    Core_rad_frac_guess = .54
+    h20_radfrac_guess = 0.1
+
+
+    #lists of compositional and structural inputs used to build planet
+
+    structure_params =  [Pressure_range_mantle_UM,Temperature_range_mantle_UM,resolution_UM,
+                         Pressure_range_mantle_LM, Temperature_range_mantle_LM, resolution_LM,
+                         Core_rad_frac_guess,Mantle_potential_temp, h20_radfrac_guess, T_surface_h2o]
+
+
     for i in range(len(FeMg)):
         for j in range(len(SiMg)):
             for p in range(len(wt_frac_Si_core)):
@@ -75,10 +90,6 @@ if __name__ == "__main__":
                     compositional_params = [wt_frac_water,FeMg[i],SiMg[j],CaMg,AlMg,mol_frac_Fe_mantle[q],wt_frac_Si_core[p], \
                                     wt_frac_O_core,wt_frac_S_core]
 
-                    Core_rad_frac_guess = .54
-                    structure_params =  [Pressure_range_mantle_UM,Temperature_range_mantle_UM,resolution_UM,
-                                    Pressure_range_mantle_LM, Temperature_range_mantle_LM, resolution_LM,
-                                    Core_rad_frac_guess,Mantle_potential_temp]
 
                     layers = [num_mantle_layers,num_core_layers,number_h2o_layers]
                     filename = Star
@@ -86,7 +97,7 @@ if __name__ == "__main__":
 
 
 
-'''
+
 #--------------------------------------------------------------------------#
 # write data files for input ranges of various scenarios
 #--------------------------------------------------------------------------#
@@ -114,8 +125,11 @@ def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
     Radius_planet = Radius
 
     Star = 'Rando'
-    CaMg = 0.0616595
-    AlMg = 0.0851138
+    #CaMg = 0.0616595
+    #AlMg = 0.0851138
+
+    CaMg = 0
+    AlMg = 0
 
     # among light elements, vary only the silicon value
     wt_frac_Si_core = np.arange(0.1,0.3, 0.05) #0 to 30wt% Si in core
@@ -123,7 +137,7 @@ def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
     wt_frac_S_core = 0.
 
     #h2o content 0 to 1.0
-    wt_frac_water = np.arange(0,0.5, 0.05)
+    wt_frac_water = np.arange(0.0,0.5, 0.05)
 
     #how much Fe in the mantle by mole. This is Fe oxidation state
     mol_frac_Fe_mantle = XFeO
@@ -148,6 +162,18 @@ def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
     #temperature at surface if no water layer. Essentially temperature below the crust
     Mantle_potential_temp = 1700.
 
+    #h2o potential Temp, surface temperature if there exists an h2o layer
+    T_surface_h2o = 300. # K
+
+    #initialize planet with these guesses for radial fraction of core and water layer
+    Core_rad_frac_guess = .54
+    h20_radfrac_guess = 0.1
+
+
+    structure_params =  [Pressure_range_mantle_UM,Temperature_range_mantle_UM,resolution_UM,
+                         Pressure_range_mantle_LM, Temperature_range_mantle_LM, resolution_LM,
+                         Core_rad_frac_guess,Mantle_potential_temp, h20_radfrac_guess, T_surface_h2o]
+
 
     for q in range(len(wt_frac_water)):
         for p in range(len(wt_frac_Si_core)):
@@ -155,16 +181,14 @@ def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
             compositional_params = [wt_frac_water[q],FeMg,SiMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core[p], \
                             wt_frac_O_core,wt_frac_S_core]
 
-            Core_rad_frac_guess = .54
-            structure_params =  [Pressure_range_mantle_UM,Temperature_range_mantle_UM,resolution_UM,
-                            Pressure_range_mantle_LM, Temperature_range_mantle_LM, resolution_LM,
-                            Core_rad_frac_guess,Mantle_potential_temp]
 
             layers = [num_mantle_layers,num_core_layers,number_h2o_layers]
             filename = Star
             Planet = exo.run_planet_radius(Radius_planet,compositional_params,structure_params,layers,filename)
 
             #things to output to data file
+            print 'did it!!'
+            sys.exit()
             mas = (Planet['mass'][-1])
             rho = rho_bulk(mas,Radius*REarth)
             corwt = 100.*Planet['mass'][num_core_layers]/Planet['mass'][-1]

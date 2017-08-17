@@ -561,7 +561,6 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
         structure_params[6] = value
         Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
         Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
-
         planet_mass = minphys.get_mass(Planet,layers)
 
         CMF = planet_mass[num_core_layers]/planet_mass[-1]
@@ -618,9 +617,13 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
 
         return (100.*CMF_to_fit - 100.*CMF,100.*WMF_to_fit - 100.*WMF)
 
-
-    if layers[2] > 0:
+    #if user enters water mass fraction and water layers
+    if compositional_params[0] > 0:
         from scipy.optimize import root
+        if layers[2] <10:
+            print "***Build error: too few water layers for H2Owt% = {0:6f}***".format(compositional_params[0])
+            print "Solution: changing to 100 water layers"
+            layers[2] = 100
 
         water_mass_frac = compositional_params[0]
         args = (radius_planet, structure_params, compositional_params, layers, grids, Core_wt_per, core_mass_frac,water_mass_frac)
@@ -633,8 +636,15 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
 
     else:
         from scipy.optimize import brentq
+        #make sure there are no water layers. User has entered H2Owt% = 0
+        if layers[2] > 0:
+            print "***Build error: excess in water layers for H2Owt% = 0 wt%***"
+            print "Solution: removing water layer"
+            layers[2] = 0
+
         args = [radius_planet, structure_params, compositional_params, layers,grids,Core_wt_per,core_mass_frac]
         structure_params[6] = brentq(calc_CRF,.40,.75,args=args,xtol=1e-4)
+
         Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
         Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
 

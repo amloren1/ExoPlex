@@ -329,6 +329,7 @@ def get_gravity(Planet,layers):
     rhofunc_core = interpolate.UnivariateSpline(radii_core, density_core)
     rhofunc_mantle = interpolate.UnivariateSpline(radii_mantle, density_mantle)
 
+
     # Create a spline fit of density as a function of radius
 
     # Numerically integrate Poisson's equation
@@ -338,7 +339,7 @@ def get_gravity(Planet,layers):
     gravity_layers_core = np.ravel(odeint(poisson_core, 0., radii_core))
     gravity_layers_mantle = np.ravel(odeint(poisson_mantle,gravity_layers_core[-1],radii_mantle))
 
-    if number_h2o_layers>0:
+    if number_h2o_layers > 0:
         rhofunc_water = interpolate.UnivariateSpline(radii_water, density_water)
         poisson_water = lambda p, x: 4.0 * np.pi * G * rhofunc_water(x) * x * x
         gravity_layers_water = np.ravel(odeint(poisson_water,gravity_layers_mantle[-1],radii_water))
@@ -346,6 +347,7 @@ def get_gravity(Planet,layers):
 
     else:
         gravity_layers = np.concatenate((gravity_layers_core, gravity_layers_mantle), axis=0)
+
 
     gravity_layers[1:] = gravity_layers[1:]/radii[1:]/radii[1:]
     gravity_layers[0] = 0

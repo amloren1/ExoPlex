@@ -48,13 +48,22 @@ if __name__ == "__main__":
     #temperature at surface if no water layer. Essentially temperature below the crust
     Mantle_potential_temp = 1700.
 
+    #h2o potential Temp, surface temperature if there exists an h2o layer
+    T_surface_h2o = 300. # K
+
+    #initialize planet with these guesses for radial fraction of core and water layer
+    Core_rad_frac_guess = .54
+    h20_radfrac_guess = 0.1
+
+
+    #lists of compositional and structural inputs used to build planet
     compositional_params = [wt_frac_water,FeMg,SiMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core, \
                           wt_frac_O_core,wt_frac_S_core]
 
-    Core_rad_frac_guess = .54
+
     structure_params =  [Pressure_range_mantle_UM,Temperature_range_mantle_UM,resolution_UM,
                          Pressure_range_mantle_LM, Temperature_range_mantle_LM, resolution_LM,
-                         Core_rad_frac_guess,Mantle_potential_temp]
+                         Core_rad_frac_guess,Mantle_potential_temp, h20_radfrac_guess, T_surface_h2o]
 
     layers = [num_mantle_layers,num_core_layers,number_h2o_layers]
     filename = Star

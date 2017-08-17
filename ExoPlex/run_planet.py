@@ -14,7 +14,7 @@ import functions
 import run_perplex
 ########
 #Make files only
-only = True
+only = False
 def run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename):
     Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac = functions.get_percents(*compositional_params)
 
@@ -42,7 +42,6 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
     ###Append low and high res grids. grids are rho, alpha, Cp, T,P from perplex solution
     grids = [grids_low,grids_high]
 
-    sys.exit()
     #find mass of planet as a function of radius and composition
     Planet = functions.find_Planet_radius(radius_planet, core_mass_frac,structure_params, compositional_params, grids, Core_wt_per, layers)
 

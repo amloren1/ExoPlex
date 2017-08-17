@@ -27,35 +27,41 @@ def initialize_by_radius(*args):
     # if there is a water layer, the imput temperature is lowered because that temperature is for the crustal layer
     # also 50 shells are used for the water layer hence the nh20 vaiable
 
+    #Safety check for non-matching inputs, probably just remove this
     if wt_frac_water == 0. and number_h2o_layers > 0:
-       print "You have layers of water but no water!"
-       number_h2o_layers = 0
+       print "***Build error: excess in water layers for water mass fraction = 0 wt%***"
+       print "Solution: removing water layer"
+       number_h2o_layers     = 0
+       water_thickness_guess = 0
+    elif wt_frac_water > 0 and number_h2o_layers == 0:
+        print "***Build error: no layers for water mass fraction > 0 wt%***"
+        print "Solution: Adding 100 layers for water envelope"
+        number_h2o_layers = 100
 
-    num_layers = num_core_layers+num_mantle_layers + number_h2o_layers # add 50 shells if there is an h2O layer
-    # arrays to be used
+    num_layers = num_core_layers+num_mantle_layers + number_h2o_layers
 
     # these grids are initialized in this function and are then a passed around through the other routines and edited each iteration
-    radius_layers = np.zeros(num_layers)
-    density_layers = np.zeros(num_layers)
-    volume_layers = np.zeros(num_layers)
-    mass_layers = np.zeros(num_layers)
-    cumulative_mass = np.zeros(num_layers)
+    radius_layers      = np.zeros(num_layers)
+    density_layers     = np.zeros(num_layers)
+    volume_layers      = np.zeros(num_layers)
+    mass_layers        = np.zeros(num_layers)
+    cumulative_mass    = np.zeros(num_layers)
     Temperature_layers = np.zeros(num_layers)
     # used for compressiofh2on funciton
-    gravity_layers = np.zeros(num_layers)
+    gravity_layers  = np.zeros(num_layers)
     Pressure_layers = np.zeros(num_layers)
-    alpha = np.zeros(num_layers)
-    cp = np.zeros(num_layers)
-    Vphi = np.zeros(num_layers )
+    alpha           = np.zeros(num_layers)
+    cp              = np.zeros(num_layers)
+    Vphi            = np.zeros(num_layers)
 
     Vs = np.zeros(num_layers )
     Vp = np.zeros(num_layers)
-    K =  np.zeros(num_layers)
+    K  =  np.zeros(num_layers)
 
     # 15 mineral phases + 2ice + liquid water #phasechange
-    planet_radius_guess = radius_planet*Earth_radius
-    water_thickness_guess = water_rad_frac*planet_radius_guess
-    core_thickness_guess = core_rad_frac * (planet_radius_guess-water_thickness_guess)
+    planet_radius_guess    = radius_planet*Earth_radius
+    water_thickness_guess  = water_rad_frac*planet_radius_guess
+    core_thickness_guess   = core_rad_frac * (planet_radius_guess-water_thickness_guess)
     mantle_thickness_guess = planet_radius_guess - water_thickness_guess - core_thickness_guess
 
 
