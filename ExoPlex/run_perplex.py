@@ -31,6 +31,7 @@ def run_perplex(*args):
              + ' ' + str(Mantle_wt_per.get('Al2O3'))+ ' ' + str(0.) #last value included for Na
 
 
+    #this filename convention excludes wtO and wtS in the core
     solfileparamsString0 = '_' + str(round(SiMg, 3)) + '_' + str(round(FeMg, 3)) + '_' + str(
         round(CaMg, 3)) + '_' + str(round(AlMg, 3)) \
                            + '_' + str(round(mol_frac_Fe_mantle, 3)) + '_' + str(round(wt_frac_Si_core, 3))

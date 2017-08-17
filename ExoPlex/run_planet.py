@@ -12,15 +12,16 @@ if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
 
 import functions
 import run_perplex
-
-
+########
+#Make files only
+only = True
 def run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename):
     Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac = functions.get_percents(*compositional_params)
 
     #(Perplex)Run fine mesh grid, Upper mantle mineralogy
     Mantle_filename = run_perplex.run_perplex(*[Mantle_wt_per,compositional_params,[structure_params[0],structure_params[1],structure_params[2]],filename,True])
 
-    sys.exit()
+    ##store upper mantle data grids: T, P, rho etc.
     grids_low, names = functions.make_mantle_grid(Mantle_filename,True)
     names.append('Fe')
 
@@ -31,12 +32,18 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
         names.append('ice_VI')
         names.append('ice_Ih')
 
-    #(Perplex) run the lower mantle grid. Coarse mesh
+    #(Perplex) run the lower mantle grid. Coarse mesh, store data in arrays
     Mantle_filename = run_perplex.run_perplex(*[Mantle_wt_per,compositional_params,[structure_params[3],structure_params[4],structure_params[5]],filename,False])
     grids_high = functions.make_mantle_grid(Mantle_filename,False)[0]
 
-    #grids are rho, alpha, Cp, T,P from perplex solution
+
+    if only:
+        return
+    ###Append low and high res grids. grids are rho, alpha, Cp, T,P from perplex solution
     grids = [grids_low,grids_high]
+
+    sys.exit()
+    #find mass of planet as a function of radius and composition
     Planet = functions.find_Planet_radius(radius_planet, core_mass_frac,structure_params, compositional_params, grids, Core_wt_per, layers)
 
 

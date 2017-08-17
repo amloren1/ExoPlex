@@ -122,8 +122,14 @@ def get_percents(*args):
 
     #Throw exception, not if statement
     #make inequality not, absolute if. Use machine precision
-    if (S_core_wt+O_core_wt+Si_core_wt+Fe_core_wt) != 1.:
-        print '\n\n damn, it broke'
+    corwt_tot = S_core_wt+O_core_wt+Si_core_wt+Fe_core_wt
+    if corwt_tot != 1. and corwt_tot > 1:
+        print '\n\n*****Exiting program*****'
+        print 'Core wt%% don\'t add up'
+        print 'S_core_wt + O_core_wt + Si_core_wt + Fe_core_wt = %r' % (corwt_tot)
+        print 'Siwt = %.5f' % (Si_core_wt)
+        print 'Siwt_input = %.5f'% wt_frac_Si_core
+        print '*************************'
         sys.exit()
 
     Fe_core_wt = abs(round(Fe_core_wt*100.,8))
@@ -427,7 +433,7 @@ def write(Planet,filename):
     for i in Planet['phase_names']:
         line_name.append(str(i))
 
-    string_element = '	'.join(line_name)
+    string_element = '  '.join(line_name)
     np.savetxt(filename+'.dat', output, '%.5f', "\t", newline='\n',
                 header=string_element, footer='', comments='# ')
 
@@ -451,7 +457,7 @@ def find_water_phase(Pressure, Temperature):
         phase = iceVII(Temperature, Pressure)
 
     elif Pressure > 223.276 and Temperature < 355 and Temperature > 250:
-        # iceVII or liq?? 
+        # iceVII or liq??
         # for bme3
         phase = iceVII_2(Temperature, Pressure)
 
