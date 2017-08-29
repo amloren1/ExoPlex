@@ -1,6 +1,7 @@
 import os
 import sys
 import numpy as np
+import matplotlib.pyplot as plt
 # hack to allow scripts to be placed in subdirectories next to burnman:
 if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
     sys.path.insert(1, os.path.abspath('..'))
@@ -10,13 +11,7 @@ import ExoPlex as exo
 
 run = False
 MEarth = 5.972e24 #kg
-REarth = 6371   #KM
-def rho_bulk(M, R):
-
-    rho = M/((4./3)*np.pi*np.pow(R,3))
-
-    return rho
-
+REarth = 6.371e6   #meters
 
 
 if __name__ == "__main__" and run == True:
@@ -34,7 +29,7 @@ if __name__ == "__main__" and run == True:
 
     Star = 'Rando'
     CaMg = 0.0616595
-    SiMg = np.arange(0.7,1.3, 0.1)
+    SiMg = np.arange(1.0,1.1, 0.1)
     AlMg = 0.0851138
     FeMg = np.arange(0.7,1.3, 0.1)
     # among light elements, vary only the silicon value
@@ -46,7 +41,7 @@ if __name__ == "__main__" and run == True:
     wt_frac_water = 0.0
 
     #how much Fe in the mantle by mole. This is Fe oxidation state
-    mol_frac_Fe_mantle = np.arange(0,0.3, 0.05)
+    mol_frac_Fe_mantle = [0, 0.05, 0.1, 0.15, 0.20]
 
     #(Perplex) P&T parameter space definitions for perplex
     #UM-upper mantle, LM-lower mantle
@@ -72,7 +67,7 @@ if __name__ == "__main__" and run == True:
 
     #initialize planet with these guesses for radial fraction of core and water layer
     Core_rad_frac_guess = .54
-    h20_radfrac_guess = 0.1
+    h20_radfrac_guess   = 0.1
 
 
     #lists of compositional and structural inputs used to build planet
@@ -98,9 +93,38 @@ if __name__ == "__main__" and run == True:
 
 
 
+
+def rho_bulk(M, R):
+
+    rho = M/((4./3)*np.pi*np.power(R,3))
+
+    return round(rho,6)
+
+#--------------------------------------------------------------------------#
+# Contour plot function
+#--------------------------------------------------------------------------#
+
+def cohntor(xlab , ylab, X, Y, Z1, Z2):
+
+    fig, (ax1, ax2) = plt.subplots(2, sharex=True ,figsize=(30,50))
+    cp1 = ax1.contourf(X, Y, Z1)
+    cp2 = ax2.contourf(X, Y, Z2)
+    fig.colorbar(cp1, ax = ax1)
+    fig.colorbar(cp2, ax = ax2)
+
+    ax2.set_ylim(0,max(Y[:,0]))
+    ax1.set_ylim(0,max(Y[:,0]))
+
+    ax2.tick_params(axis = 'both', labelsize = 20)
+    ax1.tick_params(axis = 'both', labelsize = 20)
+    ax2.set_xlabel(xlab, fontsize = 22)
+    ax1.set_ylabel(ylab, fontsize = 22)
+    ax2.set_ylabel(ylab, fontsize = 22)
+    plt.show()
 #--------------------------------------------------------------------------#
 # write data files for input ranges of various scenarios
 #--------------------------------------------------------------------------#
+
 
 
 #==========================================================================#
@@ -112,12 +136,15 @@ if __name__ == "__main__" and run == True:
 
 def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
 
+    Xlab = r'Si$_{core}$ wt%'
+    Ylab = r'H$_2$O wt%'
+
     filename = 'R_FeMg_SiMg_XFeO_%.2f_%.2f_%.2f_%.2f.dat' % \
         (Radius,FeMg, SiMg, XFeO)
 
     print filename
     data_file = open(filename, 'w')
-    dat_row_header = '{0:10s}{1:10s}{2:10s}{3:10s}{4:10s}{5:10s}{6:10s}{7:10s}{8:10s}{9:10s}'.format('Fe/Mg', \
+    dat_row_header = '{0:11}{1:11}{2:11}{3:11}{4:11}{5:11}{6:11}{7:11}{8:11}{9:11}'.format('Fe/Mg', \
                     'Si/Mg' ,'XFeO', 'Si_cwt%' , 'H2Owt%', \
                  'MEarth', 'density', 'core_wt%', 'core_rad%', 'h20_rad%')
     #'Fe/Mg    Si/Mg    XFeO    Si_cwt%    H2Owt%    MEarth    density    core_wt%    core_rad%    h20_rad%'
@@ -132,13 +159,13 @@ def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
     AlMg = 0
 
     # among light elements, vary only the silicon value
-    wt_frac_Si_core = np.arange(0.1,0.3, 0.05) #0 to 30wt% Si in core
+    wt_frac_Si_core = [0.0, 0.05, 0.1, 0.15, 0.20, 0.25] #0 to 30wt% Si in core
     wt_frac_O_core = 0.
     wt_frac_S_core = 0.
 
     #h2o content 0 to 1.0
     wt_frac_water = np.arange(0.0,0.5, 0.05)
-
+    wt_frac_water = [0.0, 0.01]
     #how much Fe in the mantle by mole. This is Fe oxidation state
     mol_frac_Fe_mantle = XFeO
 
@@ -153,11 +180,10 @@ def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
     resolution_LM = '50 50'
 
 
-    #layers, like concentric shells set here in each region: core, mantle, h20 envelope
+    #layers, like concentric shells set here in each region: core, mantle, h20 envelope (below)
     num_mantle_layers = 2000
     num_core_layers = 1000
-    number_h2o_layers = 200
-    n_tot = num_mantle_layers + num_core_layers + number_h2o_layers
+
 
     #temperature at surface if no water layer. Essentially temperature below the crust
     Mantle_potential_temp = 1700.
@@ -174,37 +200,88 @@ def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
                          Pressure_range_mantle_LM, Temperature_range_mantle_LM, resolution_LM,
                          Core_rad_frac_guess,Mantle_potential_temp, h20_radfrac_guess, T_surface_h2o]
 
+    counter = 1
+
+    #store independent values in arrays for contour plots
+    SicX = np.zeros((len(wt_frac_water), len(wt_frac_Si_core)))
+    h2oY = np.zeros((len(wt_frac_water), len(wt_frac_Si_core)))
+    masZ = np.zeros((len(wt_frac_water), len(wt_frac_Si_core)))
+    rhoZ = np.zeros((len(wt_frac_water), len(wt_frac_Si_core)))
 
     for q in range(len(wt_frac_water)):
         for p in range(len(wt_frac_Si_core)):
 
+            #make sure to add or zero out water layers and wrf guess
+            if wt_frac_water[q] > 0.0:
+                num_h2o_layers = 500
+            else:
+                num_h2o_layers = 0
+                structure_params[8] = 0
+
+
+            #store independent values in arrays for contour plots
+            SicX[q,p] = wt_frac_Si_core[p]
+            h2oY[q,p] = wt_frac_water[q]
+
+
+            layers = [num_mantle_layers,num_core_layers,num_h2o_layers]
+            n_tot = sum(layers)-1
+
+            #composition varies in water and core light element abundance
             compositional_params = [wt_frac_water[q],FeMg,SiMg,CaMg,AlMg,mol_frac_Fe_mantle,wt_frac_Si_core[p], \
-                            wt_frac_O_core,wt_frac_S_core]
+                                    wt_frac_O_core,wt_frac_S_core]
 
+            layers = [num_mantle_layers,num_core_layers,num_h2o_layers]
 
-            layers = [num_mantle_layers,num_core_layers,number_h2o_layers]
             filename = Star
+
+            #run routines to build perplex solution and planet
             Planet = exo.run_planet_radius(Radius_planet,compositional_params,structure_params,layers,filename)
+            continue
 
             #things to output to data file
-            print 'did it!!'
-            sys.exit()
             mas = (Planet['mass'][-1])
             rho = rho_bulk(mas,Radius*REarth)
-            corwt = 100.*Planet['mass'][num_core_layers]/Planet['mass'][-1]
-            cor_rad = 100.*Planet['radius'][num_core_layers]/Planet['radius'][-1]
-            h2o_rad = Planet['radius'][n_tot-number_h2o_layers]/Planet['radius'][n_tot]
+            corwt = round(100.*Planet['mass'][num_core_layers]/Planet['mass'][-1],6)
+            cor_rad = round(100.*Planet['radius'][num_core_layers]/Planet['radius'][-1],6)
+            h2o_rad = round(abs(Planet['radius'][n_tot-num_h2o_layers]/Planet['radius'][-1]-1.00)*100.,6)
+            mas_E = np.around(mas/MEarth, decimals = 6)
 
-            #here's where we write to a file
+
+            h2owt_test = Planet['mass'][num_mantle_layers+num_core_layers-1]/Planet['mass'][-1]
+
+            print '\n\nresulting h2owt = {}\n'.format(1.-h2owt_test)
+            print 'wt frac water = {}'.format(wt_frac_water[q])
+            #Z-axis for contour plots
+            masZ[q,p] = mas/MEarth
+            rhoZ[q,p] = rho
+
+            #write to a file
             #'Fe/Mg    Si/Mg    XFeO    Si_cwt%    H2Owt%    MEarth    density    core_wt%    core_rad%    h20_rad%'
-            data_file.write('{0:10f}{1:10f}{2:10f}{3:10f}{4:10f}{5:10s}{6:10s}{7:10s}{8:10s}{9:10s}'.format(FeMg, \
-                    Si/Mg ,XFeO, wt_frac_Si_core[p] , wt_frac_water[q], \
-                 mas/MEarth, rho, corwt, cor_rad, h2o_rad))
-            sys.exit()
+            data_file.write('\n{0:>10}{1:>10}{2:>10.2f}{3:>10.2f}{4:>10.2f}{5:>11.4f}{6:>11.4f}{7:>10.4f}{8:>10.4f}{9:>10.4f}{10:>10.4f}'.format(FeMg,\
+                    SiMg ,XFeO, wt_frac_Si_core[p]*100. , wt_frac_water[q]*100. , mas_E, rho, corwt, cor_rad, h2o_rad, (1-h2owt_test)))
+
+            #make contour plots
 
 
-fixed_Si_Fe_XFeO(1.0,1.0,1.0,0.4)
+            ##
+            #
+            ##
 
+            counter += 1
+            if counter < 1:
+
+                #data_file.close()
+                #cohntor(Xlab , Ylab, SicX, h2oY, masZ, rhoZ)
+                break
+
+    #close data file and plot data
+    data_file.close()
+    cohntor(Xlab , Ylab, SicX, h2oY, masZ, rhoZ)
+
+#(Radius, FeMg, SiMg, XFeO)
+fixed_Si_Fe_XFeO(1.0,1.3,1.0,0.1)
+fixed_Si_Fe_XFeO(1.0,1.3,1.0,0.0)
 
 
 #==========================================================================#

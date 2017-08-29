@@ -29,7 +29,7 @@ def initialize_by_radius(*args):
 
     #Safety check for non-matching inputs, probably just remove this
     if wt_frac_water == 0. and number_h2o_layers > 0:
-       print "***Build error: excess in water layers for water mass fraction = 0 wt%***"
+       print "***Build error: excess in water layers for water mass fraction = 0 wt%*** {}".format(number_h2o_layers)
        print "Solution: removing water layer"
        number_h2o_layers     = 0
        water_thickness_guess = 0
@@ -54,11 +54,10 @@ def initialize_by_radius(*args):
     cp              = np.zeros(num_layers)
     Vphi            = np.zeros(num_layers)
 
-    Vs = np.zeros(num_layers )
+    Vs = np.zeros(num_layers)
     Vp = np.zeros(num_layers)
     K  =  np.zeros(num_layers)
 
-    # 15 mineral phases + 2ice + liquid water #phasechange
     planet_radius_guess    = radius_planet*Earth_radius
     water_thickness_guess  = water_rad_frac*planet_radius_guess
     core_thickness_guess   = core_rad_frac * (planet_radius_guess-water_thickness_guess)
@@ -109,6 +108,7 @@ def compress(*args):
     layers= args[4]
     n_iterations = 1
     max_iterations = 100
+    n_min = 2
 
 
     old_rho = [0  for i in range(len(Planet['density']))]
@@ -116,6 +116,8 @@ def compress(*args):
     print
     while n_iterations <= max_iterations and converge == False:
         print "iteration #",n_iterations
+
+        #find density with current P, T gradients
         Planet['density'] = minphys.get_rho(Planet,grids,Core_wt_per,layers)
 
 
@@ -124,15 +126,23 @@ def compress(*args):
                 print "Density has a nan"
                 print i, Planet['pressure'][i],Planet['temperature'][i]
                 print
-                #print "pressure range mantle",structural_params[0]
-                #print "temperature range mantle",structural_params[1]
+                sys.exit()
+            elif np.isnan(Planet['gravity'][i]) == True:
+                print "Gravity has a nan \nat shell\tPressure\tTemperature"
+                print i, Planet['pressure'][i],Planet['temperature'][i]
+                print
                 sys.exit()
 
-        Planet['gravity'] = minphys.get_gravity(Planet,layers)
-        Planet['pressure'] = minphys.get_pressure(Planet,layers)
+        #update gravity, pressure and temperature with new density
+        Planet['gravity']     = minphys.get_gravity(Planet,layers)
+
+        Planet['pressure']    = minphys.get_pressure(Planet,layers)
 
         Planet['temperature'] = minphys.get_temperature(Planet,grids,structural_params,layers)
+
         converge,old_rho = minphys.check_convergence(Planet['density'],old_rho)
+        if n_iterations < n_min:
+            converge = False
         n_iterations+=1
 
     return Planet

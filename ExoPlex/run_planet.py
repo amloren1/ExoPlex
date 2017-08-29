@@ -14,8 +14,10 @@ import functions
 import run_perplex
 ########
 #Make files only
-only = False
+only = True
 def run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename):
+
+    #find compositional percentages: abun. of each element, core mass frac, core composition and Perplex inputs
     Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac = functions.get_percents(*compositional_params)
 
     #(Perplex)Run fine mesh grid, Upper mantle mineralogy
@@ -36,9 +38,10 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
     Mantle_filename = run_perplex.run_perplex(*[Mantle_wt_per,compositional_params,[structure_params[3],structure_params[4],structure_params[5]],filename,False])
     grids_high = functions.make_mantle_grid(Mantle_filename,False)[0]
 
-
+    #only make perplex files?
     if only:
         return
+
     ###Append low and high res grids. grids are rho, alpha, Cp, T,P from perplex solution
     grids = [grids_low,grids_high]
 

@@ -22,7 +22,7 @@ bounds                     VRH  | [VRH] HS; Voigt-Reuss-Hill or Hashin-Shtrikman
 closed_c_space             T    | T[rue] or F[alse], default is T => closed composition space for gridded minimization 
 composition_constant       F    | T[rue] or F[alse], default is F; allows constants in composition expressions
 composition_phase          mol  | mol or wt; phase compositions in WERAMI output
-composition_system         wt   | mol or wt; system composition in WERAMI mode 2-4 output
+composition_system         mol  | mol or wt; system composition in WERAMI mode 2-4 output
 console_messages           on   | on or off
 dependent_potentials       on   | on or off
 efficiency                 3    | 1->5
@@ -60,7 +60,7 @@ refinement_points_II        5   | > 0, # of metstable refinement points retained
 seismic_output            some  | all, some, none
 short_print                on   | on or off
 solution_names             abb  | mod[el], abb[reviation], ful[l] 
-solvus_tolerance          auto  | auto or 0->1 [0.05] should be > initial_resolution/auto_refine_factor
+solvus_tolerance             1  | auto or 0->1 [0.05] should be > initial_resolution/auto_refine_factor
 solvus_tolerance_II        0.2  | 0->1 [0.2]
 speciation_factor          100  | >10, speciation precision = final resolution/speciation factor
 speciation_max_it          100  | max number of iterations permitted in speciation/order-disorder calculations

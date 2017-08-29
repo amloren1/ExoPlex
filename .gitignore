@@ -30,3 +30,9 @@ Solutions/*.dat
 Examples/*.txt
 
 Solutions/*.txt
+
+/home/alejandro/Scripts/Python/ExoPlex/Examples/tester
+
+/home/alejandro/Scripts/Python/ExoPlex/Examples/R*
+
+/home/alejandro/Scripts/Python/ExoPlex/Examples/h2o_mundo.py

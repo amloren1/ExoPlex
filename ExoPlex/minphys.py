@@ -315,6 +315,7 @@ def get_core_speeds(Pressure,Temperature,Core_wt_per):
 def get_gravity(Planet,layers):
     radii = Planet.get('radius')
     density = Planet.get('density')
+
     num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
     radii_core =  radii[:num_core_layers]
@@ -344,6 +345,7 @@ def get_gravity(Planet,layers):
         poisson_water = lambda p, x: 4.0 * np.pi * G * rhofunc_water(x) * x * x
         gravity_layers_water = np.ravel(odeint(poisson_water,gravity_layers_mantle[-1],radii_water))
         gravity_layers = np.concatenate((gravity_layers_core,gravity_layers_mantle,gravity_layers_water),axis=0)
+        #print gravity_layers_water
 
     else:
         gravity_layers = np.concatenate((gravity_layers_core, gravity_layers_mantle), axis=0)
@@ -379,10 +381,11 @@ def get_pressure(Planet,layers):
     gfunc_mant = interpolate.UnivariateSpline(depths_mant[::-1], gravity_mant[::-1])
 
     rhofunc_core = interpolate.UnivariateSpline(depths_core[::-1], density_core[::-1])
-    gfunc_core = interpolate.UnivariateSpline(depths_core[::-1], gravity_core[::-1])
+    gfunc_core   = interpolate.UnivariateSpline(depths_core[::-1], gravity_core[::-1])
 
     if number_h2o_layers >0:
         depths_water = depths[(num_core_layers + num_mantle_layers):]
+
         gravity_water = gravity[(num_core_layers + num_mantle_layers):]
         density_water = density[(num_core_layers + num_mantle_layers):]
 
@@ -469,7 +472,6 @@ def get_temperature(Planet,grids,structural_parameters,layers):
     gravity = Planet.get('gravity')
     temperature = Planet.get('temperature')
     pressure = Planet.get('pressure')
-
     num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
     Mantle_potential_temp = structural_parameters[7]
@@ -531,6 +533,7 @@ def get_temperature(Planet,grids,structural_parameters,layers):
     if len(to_switch_P) > 0:
         test = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']),
                                     grids[1]['cp'], (to_switch_P, to_switch_T), method='linear')
+
 
         for i in range(len(test)):
 

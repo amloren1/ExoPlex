@@ -549,18 +549,18 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
     import minphys
 
     def calc_CRF(value, args):
-        radius_planet = args[0]
-        structure_params = args[1]
+        radius_planet        = args[0]
+        structure_params     = args[1]
         compositional_params = args[2]
-        num_core_layers = args[3][1]
-        grids = args[4]
+        num_core_layers      = args[3][1]
+        grids       = args[4]
         Core_wt_per = args[5]
-        CMF_to_fit = args[6]
+        CMF_to_fit  = args[6]
 
 
         structure_params[6] = value
-        Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
-        Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
+        Planet      = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
+        Planet      = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
         planet_mass = minphys.get_mass(Planet,layers)
 
         CMF = planet_mass[num_core_layers]/planet_mass[-1]
@@ -568,21 +568,21 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
         return (CMF_to_fit - CMF)
 
     def calc_CRF_WRF(values, *args):
-        radius_planet = args[0]
-        structure_params = args[1]
+        radius_planet        = args[0]
+        structure_params     = args[1]
         compositional_params = args[2]
-        num_core_layers = args[3][1]
-        num_mantle_layers = args[3][0]
-        num_water_laters = args[3][2]
-        grids = args[4]
+        num_core_layers      = args[3][1]
+        num_mantle_layers    = args[3][0]
+        num_water_laters     = args[3][2]
+        grids       = args[4]
         Core_wt_per = args[5]
-        CMF_to_fit = args[6]
-        WMF_to_fit = args[7]
+        CMF_to_fit  = args[6]
+        WMF_to_fit  = args[7]
 
 
         structure_params[6] = values[0]
         structure_params[8] = values[1]
-        print values
+        #print values
         if values[0] <= 0.005 or values[1] <= 0.005 or values[0] >= 1 or values[1] >=1:
             if values[0] <= .05:
                 return (10.,1)
@@ -603,16 +603,18 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
         Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
 
 
-        planet_mass = minphys.get_mass(Planet,layers)
-        core_mass = planet_mass[num_core_layers]
+        planet_mass      = minphys.get_mass(Planet,layers)
+        core_mass        = planet_mass[num_core_layers]
         terrestrial_mass = planet_mass[num_core_layers+num_mantle_layers]
-        water_mass = planet_mass[-1] - terrestrial_mass
+        water_mass       = planet_mass[-1] - terrestrial_mass
 
         CMF = core_mass/terrestrial_mass
         WMF = water_mass/planet_mass[-1]
 
         print "Diff in Core Mass percent = ", '%.3f' % (100.*CMF_to_fit - 100.*CMF)
         print "Diff in Water Mass percent = ", '%.3f' % (100.*WMF_to_fit - 100.*WMF)
+        print 'core mass frac {}'.format(CMF)
+        print 'h2o mass fraction {}'.format(WMF)
 
 
         return (100.*CMF_to_fit - 100.*CMF,100.*WMF_to_fit - 100.*WMF)
@@ -626,20 +628,26 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
             layers[2] = 100
 
         water_mass_frac = compositional_params[0]
-        args = (radius_planet, structure_params, compositional_params, layers, grids, Core_wt_per, core_mass_frac,water_mass_frac)
+        args     = (radius_planet, structure_params, compositional_params, layers, grids, Core_wt_per, core_mass_frac,water_mass_frac)
         solution = root(calc_CRF_WRF, [.5,water_mass_frac],args=args,tol=1.e-4,method='anderson')
         structure_params[6], structure_params[8] = solution.x
+        if structure_params[6]> 1.0:
+            structure_params[6] = 0.5
+        print 'core rad frac {}'.format(structure_params[6])
+        print 'h2o rad fraction {}'.format(structure_params[8])
+
         Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
         Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
-
         return Planet
 
     else:
         from scipy.optimize import brentq
         #make sure there are no water layers. User has entered H2Owt% = 0
-        if layers[2] > 0:
+        #if user entered >0 water layers or >0 water radius fraction, zero them out
+        if layers[2] > 0 or structure_params[8] != 0 :
             print "***Build error: excess in water layers for H2Owt% = 0 wt%***"
             print "Solution: removing water layer"
+            structure_params[8] = 0
             layers[2] = 0
 
         args = [radius_planet, structure_params, compositional_params, layers,grids,Core_wt_per,core_mass_frac]
