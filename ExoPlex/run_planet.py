@@ -14,7 +14,7 @@ import functions
 import run_perplex
 ########
 #Make files only
-only = True
+only = False
 def run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename):
 
     #find compositional percentages: abun. of each element, core mass frac, core composition and Perplex inputs

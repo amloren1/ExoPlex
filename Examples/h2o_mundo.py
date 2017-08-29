@@ -127,6 +127,10 @@ def cohntor(xlab , ylab, X, Y, Z1, Z2):
 
 
 
+
+
+
+
 #==========================================================================#
 # Fix Fe,Si/Mg and XFeO
 # Vary the water content and the Si_corewt%
@@ -144,9 +148,9 @@ def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
 
     print filename
     data_file = open(filename, 'w')
-    dat_row_header = '{0:11}{1:11}{2:11}{3:11}{4:11}{5:11}{6:11}{7:11}{8:11}{9:11}'.format('Fe/Mg', \
+    dat_row_header = '{0:11}{1:11}{2:11}{3:11}{4:11}{5:11}{6:11}{7:11}{8:11}{9:11}{10:11}'.format('Fe/Mg', \
                     'Si/Mg' ,'XFeO', 'Si_cwt%' , 'H2Owt%', \
-                 'MEarth', 'density', 'core_wt%', 'core_rad%', 'h20_rad%')
+                 'MEarth', 'density', 'core_wt%', 'core_rad%', 'h20_rad%', 'calc_h20')
     #'Fe/Mg    Si/Mg    XFeO    Si_cwt%    H2Owt%    MEarth    density    core_wt%    core_rad%    h20_rad%'
     data_file.write(dat_row_header)
     Radius_planet = Radius
@@ -160,12 +164,13 @@ def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
 
     # among light elements, vary only the silicon value
     wt_frac_Si_core = [0.0, 0.05, 0.1, 0.15, 0.20, 0.25] #0 to 30wt% Si in core
+    wt_frac_Si_core = [0.15]
     wt_frac_O_core = 0.
     wt_frac_S_core = 0.
 
     #h2o content 0 to 1.0
     wt_frac_water = np.arange(0.0,0.5, 0.05)
-    wt_frac_water = [0.0, 0.01]
+    wt_frac_water = [0.05]
     #how much Fe in the mantle by mole. This is Fe oxidation state
     mol_frac_Fe_mantle = XFeO
 
@@ -237,20 +242,22 @@ def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
 
             #run routines to build perplex solution and planet
             Planet = exo.run_planet_radius(Radius_planet,compositional_params,structure_params,layers,filename)
-            continue
+
 
             #things to output to data file
             mas = (Planet['mass'][-1])
             rho = rho_bulk(mas,Radius*REarth)
-            corwt = round(100.*Planet['mass'][num_core_layers]/Planet['mass'][-1],6)
-            cor_rad = round(100.*Planet['radius'][num_core_layers]/Planet['radius'][-1],6)
-            h2o_rad = round(abs(Planet['radius'][n_tot-num_h2o_layers]/Planet['radius'][-1]-1.00)*100.,6)
+            corwt = round(100.*Planet['mass'][num_core_layers]/Planet['mass'][-1],4)
+            cor_rad = round(100.*Planet['radius'][num_core_layers]/Planet['radius'][-1],4)
+
+
+            h2o_rad = round(abs(Planet['radius'][n_tot-num_h2o_layers]/Planet['radius'][-1]-1.00)*100.,4)
             mas_E = np.around(mas/MEarth, decimals = 6)
 
 
             h2owt_test = Planet['mass'][num_mantle_layers+num_core_layers-1]/Planet['mass'][-1]
 
-            print '\n\nresulting h2owt = {}\n'.format(1.-h2owt_test)
+            print '\n\nresulting h2owt = {}'.format(1.-h2owt_test)
             print 'wt frac water = {}'.format(wt_frac_water[q])
             #Z-axis for contour plots
             masZ[q,p] = mas/MEarth
@@ -280,11 +287,17 @@ def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
     cohntor(Xlab , Ylab, SicX, h2oY, masZ, rhoZ)
 
 #(Radius, FeMg, SiMg, XFeO)
-fixed_Si_Fe_XFeO(1.0,1.3,1.0,0.1)
-fixed_Si_Fe_XFeO(1.0,1.3,1.0,0.0)
+fixed_Si_Fe_XFeO(1.0,1.0,1.0,0.0)
+#fixed_Si_Fe_XFeO(1.0,1.3,1.0,0.0)
 
 
 #==========================================================================#
+
+
+
+
+
+
 #==========================================================================#
 #==========================================================================#
 #==========================================================================#

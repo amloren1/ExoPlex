@@ -595,9 +595,9 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
 
         if (values[0]+values[1]) >= 1:
             if values[0] > values[1]:
-                return (-15.,0)
+                return (-200.,0)
             if values[1] > values[0]:
-                return (0,-15.)
+                return (0,-200.)
 
         Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
         Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
@@ -610,12 +610,14 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
 
         CMF = core_mass/terrestrial_mass
         WMF = water_mass/planet_mass[-1]
-
+        print '\n<========================================================================>'
         print "Diff in Core Mass percent = ", '%.3f' % (100.*CMF_to_fit - 100.*CMF)
         print "Diff in Water Mass percent = ", '%.3f' % (100.*WMF_to_fit - 100.*WMF)
-        print 'core mass frac {}'.format(CMF)
-        print 'h2o mass fraction {}'.format(WMF)
-
+        print '\ncalculated core mass frac {}'.format(CMF)
+        print 'input core mass frac {}'.format(CMF_to_fit)
+        print '\ncalculated h2o mass fraction {}'.format(WMF)
+        print 'input h2o mass fraction {}'.format(WMF_to_fit)
+        print '<========================================================================>'
 
         return (100.*CMF_to_fit - 100.*CMF,100.*WMF_to_fit - 100.*WMF)
 
