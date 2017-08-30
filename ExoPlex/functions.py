@@ -9,9 +9,9 @@ def get_percents(*args):
     CaMg = args[3]
     AlMg = args[4]
     mol_frac_Fe_mantle = args[5]
-    wt_frac_Si_core = args[6]
-    wt_frac_O_core = args[7]
-    wt_frac_S_core = args[8]
+    wt_frac_Si_core    = args[6]
+    wt_frac_O_core     = args[7]
+    wt_frac_S_core     = args[8]
 
     MgSi = 1./SiMg
     FeSi = FeMg*MgSi
