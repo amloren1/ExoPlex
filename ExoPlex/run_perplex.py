@@ -46,11 +46,13 @@ def run_perplex(*args):
     filename = solutionFileNameMan
 
     if os.path.isfile('../Solutions/'+filename+'_UM.tab') and UMLM == True:
-        print 'The Upper mantle .tab already exists, please wait briefly for solution\n'
+        print '\nThe Upper mantle .tab already exists, please wait briefly for solution:'
+        print  filename+'_LM.tab\n'
         return '../Solutions/' + filename
 
     if os.path.isfile('../Solutions/'+filename+'_LM.tab') and UMLM == False:
-        print 'The Lower mantle .tab already exists, please wait briefly for solution\n'
+        print '\nThe Lower mantle .tab already exists, please wait briefly for solution'
+        print  filename+'_UM.tab\n'
         return '../Solutions/' + filename
 
     else:
@@ -159,92 +161,105 @@ def run_perplex(*args):
 
     print 'Finished with Vertex, beginning Werami'
 
-    p = pe.spawn(PerPlex_path+"/./werami",timeout=None)
+    try:
+
+        p = pe.spawn(PerPlex_path+"/./werami",timeout=None)
 
 
-    p.sendline(solutionFileNameMan)
-    # select 2D grid
-    p.sendline('2')
-    # Below, select parameters density, alpha, cp.
-    # Ns for no calculating individual phase properties
-    p.sendline('2')
-    p.sendline('N')
-    p.sendline('12')
-    p.sendline('N')
-    p.sendline('13')
-    p.sendline('N')
-    p.sendline('14')
-    p.sendline('N')
-    p.sendline('4')
-    p.sendline('N')
-    p.sendline('19')
-    p.sendline('N')
-    ####### the next lines will pass requests to perplex to print phases and their proportions into the .tab file
+        p.sendline(solutionFileNameMan)
+        # select 2D grid
+        p.sendline('2')
+        # Below, select parameters density, alpha, cp.
+        # Ns for no calculating individual phase properties
+        p.sendline('2')
+        p.sendline('N')
+        p.sendline('12')
+        p.sendline('N')
+        p.sendline('13')
+        p.sendline('N')
+        p.sendline('14')
+        p.sendline('N')
+        p.sendline('4')
+        p.sendline('N')
+        p.sendline('19')
+        p.sendline('N')
+        ####### the next lines will pass requests to perplex to print phases and their proportions into the .tab file
 
-    # 21 species, in all for Fe-Si-Mg-O regime
-    p.sendline('7')
-    p.sendline('C2/c')  # 0
-    p.sendline('7')
-    p.sendline('Wus')  # 1
-    p.sendline('7')
-    p.sendline('Pv')  # 2
-    p.sendline('7')
-    p.sendline('an')  # 3
-    p.sendline('7')
-    p.sendline('Sp')  #4
-    p.sendline('7')
-    p.sendline('O')  # 4
-    p.sendline('7')
-    p.sendline('Wad')  # 5
-    p.sendline('7')
-    p.sendline('Ring')  # 6  #if statement about no FeO or some shit
-    p.sendline('7')
-    p.sendline('Opx')  # 7
-    p.sendline('7')
-    p.sendline('Cpx')  # 8
-    p.sendline('7')
-    p.sendline('Aki')  # 9
-    p.sendline('7')
-    p.sendline('Gt_maj')  # 10
-    p.sendline('7')
-    p.sendline('Ppv')  # 11
-    p.sendline('7')
-    p.sendline('CF')   # 12
-    p.sendline('7')
-    p.sendline('st')  # 12
-    p.sendline('7')
-    p.sendline('q')  # 13
-    p.sendline('7')
-    p.sendline('ca-pv')  # 14
-    p.sendline('7')
-    p.sendline('cfs')  # 15
-    p.sendline('7')
-    p.sendline('coe')  # 16
-    p.sendline('7')
-    p.sendline('ky')  # 17
-    p.sendline('7')
-    p.sendline('seif')  # 18
+        # 21 species, in all for Fe-Si-Mg-O regime
+        p.sendline('7')
+        p.sendline('C2/c')  # 0
+        p.sendline('7')
+        p.sendline('Wus')  # 1
+        p.sendline('7')
+        p.sendline('Pv')  # 2
+        p.sendline('7')
+        p.sendline('an')  # 3
+        p.sendline('7')
+        p.sendline('Sp')  #4
+        p.sendline('7')
+        p.sendline('O')  # 4
+        p.sendline('7')
+        p.sendline('Wad')  # 5
+        p.sendline('7')
+        p.sendline('Ring')  # 6  #if statement about no FeO or some shit
+        p.sendline('7')
+        p.sendline('Opx')  # 7
+        p.sendline('7')
+        p.sendline('Cpx')  # 8
+        p.sendline('7')
+        p.sendline('Aki')  # 9
+        p.sendline('7')
+        p.sendline('Gt_maj')  # 10
+        p.sendline('7')
+        p.sendline('Ppv')  # 11
+        p.sendline('7')
+        p.sendline('CF')   # 12
+        p.sendline('7')
+        p.sendline('st')  # 12
+        p.sendline('7')
+        p.sendline('q')  # 13
+        p.sendline('7')
+        p.sendline('ca-pv')  # 14
+        p.sendline('7')
+        p.sendline('cfs')  # 15
+        p.sendline('7')
+        p.sendline('coe')  # 16
+        p.sendline('7')
+        p.sendline('ky')  # 17
+        p.sendline('7')
+        p.sendline('seif')  # 18
 
-    # exit parameter choosing
+        # exit parameter choosing
 
-    p.sendline('0')
-    # Change default variable range (y/n)?
-    p.sendline('N')
+        p.sendline('0')
+        # Change default variable range (y/n)?
+        p.sendline('N')
 
-    # Enter number of nodes in the T(K)     and P(bar)   directions:
+        # Enter number of nodes in the T(K)     and P(bar)   directions:
 
-    p.sendline(resolution)
-    p.logfile = open('werami.log','wb')
-    p.expect('    0 - EXIT', timeout=None)
-    p.sendline('0')
-    p.read()
-    p.terminate()
-    print "Done with PerPlex"
+        p.sendline(resolution)
+        p.logfile = open('werami.log','wb')
+        p.expect('    0 - EXIT', timeout=None)
+        p.sendline('0')
+        p.read()
+        p.terminate()
+        print "Done with PerPlex"
 
-    if UMLM == True:
-        os.rename(solutionFileNameMan+'_1.tab','../Solutions/'+filename+'_UM.tab')
-    else:
-        os.rename(solutionFileNameMan + '_1.tab', '../Solutions/' + filename + '_LM.tab')
+        if UMLM == True:
+            os.rename(solutionFileNameMan+'_1.tab','../Solutions/'+filename+'_UM.tab')
+        else:
+            os.rename(solutionFileNameMan + '_1.tab', '../Solutions/' + filename + '_LM.tab')
+
+        successful = True
+    except:
+
+        successful = False
+        print 'Woah, uh perplex broke at werami. The details are stored in the ERROR_ files'
+        os.rename('build.log', 'ERROR_'+solutionFileNameMan+'_build.log')
+        os.rename('vertex.log', 'ERROR_'+solutionFileNameMan+'_vertex.log')
+        os.rename('werami.log', 'ERROR_'+solutionFileNameMan+'_werami.log')
+
+
 
     os.remove(solutionFileNameMan+'.arf')
     os.remove(solutionFileNameMan+'.blk')

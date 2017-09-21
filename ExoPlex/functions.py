@@ -2,7 +2,7 @@ import numpy as np
 import sys
 from scipy import interpolate
 import minphys
-
+verbose = True
 def get_percents(*args):
     FeMg = args[1]
     SiMg = args[2]
@@ -60,6 +60,7 @@ def get_percents(*args):
 
     Num_moles = np.linalg.solve(A,b)
 
+
     #To do: Adjust so oxygen is last in list
     ## find masses and wt% below for perplex ##
 
@@ -77,6 +78,12 @@ def get_percents(*args):
     mass_of_Mantle = (mFe*Mantle_moles[0])+(mMg*Mantle_moles[1])\
                    +(mSi*Mantle_moles[2])+(mO*Mantle_moles[3])\
                    +(mCa*Mantle_moles[4])+(mAl*Mantle_moles[5])
+
+    #print calculated molar values to screen
+
+    if verbose:
+        verbosity(Num_moles, mass_of_Core, mSi)
+
 
 
     Mtot= mass_of_Core+mass_of_Mantle #in g
@@ -122,7 +129,7 @@ def get_percents(*args):
 
     #Throw exception, not if statement
     #make inequality not, absolute if. Use machine precision
-    corwt_tot = S_core_wt+O_core_wt+Si_core_wt+Fe_core_wt
+    corwt_tot = round(S_core_wt+O_core_wt+Si_core_wt+Fe_core_wt,8)
     if corwt_tot != 1. and corwt_tot > 1:
         print '\n\n*****Exiting program*****'
         print 'Core wt%% don\'t add up'
@@ -144,37 +151,37 @@ def get_percents(*args):
     return(Core_wt_per,Mantle_wt_per,Core_mol_per,core_mass_frac)
 
 
-def verbosity():
+def verbosity(x, mcor, mSi):
 
     # MgO,SiO2,FeO, CaO, Al2O3 wt%
 
 
-    solutionFileNameMan    = 'SiMg_FeMg_CaMg_AlMg_XFeO_fSic_fOc_fSc' + solfileparamsString+'_MANTLE'
+#    solutionFileNameMan    = 'SiMg_FeMg_CaMg_AlMg_XFeO_fSic_fOc_fSc' + solfileparamsString+'_MANTLE'
 #    datafileName         = 'Mass_MgSi_FeSi_XFeO_fSic_fOc_' +repr(round(PlanetMass/MEarth,3))+solfileparamsString
 
-    print 'Mantle solution file: \n'
-    print solutionFileNameMan
+#    print 'Mantle solution file: \n'
+#    print solutionFileNameMan
 
     #sys.exit()
     #for creating data files in perplex, plcCor is an entry into the build code
-    plxCor  = repr(Fecwt)+' '+repr(O2cwt)+' '+repr(Sicwt) + ' ' + repr(S2cwt)
-    solfileparamsString0 = '_'+repr(round(fSic,3)) +'_'+repr(round(fOc,3)) + '_'+ repr(round(fSc,3))
-    solfileparamsString  = solfileparamsString0.replace('.',',')
+    #plxCor  = repr(Fecwt)+' '+repr(O2cwt)+' '+repr(Sicwt) + ' ' + repr(S2cwt)
+    #solfileparamsString0 = '_'+repr(round(fSic,3)) +'_'+repr(round(fOc,3)) + '_'+ repr(round(fSc,3))
+    #solfileparamsString  = solfileparamsString0.replace('.',',')
 #    datafileName         = 'Mass_MgSi_FeSi_XFeO_fSic_fOc_' +repr(normMass)+solfileparamsString
-    solutionFileNameCor     = 'fSic_fOc_fSc' + solfileparamsString+'_CORE'
+    #solutionFileNameCor     = 'fSic_fOc_fSc' + solfileparamsString+'_CORE'
 
      #print some stuff here
-    if verbose:
-        print 'Mantle composition (wt%%): \n'
-        print 'MgO = %.4f \tSiO2 = %.4f \tFeO = %.4f \tCaO = %.4f \tAl2O3 = %.4f\n' %                        \
-                (np.abs(MgOmwt),np.abs(SiO2mwt),np.abs(FeOmwt),np.abs(CaOmwt), np.abs(Al2O3mwt) )
+    #if verbose:
+    ##    print 'Mantle composition (wt%%): \n'
+     #   print 'MgO = %.4f \tSiO2 = %.4f \tFeO = %.4f \tCaO = %.4f \tAl2O3 = %.4f\n' %                        \
+     #           (np.abs(MgOmwt),np.abs(SiO2mwt),np.abs(FeOmwt),np.abs(CaOmwt), np.abs(Al2O3mwt) )
 
-        print 'Core composition (wt%%): \n'
-        print 'O2 = %.4f \tSi = %.4f \tS2 = %.4f \tFe = %.4f (Fe alone & Fe in FeSi)\n' %          \
-             (np.abs(O2cwt),np.abs(Sicwt),np.abs(S2cwt),np.abs(Fecwt))
+      #  print 'Core composition (wt%%): \n'
+      #  print 'O2 = %.4f \tSi = %.4f \tS2 = %.4f \tFe = %.4f (Fe alone & Fe in FeSi)\n' %          \
+       #      (np.abs(O2cwt),np.abs(Sicwt),np.abs(S2cwt),np.abs(Fecwt))
 
-        print 'wt%% of Core: %r \t wt%% of Mantle: %r' % (round(masfCor*100,5), round(masfMan*100,5))
-        print '*---------------------------------------------------*\n'
+        #print 'wt%% of Core: %r \t wt%% of Mantle: %r' % (round(masfCor*100,5), round(masfMan*100,5))
+        #print '*---------------------------------------------------*\n'
 
 
 
@@ -191,36 +198,38 @@ def verbosity():
     #print testValue
 
     #DEBUG: print out the ratios of Mg/Si and Fe/Si
-    # x = [nFec,nMgc,nSic,nOc, nSc | ,nFem,nMgm,nSim,nOm]
+    # x = [nFec,nSic,nOc, nSc | ,nFem,nMgm,nSim,nOm, nCam, nAlm]
     if verbose:
-        print 'Calculated Values'
-        print 'Mg/Si = %.4f' % (x[5]/(x[1]+x[6]))
-        print 'Fe/Si = %.4f' % ((x[0]+x[4])/(x[1]+x[6]))
-        print 'Ca/Si = %.4f' % ((x[8])/(x[1]+x[6]))
-        print 'Al/Si = %.4f' % ((x[9])/(x[1]+x[6]))
-        print 'XFeO = %.4f' % (x[4]/(x[0]+x[4]))
-        print 'fSic = %.4f' % ((x[1]*(mSi))/masfCor)
-        print 'fOc = %.4f' % ((x[2]*(mO))/masfCor)
-        print 'fSc = %.4f' % ((x[3]*(mS))/masfCor)
-        print 'Core wt%% of Si = %.4f %%' % (100*(x[1]*(mSi))/masfCor)
-        print 'Core wt%% of O = %.4f %%' % (100*(x[2]*(mO))/masfCor)
-        print 'Core wt%% of S = %.4f %%' % (100*(x[3]*(mO))/masfCor)
-        print 'Total light element wt%% in core: %.4f %%' % (100*(x[2]*(mO)+x[1]*mSi+x[3]*mS)/masfCor)
-        print 'Mantle Mg/Si = %.4f' % (x[5]/x[6])
-        print '\nEntered values:'
-        print 'Si/Mg = %r' % SiMg
-        print 'Fe/Mg = %r' % FeMg
-        print 'Ca/Mg = %r' % CaMg
-        print 'Al/Mg = %r' % AlMg
-        print 'XFeO = %.4f' % XFeO
-        print 'fSic = %.4f' % (fSic)
-        print 'fOc = %.4f' % fOc
-        print 'fSc = %.4f' % fSc
+        print 'Calculated composition:'
+        print 'XFeO  = %.4f' % (x[4]/(x[0]+x[4]))
+        print 'fSic  = %.4f' % ((x[1]*(mSi))/mcor)
+        print 'Si/Mg = %.4f' % ((x[1]+x[6])/x[5])
+        print 'Fe/Mg = %.4f' % ((x[0]+x[4])/x[5])
+        print 'Ca/Mg = %.4f' % ((x[8])/x[5])
+        print 'Al/Mg = %.4f' % ((x[9])/x[5])
+
+        #print 'fSic = %.4f' % ((x[1]*(mSi))/masfCor)
+        #print 'fOc = %.4f' % ((x[2]*(mO))/masfCor)
+        #print 'fSc = %.4f' % ((x[3]*(mS))/masfCor)
+      #  print 'Core wt%% of Si = %.4f %%' % (100*(x[1]*(mSi))/masfCor)
+        #print 'Core wt%% of O = %.4f %%' % (100*(x[2]*(mO))/masfCor)
+        #print 'Core wt%% of S = %.4f %%' % (100*(x[3]*(mO))/masfCor)
+        #print 'Total light element wt%% in core: %.4f %%' % (100*(x[2]*(mO)+x[1]*mSi+x[3]*mS)/masfCor)
+        #print 'Mantle Mg/Si = %.4f' % (x[5]/x[6])
+        #print '\nEntered values:'
+        #print 'Si/Mg = %r' % SiMg
+        #print 'Fe/Mg = %r' % FeMg
+        #print 'Ca/Mg = %r' % CaMg
+        #print 'Al/Mg = %r' % AlMg
+        #print 'XFeO = %.4f' % XFeO
+        #print 'fSic = %.4f' % (fSic)
+        #print 'fOc = %.4f' % fOc
+        #print 'fSc = %.4f' % fSc
 
     #sys.exit()
 #  return values: masfCor,masfMan, MgOmwt,SiO2mwt,FeOmwt, Sicwt, Fecwt,O2cwt
     #must rememer: the masfMan and Cor are wt%s
-    return (masfCor,masfMan,MgOmwt,SiO2mwt,FeOmwt,CaOmwt, Al2O3mwt, Sicwt,Fecwt,O2cwt,S2cwt,solutionFileNameCor,solutionFileNameMan, plxMan,plxCor)
+    return
 
 def make_mantle_grid(Mantle_filename,LMUM):
 

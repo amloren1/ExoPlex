@@ -89,7 +89,6 @@ def initialize_by_radius(*args):
         else:
             Pressure_layers[i] = (float((5000.-(300.*10000))/float(num_core_layers+num_mantle_layers))*float(i)
                                   + 300.*10000)
-            print Pressure_layers[i]
 
     #initial temperature guess of 0.5 K per km
     keys = ['radius','density','temperature','gravity','pressure',\
@@ -119,6 +118,7 @@ def compress(*args):
     while n_iterations <= max_iterations and converge == False:
         print "iteration #",n_iterations
 
+
         #find density with current P, T gradients
         Planet['density'] = minphys.get_rho(Planet,grids,Core_wt_per,layers)
 
@@ -134,15 +134,21 @@ def compress(*args):
                 print i, Planet['pressure'][i],Planet['temperature'][i]
                 print
                 sys.exit()
-        print max(Planet['pressure'][100:])
+
         #update gravity, pressure and temperature with new density
         Planet['gravity']     = minphys.get_gravity(Planet,layers)
 
         Planet['pressure']    = minphys.get_pressure(Planet,layers)
-        print max(Planet['pressure'][100:])
+
+        #DEBUG
+        #print Planet['pressure'][::-1]
+        #print Planet['pressure'][-1]
+        #sys.exit()
+
         Planet['temperature'] = minphys.get_temperature(Planet,grids,structural_params,layers)
 
         converge,old_rho = minphys.check_convergence(Planet['density'],old_rho)
+
         if n_iterations < n_min:
             converge = False
         n_iterations+=1
