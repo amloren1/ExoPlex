@@ -44,13 +44,14 @@ def get_rho(Planet,grids,Core_wt_per,layers):
     T_points_LM = []
 
     for i in range(num_mantle_layers):
+        #DEBUG
+        #print 'P[{:.0f}] = {:.3f}]'.format(i+num_core_layers,Pressure_layers[i+num_core_layers])
         if Pressure_layers[i+num_core_layers] >=1250000:
             P_points_LM.append(Pressure_layers[i+num_core_layers])
             T_points_LM.append(Temperature_layers[i+num_core_layers])
         else:
             P_points_UM.append(Pressure_layers[i+num_core_layers])
             T_points_UM.append(Temperature_layers[i+num_core_layers])
-
 
     UM_data = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']),
                                            grids[0]['density'],(P_points_UM, T_points_UM), method='linear')
@@ -87,7 +88,7 @@ def get_rho(Planet,grids,Core_wt_per,layers):
 
     for i in range(len(LM_data)):
         if np.isnan(LM_data[i]) == True:
-            # try lower mantle:
+            # try upper mantle:
             to_switch_P.append(P_points_LM[i])
             to_switch_T.append(T_points_LM[i])
             to_switch_index.append(i)
@@ -99,7 +100,10 @@ def get_rho(Planet,grids,Core_wt_per,layers):
         for i in range(len(test)):
 
             if np.isnan(test[i]) == True:
-                print to_switch_P[i] / 1e5, to_switch_T[i]
+                print to_switch_P[i], to_switch_T[i]
+                print to_switch_T
+                print '\n\n'
+                print min(Pressure_layers)
                 print "LM Rho Outside of range!"
                 sys.exit()
             else:

@@ -14,7 +14,7 @@ import functions
 import run_perplex
 ########
 #Make files only
-only = False
+only = True
 
 def run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename):
 
