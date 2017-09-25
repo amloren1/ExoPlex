@@ -16,7 +16,7 @@ import run_perplex
 import multiprocessing as mp
 ########
 #Make files only
-only = False
+only = True
 
 def run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename, truncate_comp):
 
