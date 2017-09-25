@@ -2,6 +2,60 @@ import numpy as np
 import sys
 from scipy import interpolate
 import minphys
+import os
+
+
+
+def solfile_name(*args):
+
+    Mantle_wt_per = args[0]
+
+    FeMg = args[1][1]
+    SiMg = args[1][2]
+    CaMg = args[1][3]
+    AlMg = args[1][4]
+    mol_frac_Fe_mantle = args[1][5]
+    wt_frac_Si_core = args[1][6]
+
+    filename = args[3]
+    UMLM = args[4]
+
+    plxMan = str(Mantle_wt_per.get('MgO')) + ' ' + str(Mantle_wt_per.get('SiO2')) + ' ' \
+             + str(Mantle_wt_per.get('FeO')) + ' ' + str(Mantle_wt_per.get('CaO')) \
+             + ' ' + str(Mantle_wt_per.get('Al2O3'))+ ' ' + str(0.) #last value included for Na
+
+
+    #this filename convention excludes wtO and wtS in the core
+    solfileparamsString0 = '_' + str(round(SiMg, 3)) + '_' + str(round(FeMg, 3)) + '_' + str(
+        round(CaMg, 3)) + '_' + str(round(AlMg, 3)) \
+                           + '_' + str(round(mol_frac_Fe_mantle, 3)) + '_' + str(round(wt_frac_Si_core, 3))
+
+    # changes periods to commas
+    solfileparamsString = solfileparamsString0.replace('.', ',')
+    solutionFileNameMan = 'SiMg_FeMg_CaMg_AlMg_XFeO_fSic' + solfileparamsString + '_MANTLE'
+
+    filename = solutionFileNameMan
+
+    if os.path.isfile('../Solutions/'+filename+'_UM.tab') and UMLM == True:
+        print 'The Upper mantle .tab already exists, please wait briefly for solution\n'
+        return '../Solutions/' + filename
+
+    if os.path.isfile('../Solutions/'+filename+'_LM.tab') and UMLM == False:
+        print 'The Lower mantle .tab already exists, please wait briefly for solution\n'
+        return '../Solutions/' + filename 
+
+    else:
+        if UMLM == True:
+            print 'Making upper mantle PerPlex phase file. \n This will be stored in: ../Solutions/'+ filename+'_UM.tab'
+            filename =  '../Solutions/'+ filename
+        else:
+            print 'Making lower mantle PerPlex phase file. \n This will be stored in: ../Solutions/'+ filename+'_LM.tab'
+            filename = '../Solutions/'+ filename
+        
+    return filename
+        
+    
+    
 
 def get_percents(*args):
     FeMg = args[1]
@@ -141,7 +195,7 @@ def get_percents(*args):
     Core_mol_per ={'Fe':Core_moles[0]/tot_moles_core,'Si':Core_moles[1]/tot_moles_core,\
                   'O':Core_moles[2]/tot_moles_core,'S':Core_moles[3]/tot_moles_core}
 
-    return(Core_wt_per,Mantle_wt_per,Core_mol_per,core_mass_frac)
+    return(Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac)
 
 
 def verbosity():

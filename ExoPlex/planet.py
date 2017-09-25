@@ -89,7 +89,7 @@ def initialize_by_radius(*args):
         else:
             Pressure_layers[i] = (float((5000.-(300.*10000))/float(num_core_layers+num_mantle_layers))*float(i)
                                   + 300.*10000)
-            print Pressure_layers[i]
+            #print Pressure_layers[i]
 
     #initial temperature guess of 0.5 K per km
     keys = ['radius','density','temperature','gravity','pressure',\
@@ -134,12 +134,11 @@ def compress(*args):
                 print i, Planet['pressure'][i],Planet['temperature'][i]
                 print
                 sys.exit()
-        print max(Planet['pressure'][100:])
+        
         #update gravity, pressure and temperature with new density
         Planet['gravity']     = minphys.get_gravity(Planet,layers)
 
         Planet['pressure']    = minphys.get_pressure(Planet,layers)
-        print max(Planet['pressure'][100:])
         Planet['temperature'] = minphys.get_temperature(Planet,grids,structural_params,layers)
 
         converge,old_rho = minphys.check_convergence(Planet['density'],old_rho)
