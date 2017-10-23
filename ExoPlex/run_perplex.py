@@ -257,7 +257,7 @@ def run_perplex(*args):
     except:
 
         successful = False
-        print 'Woah, uh perplex broke at werami. The details are stored in the ERROR_ files'
+        print 'perplex broke at werami. The details are stored in the ERROR_ files'
         os.rename('build.log', 'ERROR_'+solutionFileNameMan+'_build.log')
         os.rename('vertex.log', 'ERROR_'+solutionFileNameMan+'_vertex.log')
         os.rename('werami.log', 'ERROR_'+solutionFileNameMan+'_werami.log')

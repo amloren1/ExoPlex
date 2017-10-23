@@ -57,7 +57,7 @@ def solfile_name(*args):
     
     
 
-verbose = True
+verbose = False
 def get_percents(*args):
     FeMg = args[1]
     SiMg = args[2]
@@ -607,6 +607,46 @@ def Ih_or_VII(Temperature,Pressure):
         return 'Ice_VII'
     else:
         return 'Ice_Ih'
+
+
+
+
+def update_radius(Planet, layers, rho_old):
+    REarth = 6.371e6
+    mass    = Planet.get('mass') #cumulative mass
+    dmass   = Planet.get('dmass') #mass in each layer
+    rad     = Planet.get('radius') 
+    grav    = Planet.get('gravity')
+    rho_new = Planet.get('density')
+    
+    num_mantle_layers, num_core_layers, number_h2o_layers = layers
+    n_tot = num_mantle_layers + num_core_layers + number_h2o_layers
+
+    #density of each layer after dampening mixture
+    rho   = np.zeros(n_tot)
+    vol   = np.zeros(n_tot)
+    
+    mix   = 0.5
+    delta = 0.0
+
+    for i in range(0, n_tot):
+
+        deltaNew = np.abs((rho_new[i]/rho_old[i]) - 1.0)
+        if (deltaNew > delta):
+            delta = deltaNew
+
+        # the new density of this shell is a mix of new and old for dampening purposes
+        rho[i] = rho_new[i] * mix + rho_old[i] * (1.0 - mix)
+
+        # update radius and volume and then temperature
+        if i > 0:
+            vol[i] = dmass[i] / rho[i]
+            rad[i] = (0.75 * (dmass[i] / rho[i] / np.pi) + (rad[i - 1] ** 3)) ** (1.0 / 3)
+            #print 'r[%r] = %.3f' %(i,rad[i]/REarth)
+    
+    return(rad, delta)
+
+
 def find_Planet_radius(radius_planet, core_mass_frac, structure_params, compositional_params, grids, Core_wt_per, layers):
 
     import planet
@@ -647,15 +687,6 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
         structure_params[6] = values[0]
         structure_params[8] = values[1]
         #print values
-        if values[0] <= 0.005 or values[1] <= 0.005 or values[0] >= 1 or values[1] >=1:
-            if values[0] <= .05:
-                return (10.,1)
-            if values[1] <= .05:
-                return (1,10)
-            if values[1] <= .95:
-                return (1,-10)
-            if values[0] <= .95:
-                return (-10,1)
 
         if (values[0]+values[1]) >= 1:
             if values[0] > values[1]:
@@ -717,7 +748,7 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
             layers[2] = 0
 
         args = [radius_planet, structure_params, compositional_params, layers,grids,Core_wt_per,core_mass_frac]
-        structure_params[6] = brentq(calc_CRF,.40,.75,args=args,xtol=1e-4)
+        structure_params[6] = brentq(calc_CRF,.30,.85,args=args,xtol=1e-4)
 
         Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
         Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
@@ -726,3 +757,42 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
         return Planet
 
 
+def R_of_M(mass_planet, core_mass_frac, structure_params, compositional_params, grids, Core_wt_per, layers):
+    import planet
+    import minphys
+    #1. initialize the plant by mass
+    Planet = planet.initialize_by_mass(*[mass_planet, structure_params, compositional_params, layers, core_mass_frac])
+
+    #DEBUG
+    #print 'Mass after initialization = {}'.format(Planet.get('mass')[-1]/5.972e24)
+    #print 'Surface pressure = {}'.format(Planet.get('pressure')[-1])
+    #print mass_planet 
+    #sys.exit()
+    
+    
+    #2. run routine to find density as a function of P, T from perplex files
+    # iterate until the max change in density of any given layer is 1e-6
+    
+    Planet = planet.compress_fixed_mass(*[Planet, grids, Core_wt_per, structure_params, layers])
+
+    print Planet['mass']/5.972e24 
+    
+
+    
+    
+
+    print 'Mass after compression = {}'.format(Planet.get('mass')[-1]/5.972e24)
+    
+    #Planet['phases'] = functions.get_phases(Planet, grids, layers)
+
+    #Planet['phase_names'] = names
+
+    #Planet['Vphi'], Planet['Vp'], Planet['Vs'] = functions.get_speeds(Planet, Core_wt_per, grids, layers)
+
+
+    return Planet
+    
+    
+    
+    
+    

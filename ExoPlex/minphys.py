@@ -14,9 +14,9 @@ G = 6.67408e-11
 
 def get_rho(Planet,grids,Core_wt_per,layers):
 
-    Pressure_layers = Planet.get('pressure')
+    Pressure_layers    = Planet.get('pressure')
     Temperature_layers = Planet.get('temperature')
-    rho_layers = Planet.get('density')
+    rho_layers         = Planet.copy().get('density')
 
     num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
@@ -315,9 +315,24 @@ def get_core_speeds(Pressure,Temperature,Core_wt_per):
 
     return speeds
 
+def calc_gravity(Planet, layers):
+    mass    = Planet.get('mass') #cumulative mass
+    rad     = Planet.get('radius') 
+    grav    = Planet.get('gravity')
+
+    num_mantle_layers, num_core_layers, number_h2o_layers = layers
+    
+    n_tot = num_mantle_layers + num_core_layers + number_h2o_layers
+    
+    # gravity at each zone
+    for i in range(1, n_tot):
+        grav[i] = (G * mass[i]) / (rad[i] ** 2)
+
+    return grav
+    
 
 def get_gravity(Planet,layers):
-    radii = Planet.get('radius')
+    radii   = Planet.get('radius')
     density = Planet.get('density')
 
     num_mantle_layers, num_core_layers, number_h2o_layers = layers
@@ -338,7 +353,7 @@ def get_gravity(Planet,layers):
     # Create a spline fit of density as a function of radius
 
     # Numerically integrate Poisson's equation
-    poisson_core = lambda p, x: 4.0 * np.pi * G * rhofunc_core(x) * x * x
+    poisson_core   = lambda p, x: 4.0 * np.pi * G * rhofunc_core(x) * x * x
     poisson_mantle = lambda p, x: 4.0 * np.pi * G * rhofunc_mantle(x) * x * x
 
     gravity_layers_core = np.ravel(odeint(poisson_core, 0., radii_core))
@@ -360,6 +375,33 @@ def get_gravity(Planet,layers):
 
     return gravity_layers
 
+def calc_pressure(Planet, layers):
+    #pressure comes in as bar. 
+    #calculate pressure in Pa and convert to bar
+    
+    radius   = Planet.get('radius')
+    density  = Planet.get('density')
+    gravity  = Planet.get('gravity')
+    pressure = Planet.get('pressure')
+
+    num_mantle_layers, num_core_layers, number_h2o_layers = layers
+
+    n_tot = num_mantle_layers + num_core_layers + number_h2o_layers
+
+
+    P_pa  = np.zeros(n_tot)
+    P_bar = np.zeros(n_tot)
+    #keep surface pressure fixed, change to Pa
+    P_pa[n_tot-1] = pressure[-1]*ToPa
+    
+    for i in range(n_tot - 2, -1, -1):
+        gmid   = 0.5*(gravity[i+1]+gravity[i])
+        rhomid = 0.5*(density[i+1]+density[i])
+        P_pa[i] = P_pa[i + 1] + gmid*rhomid * (radius[i + 1] - radius[i]) 
+        
+    P_bar = P_pa*ToBar
+    
+    return P_bar
 def get_pressure(Planet,layers):
     radii   = Planet.get('radius')
     density = Planet.get('density')
@@ -398,7 +440,9 @@ def get_pressure(Planet,layers):
 
         #integrate from 1 bar
         pressure_water = np.ravel(odeint((lambda p, x: gfunc_water(x) * rhofunc_water(x)),(1./10000.)*1.e9, depths_water[::-1]))
-        WMB_pres       = pressure_water[-1]
+        WMB_pres       = pressure_water[-1] #does not account for very small water layers and ends up breaking code
+        WMB_pres = 5.e8
+
 
     else:
         WMB_pres = 5.e8
@@ -421,7 +465,7 @@ def get_pressure(Planet,layers):
 
 
 def get_mass(Planet,layers):
-    radii = Planet.get('radius')
+    radii   = Planet.get('radius')
     density = Planet.get('density')
     num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
@@ -516,6 +560,7 @@ def get_temperature(Planet,grids,structural_parameters,layers):
             P_points_UM.append(pressure[i])
             T_points_UM.append(temperature[i])
 
+
     depths_mantle  = depths[:num_mantle_layers]
     gravity_mantle = gravity[:num_mantle_layers]
 
@@ -538,6 +583,7 @@ def get_temperature(Planet,grids,structural_parameters,layers):
             to_switch_T.append(T_points_UM[i])
             to_switch_index.append(i)
 
+
     if len(to_switch_P) > 0:
         test = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']),
                                     grids[1]['cp'], (to_switch_P, to_switch_T), method='linear')
@@ -546,7 +592,7 @@ def get_temperature(Planet,grids,structural_parameters,layers):
         for i in range(len(test)):
 
             if np.isnan(test[i]) == True:
-                print to_switch_P[i] / 1e5, to_switch_T[i]
+                print to_switch_P[i] , to_switch_T[i]
                 print "UM Cp Outside of range!"
                 sys.exit()
             else:
@@ -631,9 +677,9 @@ def get_temperature(Planet,grids,structural_parameters,layers):
 
     alpha_mantle = np.append(LM_alpha_data,UM_alpha_data)
 
-    grav_func = interpolate.UnivariateSpline(depths_mantle[::-1],gravity_mantle[::-1])
+    grav_func      = interpolate.UnivariateSpline(depths_mantle[::-1],gravity_mantle[::-1])
     spec_heat_func = interpolate.UnivariateSpline(depths_mantle[::-1],spec_heat_mantle[::-1])
-    alpha_func = interpolate.UnivariateSpline(depths_mantle[::-1],alpha_mantle[::-1])
+    alpha_func     = interpolate.UnivariateSpline(depths_mantle[::-1],alpha_mantle[::-1])
 
     adiabat_mantle = lambda p, x:  alpha_func(x)*grav_func(x) / spec_heat_func(x)
 
