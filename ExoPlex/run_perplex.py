@@ -45,6 +45,7 @@ def run_perplex(*args):
     #
     filename = solutionFileNameMan
 
+    
     if os.path.isfile('../Solutions/'+filename+'_UM.tab') and UMLM == True:
         print '\nThe Upper mantle .tab already exists, please wait briefly for solution:'
         print  filename+'_LM.tab\n'
@@ -58,14 +59,16 @@ def run_perplex(*args):
     else:
         if UMLM == True:
             print 'Making upper mantle PerPlex phase file. \n This will be stored in: ../Solutions/'+ filename+'_UM.tab'
+            description = '_UM'
         else:
             print 'Making lower mantle PerPlex phase file. \n This will be stored in: ../Solutions/'+ filename+'_LM.tab'
+            description = '_LM'
 
         #we need to shorten the file name for PerPlex to accept it
         solutionFileNameMan_short = list(solutionFileNameMan)
         solutionFileNameMan_short[0:30] = []
 
-        solutionFileNameMan = "".join(solutionFileNameMan_short)
+        solutionFileNameMan = "".join(solutionFileNameMan_short)+description
     # define perplex inputs in terms of components, this is for legibility
 
     component1 = 'MGO'
@@ -254,7 +257,7 @@ def run_perplex(*args):
     except:
 
         successful = False
-        print 'Woah, uh perplex broke at werami. The details are stored in the ERROR_ files'
+        print 'perplex broke at werami. The details are stored in the ERROR_ files'
         os.rename('build.log', 'ERROR_'+solutionFileNameMan+'_build.log')
         os.rename('vertex.log', 'ERROR_'+solutionFileNameMan+'_vertex.log')
         os.rename('werami.log', 'ERROR_'+solutionFileNameMan+'_werami.log')

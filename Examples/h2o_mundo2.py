@@ -163,8 +163,8 @@ def fixed_Si_Fe_Noh2o(Radius, FeMg, SiMg):
     data_file.write(dat_row_header)
     #vary these two
 
-    wt_frac_Si_core = [0.0,0.01,0.02,0.05, 0.1,0.12, 0.15, 0.20, 0.25]
-    XFeO            = [0.0, 0.01, 0.05,0.07,0.1,0.15,0.20,0.25]
+    wt_frac_Si_core = [0.0,0.05,0.1, 0.15, 0.20, 0.25]
+    XFeO            = [0.0, 0.05,0.1,0.15,0.20]
 
     #make sure water parameters are zeroed out
     num_h2o_layers      = 0
@@ -199,8 +199,10 @@ def fixed_Si_Fe_Noh2o(Radius, FeMg, SiMg):
 
             filename = 'Star'
 
+            comp_model = False
             #run routines to build perplex solution and planet
-            Planet = exo.run_planet_radius(Radius_planet,compositional_params,structure_params,layers,filename)
+            #Planet = exo.run_planet_radius(Radius_planet,compositional_params,structure_params,layers,filename)
+            Planet = exo.run_planet_mass(1.0, compositional_params,structure_params,layers,filename, comp_model)
 
             continue
 
@@ -236,9 +238,16 @@ def fixed_Si_Fe_Noh2o(Radius, FeMg, SiMg):
 
 
 #(Radius, FeMg, SiMg)
-#fixed_Si_Fe_Noh2o(1.4, 0.5, 1.0)
-fixed_Si_Fe_Noh2o(1.5, 1.5, 1.0)
+fixed_Si_Fe_Noh2o(1.0, 0.6, 1.0)
+fixed_Si_Fe_Noh2o(1.0, 1.0, 1.0)
 sys.exit()
+
+
+
+
+
+
+
 
 
 
@@ -358,8 +367,9 @@ def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
             filename = Star
 
             #run routines to build perplex solution and planet
-            Planet = exo.run_planet_radius(Radius_planet,compositional_params,structure_params,layers,filename)
-
+            comp_model = False
+            #Planet = exo.run_planet_radius(Radius_planet,compositional_params,structure_params,layers,filename)
+            Planet = exo.run_planet_mass(Mass, compositional_params,structure_params,layers,filename, comp_model)
 
             #things to output to data file
             mas = (Planet['mass'][-1])
@@ -405,7 +415,7 @@ def fixed_Si_Fe_XFeO(Radius, FeMg, SiMg, XFeO):
 
 #(Radius, FeMg, SiMg, XFeO)
 fixed_Si_Fe_XFeO(1.0,1.0,1.0,0.0)
-#fixed_Si_Fe_XFeO(1.0,1.3,1.0,0.0)
+fixed_Si_Fe_XFeO(1.0,1.3,1.0,0.0)
 
 
 #==========================================================================#
