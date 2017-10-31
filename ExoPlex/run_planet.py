@@ -12,11 +12,12 @@ if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
 
 import functions
 import run_perplex
+#run perplex only or run full ExoPlex model?
+import params.perplex_only
+import params.multi_process 
 
 import multiprocessing as mp
-########
-#Make files only
-only = False
+
 
 def run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename, truncate_comp):
 
@@ -57,31 +58,41 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
     
     
     #(Perplex)Run fine mesh grid, Upper mantle mineralogy
-    Mantle_filename = functions.solfile_name(*[Mantle_wt_per,compositional_params,[structure_params[0],structure_params[1],structure_params[2]],filename,True])
+    Mantle_filename = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
+        [structure_params[0],structure_params[1],structure_params[2]],filename,True])
    
-    p_UM = mp.Process(target = run_perplex.run_perplex, args=([Mantle_wt_per,compositional_params, \
-                            [structure_params[0],structure_params[1],structure_params[2]],filename,True]))
+
     
    
     #(Perplex) run the lower mantle grid. Coarse mesh, store data in arrays
-    Mantle_filename = functions.solfile_name(*[Mantle_wt_per,compositional_params,[structure_params[3],structure_params[4],structure_params[5]],filename,False])
+    Mantle_filename = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
+        [structure_params[3],structure_params[4],structure_params[5]],filename,False])
     
-    p_LM = mp.Process(target = run_perplex.run_perplex, args = ([Mantle_wt_per,compositional_params, \
-                    [structure_params[3],structure_params[4],structure_params[5]],filename,False]))
+    if multi_process:
+        
+        p_LM = mp.Process(target = run_perplex.run_perplex, args = ([Mantle_wt_per,compositional_params, \
+                        [structure_params[3],structure_params[4],structure_params[5]],filename,False]))
+        
+        p_UM = mp.Process(target = run_perplex.run_perplex, args=([Mantle_wt_per,compositional_params, \
+                                [structure_params[0],structure_params[1],structure_params[2]],filename,True]))
+       
+       
+        p_UM.start()
+        p_LM.start()
+        p_UM.join()
+        p_LM.join()
     
-   
-   
-   
-    p_UM.start()
-    p_LM.start()
-    p_UM.join()
-    p_LM.join()
-    
+    else:
+        run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
+                        [structure_params[3],structure_params[4],structure_params[5]],filename,False])
+        
+        run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
+                                [structure_params[0],structure_params[1],structure_params[2]],filename,True])
+
     #only make perplex files?
-    if only:
+    if perplex_only:
         return
     
-    #Mantle_filename = run_perplex.run_perplex(*[Mantle_wt_per,compositional_params,[structure_params[0],structure_params[1],structure_params[2]],filename,True])
 
     ##store upper mantle data grids: T, P, rho etc.
     grids_low, names = functions.make_mantle_grid(Mantle_filename,True)
@@ -145,14 +156,15 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
         Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac = functions.get_percents(*compositional_params)
 
     else:
-        core_mass_frac = truncate_comp.get('cor_wt')
+        core_mass_frac = truncate_comp.get('wtCore')
+        Mantle_wt_per = functions.get_mantle_percents(compositional_params, core_mass_frac)
+        
         print '\n*********************************'
         print '\nUsing molar ratios to define mantle only'
         print 'Entered core wt%% = {}\n'.format(round(core_mass_frac*100.,6))
         print '*********************************\n'
         wtFe = round(100.*(1- sum(compositional_params[6:])), 8)
         
-        Mantle_wt_per  = truncate_comp
         Core_wt_per = {'Fe': wtFe,'Si':round(100.*compositional_params[6],8) \
           ,'O':round(100.*compositional_params[7],8),'S':round(100.*compositional_params[8],8)}
         Core_mol_per = 'place holder?'
@@ -163,18 +175,16 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
     print 'Core_mol_per: ', Core_mol_per 
     print 'core_mass_frac: ', core_mass_frac
     
+    
     #(Perplex)Run fine mesh grid, Upper mantle mineralogy
-    Mantle_filename = functions.solfile_name(*[Mantle_wt_per,compositional_params,[structure_params[0],structure_params[1],structure_params[2]],filename,True])
-   
-    p_UM = mp.Process(target = run_perplex.run_perplex, args=([Mantle_wt_per,compositional_params, \
-                            [structure_params[0],structure_params[1],structure_params[2]],filename,True]))
+    Mantle_filename = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
+        [structure_params[0],structure_params[1],structure_params[2]],filename,True])
     
    
     #(Perplex) run the lower mantle grid. Coarse mesh, store data in arrays
-    Mantle_filename = functions.solfile_name(*[Mantle_wt_per,compositional_params,[structure_params[3],structure_params[4],structure_params[5]],filename,False])
+    Mantle_filename = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
+        [structure_params[3],structure_params[4],structure_params[5]],filename,False])
     
-    p_LM = mp.Process(target = run_perplex.run_perplex, args = ([Mantle_wt_per,compositional_params, \
-                    [structure_params[3],structure_params[4],structure_params[5]],filename,False]))
     
    
    
@@ -184,8 +194,30 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
     p_UM.join()
     p_LM.join()
     
+    if multi_process:
+        
+        p_LM = mp.Process(target = run_perplex.run_perplex, args = ([Mantle_wt_per,compositional_params, \
+                        [structure_params[3],structure_params[4],structure_params[5]],filename,False]))
+        
+        p_UM = mp.Process(target = run_perplex.run_perplex, args=([Mantle_wt_per,compositional_params, \
+                                [structure_params[0],structure_params[1],structure_params[2]],filename,True]))
+       
+       
+        p_UM.start()
+        p_LM.start()
+        p_UM.join()
+        p_LM.join()
+    
+    else:
+        run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
+                        [structure_params[3],structure_params[4],structure_params[5]],filename,False])
+        
+        run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
+                                [structure_params[0],structure_params[1],structure_params[2]],filename,True])
+
+    
     #only make perplex files?
-    if only:
+    if perplex_only:
         return
     
     #Mantle_filename = run_perplex.run_perplex(*[Mantle_wt_per,compositional_params,[structure_params[0],structure_params[1],structure_params[2]],filename,True])
