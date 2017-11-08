@@ -835,10 +835,7 @@ def R_of_M(mass_planet, core_mass_frac, structure_params, compositional_params, 
     # iterate until the max change in density of any given layer is 1e-6
     
     Planet = planet.compress_fixed_mass(*[Planet, grids, Core_wt_per, structure_params, layers])
-
-    print Planet['mass']/5.972e24 
     
-
     
     
 

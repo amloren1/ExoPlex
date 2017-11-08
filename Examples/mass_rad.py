@@ -3,6 +3,21 @@
 # Copyright (C) 2017 - by the ExoPlex team, released under the GNU
 # GPL v2 or later.
 
+
+#**********************************************************************#
+'''
+This example is a basic template for running the ExoPlex model such that
+radius is a function of mass and composition. The goal is to provide the
+user with a starting point in understanding what goes into the model.
+
+For simplicity, composition is described here while default parameters 
+are set within the params.py module. While these other parameters do not 
+neccesarily need alteration, you may wish to turn some knobs, go ahead. 
+'''
+#**********************************************************************#
+
+
+
 import os
 import sys
 import numpy as np
@@ -13,23 +28,14 @@ if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
 
 
 import ExoPlex as exo
+from params import *
 
-if __name__ == "__main__":
+
+def MvR():
 
     #First user must input the ratios
     #Radius_planet = 1.
 
-    wt_frac_Si_core = 0.
-    wt_frac_water = 0.
-    mol_frac_Fe_mantle = 0.0
-
-    Pressure_range_mantle_UM = '3000 1400000'
-    Temperature_range_mantle_UM = '1400 3500'
-    resolution_UM = '80 140' #11200
-
-    Pressure_range_mantle_LM = '1250000 6200000'
-    Temperature_range_mantle_LM = '2200 5000'
-    resolution_LM = '80 80' #6400
 
     wt_frac_O_core = 0.
     wt_frac_S_core = 0.

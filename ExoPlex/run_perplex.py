@@ -48,12 +48,12 @@ def run_perplex(*args):
     
     if os.path.isfile('../Solutions/'+filename+'_UM.tab') and UMLM == True:
         print '\nThe Upper mantle .tab already exists, please wait briefly for solution:'
-        print  filename+'_LM.tab\n'
+        print  filename+'_UM.tab\n'
         return '../Solutions/' + filename
 
     if os.path.isfile('../Solutions/'+filename+'_LM.tab') and UMLM == False:
         print '\nThe Lower mantle .tab already exists, please wait briefly for solution'
-        print  filename+'_UM.tab\n'
+        print  filename+'_LM.tab\n'
         return '../Solutions/' + filename
 
     else:

@@ -13,11 +13,42 @@ if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
 import functions
 import run_perplex
 #run perplex only or run full ExoPlex model?
-import params.perplex_only
-import params.multi_process 
+
+import params
+
+perplex_only = params.perplex_only
+multi_process = params.multi_process
 
 import multiprocessing as mp
 
+
+def check_input_consistency(compositional_params, structure_params, layers):
+    
+    
+    num_mantle_layers, num_core_layers, number_h2o_layers = layers
+
+    wt_frac_water, FeMg, SiMg, CaMg, AlMg, mol_frac_Fe_mantle, wt_frac_Si_core, \
+     wt_frac_O_core, wt_frac_S_core = compositional_params
+    
+    
+    #Safety check for non-matching inputs, probably just remove this
+    if wt_frac_water == 0. and number_h2o_layers > 0:
+       print '#============================#'
+       print "\n***Build error: excess in water layers for water mass fraction:\n wt_h2o = 0 wt%***"
+       print "Solution: removing top {} layers allocated to water layer".format(number_h2o_layers)
+       print '#============================#'
+       number_h2o_layers     = 0
+       #water_thickness_guess = 0
+    elif wt_frac_water > 0 and number_h2o_layers == 0:
+        print '#============================#'
+        print "***Build error: no layers for water mass fraction:\n wt_h2 > 0 wt%***"
+        print "Solution: Adding 100 layers for water envelope"
+        print '#============================#'
+        number_h2o_layers = 100
+        
+    new_layers = [num_mantle_layers, num_core_layers, number_h2o_layers]
+    
+    return(new_layers)
 
 def run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename, truncate_comp):
 
@@ -30,6 +61,8 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
     #print Core_wt_per.get('S')
     #print Core_wt_per.get('O')
     
+    layers = check_input_consistency(compositional_params, structure_params, layers)
+
     
     if truncate_comp == False:
         print '\n*********************************'
@@ -57,19 +90,20 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
     print 'core_mass_frac: ', core_mass_frac
     
     
-    #(Perplex)Run fine mesh grid, Upper mantle mineralogy
-    Mantle_filename = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
-        [structure_params[0],structure_params[1],structure_params[2]],filename,True])
-   
-
-    
-   
-    #(Perplex) run the lower mantle grid. Coarse mesh, store data in arrays
-    Mantle_filename = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
-        [structure_params[3],structure_params[4],structure_params[5]],filename,False])
-    
+    #Run perplex either in series or parallel for upper and lower mantle
     if multi_process:
+        #must generate filenames with seperate function due to IO issues
+        #with multiprocessing
         
+        #(Perplex)Run fine mesh grid, Upper mantle mineralogy
+        upper_man_file = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
+        [structure_params[0],structure_params[1],structure_params[2]],filename,True])
+    
+        lower_man_file = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
+        [structure_params[3],structure_params[4],structure_params[5]],filename,False])
+        
+    
+        #setup and run lower and upper mantle .tab files simultaneously
         p_LM = mp.Process(target = run_perplex.run_perplex, args = ([Mantle_wt_per,compositional_params, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False]))
         
@@ -83,19 +117,20 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
         p_LM.join()
     
     else:
-        run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
+        lower_man_file = run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
         
-        run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
+        upper_man_file  = run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
                                 [structure_params[0],structure_params[1],structure_params[2]],filename,True])
 
+    
     #only make perplex files?
     if perplex_only:
         return
     
 
     ##store upper mantle data grids: T, P, rho etc.
-    grids_low, names = functions.make_mantle_grid(Mantle_filename,True)
+    grids_low, names = functions.make_mantle_grid(upper_man_file,True)
     names.append('Fe')
 
     #if there is a water mass fraction 0, then append h2o phases to phase list
@@ -107,7 +142,7 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
 
 
     #lower mantle data grids    
-    grids_high = functions.make_mantle_grid(Mantle_filename,False)[0]
+    grids_high = functions.make_mantle_grid(lower_man_file,False)[0]
 
 
     ###Append low and high res grids. grids are rho, alpha, Cp, T,P from perplex solution
@@ -148,6 +183,7 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
     #print Core_wt_per.get('S')
     #print Core_wt_per.get('O')
     
+    layers = check_input_consistency(compositional_params, structure_params, layers)
     
     if truncate_comp == False:
         print '\n*********************************'
@@ -174,28 +210,22 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
     print 'Mantle_wt_per: ', Mantle_wt_per 
     print 'Core_mol_per: ', Core_mol_per 
     print 'core_mass_frac: ', core_mass_frac
-    
-    
-    #(Perplex)Run fine mesh grid, Upper mantle mineralogy
-    Mantle_filename = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
-        [structure_params[0],structure_params[1],structure_params[2]],filename,True])
-    
-   
-    #(Perplex) run the lower mantle grid. Coarse mesh, store data in arrays
-    Mantle_filename = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
-        [structure_params[3],structure_params[4],structure_params[5]],filename,False])
-    
-    
    
    
-   
-    p_UM.start()
-    p_LM.start()
-    p_UM.join()
-    p_LM.join()
     
     if multi_process:
+        #must generate filenames with seperate function due to IO issues
+        #with multiprocessing
         
+        #(Perplex)Run fine mesh grid, Upper mantle mineralogy
+        upper_man_file = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
+        [structure_params[0],structure_params[1],structure_params[2]],filename,True])
+    
+        lower_man_file = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
+        [structure_params[3],structure_params[4],structure_params[5]],filename,False])
+        
+    
+        #setup and run lower and upper mantle .tab files simultaneously
         p_LM = mp.Process(target = run_perplex.run_perplex, args = ([Mantle_wt_per,compositional_params, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False]))
         
@@ -209,10 +239,10 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
         p_LM.join()
     
     else:
-        run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
+        lower_man_file = run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
         
-        run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
+        upper_man_file  = run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
                                 [structure_params[0],structure_params[1],structure_params[2]],filename,True])
 
     
@@ -220,10 +250,9 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
     if perplex_only:
         return
     
-    #Mantle_filename = run_perplex.run_perplex(*[Mantle_wt_per,compositional_params,[structure_params[0],structure_params[1],structure_params[2]],filename,True])
 
     ##store upper mantle data grids: T, P, rho etc.
-    grids_low, names = functions.make_mantle_grid(Mantle_filename,True)
+    grids_low, names = functions.make_mantle_grid(upper_man_file,True)
     names.append('Fe')
 
     #if there is a water mass fraction 0, then append h2o phases to phase list
@@ -235,7 +264,7 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
 
 
     #lower mantle data grids    
-    grids_high = functions.make_mantle_grid(Mantle_filename,False)[0]
+    grids_high = functions.make_mantle_grid(lower_man_file,False)[0]
 
 
     ###Append low and high res grids. grids are rho, alpha, Cp, T,P from perplex solution

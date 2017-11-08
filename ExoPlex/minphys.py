@@ -6,6 +6,7 @@ import math
 from scipy.integrate import odeint
 import sys
 import functions
+import pdb
 
 
 ToPa = 100000.
@@ -29,13 +30,13 @@ def get_rho(Planet,grids,Core_wt_per,layers):
         if i <= num_core_layers:
             rho_layers[i] = get_core_rho(Pressure_layers[i],Temperature_layers[i],Core_wt_per)
 
-    if number_h2o_layers >0:
+    if number_h2o_layers > 0:
         P_points_water = Pressure_layers[(num_mantle_layers+num_core_layers):]
         T_points_water = Temperature_layers[(num_mantle_layers+num_core_layers):]
 
 
         water_rho = get_water_rho(P_points_water, T_points_water)
-
+        
         rho_layers[num_core_layers+num_mantle_layers:] = water_rho
 
     P_points_UM = []
@@ -110,7 +111,6 @@ def get_rho(Planet,grids,Core_wt_per,layers):
                 LM_data[to_switch_index[i]] = test[i]
 
     mantle_data = np.append(LM_data,UM_data)
-
 
     rho_layers[num_core_layers:num_core_layers+num_mantle_layers] = mantle_data
 
@@ -335,9 +335,13 @@ def get_gravity(Planet,layers):
     radii   = Planet.get('radius')
     density = Planet.get('density')
 
+
     num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
+    
+    
     radii_core =  radii[:num_core_layers]
+    
     density_core = density[:num_core_layers]
 
     radii_mantle = radii[num_core_layers:(num_core_layers+num_mantle_layers)]
@@ -393,7 +397,7 @@ def calc_pressure(Planet, layers):
     P_bar = np.zeros(n_tot)
     #keep surface pressure fixed, change to Pa
     P_pa[n_tot-1] = pressure[-1]*ToPa
-    
+
     for i in range(n_tot - 2, -1, -1):
         gmid   = 0.5*(gravity[i+1]+gravity[i])
         rhomid = 0.5*(density[i+1]+density[i])
@@ -525,6 +529,7 @@ def get_temperature(Planet,grids,structural_parameters,layers):
     pressure    = Planet.get('pressure')
     num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
+    
     Mantle_potential_temp = structural_parameters[7]
     Water_potential_temp  = structural_parameters[9]
 
@@ -550,7 +555,7 @@ def get_temperature(Planet,grids,structural_parameters,layers):
     for i in range(len(P_points_water)):
         spec_heat_water.append(get_water_Cp(P_points_water[i],T_points_water[i]))
         alpha_water.append(get_water_alpha(P_points_water[i],T_points_water[i]))
-
+    
     #find upper and lower mantle points
     for i in range(num_mantle_layers):
         if pressure[i] >=1250000:

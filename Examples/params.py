@@ -19,7 +19,7 @@ num_core_layers   = 1000
 number_h2o_layers = 0
 
 #temperature at surface if no water layer. Essentially temperature below the crust
-Mantle_potential_temp = 1700.
+Mantle_potential_temp = 1800.
 
 #h2o potential Temp, surface temperature if there exists an h2o layer
 T_surface_h2o = 300. # K
@@ -38,6 +38,7 @@ perplex_only = False
 multi_process = True
 
 
+REarth = 6371 #kilometers
 
 
 

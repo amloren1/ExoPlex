@@ -6,7 +6,7 @@
 
 #**********************************************************************#
 '''
-This goal of this example is to benchmark various models of Earth with 
+The goal of this example is to benchmark various models of Earth with 
 the PREM
 The function below, Earth_model, takes in composition and builds an
 Earth mass planet. Radius is a function of mass and composition. This can
@@ -57,7 +57,7 @@ def Earth_model(composition, coreComp, fix_core):
     #mass of planet in terms of Earth mass
     Mass = 1.0 #Earth!
     
-    #Molar ratios for mantle of planet
+    #Molar ratios for mantle or whole planet
     SiMg       = composition.get('SiMg')
     FeMg       = composition.get('FeMg')
     CaMg       = composition.get('CaMg')
