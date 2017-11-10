@@ -2,7 +2,7 @@
 
 #**********************************************************************#
 '''
-This script enables the user to input a simplified composition 
+This script enables the user to input a simplified composition
 Fe/Mg and Si/Mg, and a mass to find the corresponding radius, CMF, CRF
 '''
 #*********************************************************************
@@ -23,22 +23,25 @@ import PREM.prem as p
 from params import *
 import pdb
 
+
 #Composition domain 
 # Fe/Mg is from 0.7-1.6, Si/Mg is 0.7-1.6
 FeMg = np.arange(0.7, 1.7, 0.1)
 SiMg = np.arange(0.7, 1.7, 0.1)
 
 #mass domain grid for interpolation
-#each mass has a .dat file (e.g. 0.5.dat )
+#each mass has a .dat file (e.g. 0.5.dat)
 Mass = np.arange(0.5, 1.8,0.1)
 
 Rads = np.zeros(len(Mass))
+
 
 ##Setup plots
 #plt.rc('font', family='serif', serif='cm10')
 
 fig, ax = plt.subplots(figsize = (20,10))
 plt.rc('font', family='serif')
+
 
 
 ################
@@ -57,12 +60,12 @@ Steps:
 # simple bisection method to find indicies
 ###########################################
 def bissect(grid, value):
-    
+
     mid = int(len(grid)/2.)
     hi  = int(len(grid)-1)
     lo  = 0
     if value/max(grid) > 1.0+1e-6 :
-        
+
         print 'Exiting. The following value is not in the grids yet:'
         print '{}'.format(value)
         print 'Max = {}'.format(max(grid))
@@ -92,20 +95,31 @@ def interpolant(lo, hi, val):
 #calculates interpolant
 ###################################
 def interpd_data(q, y1, y2):
-    
+
     y = y1+q*(y2-y1)
-    
+
     return y
 
 
 
 
+#Find row which corresponds to composition
+# Fe/Mg is from 0.7-1.6, Si/Mg is 0.7-1.6
+
+def loc_data(FeMg_grid, SiMg_grid, h2o_grid, femg, simg, wt_h2o):
+
+    femg_i   = bissect(FeMg_grid, femg)[0]
+    simg_i   = bissect(SiMg_grid, simg)[0]
+    wt_h2o_i = bissect(h2o_grid, wt_h2o)
+
+    
 #find the location on the grids which corresponds to
 #desired compostiion
-def loc_data(FeMg_grid, SiMg_grid, femg, simg):
+def loc_data_no_h2o(FeMg_grid, SiMg_grid, femg, simg):
     
     femg_i = bissect(FeMg_grid, femg)[0]
     simg_i = bissect(SiMg_grid, simg)[0]
+
     #loc is the row in any mass file which is the specified composition
     loc    = femg_i*len(FeMg_grid)+simg_i
 
@@ -117,7 +131,7 @@ def loc_data(FeMg_grid, SiMg_grid, femg, simg):
 def file_names(mass):
     mass_string = repr(round(mass,2)).replace('.', ',')
     name = mass_string+'.dat'
-    
+
     return name
     
     
@@ -129,9 +143,11 @@ Import all of the mass files
 '''
 ########################################################################
 
+
 ####
 #Pull data from arrays for a specific composition
 ####
+
 def make_data_arrays(femg, simg):
 
     N_mas = len(Mass)
@@ -145,30 +161,33 @@ def make_data_arrays(femg, simg):
     #pull data row from each file
     for i in range(len(Mass)):
         f_name = file_names(Mass[i])
-        #'Mass', 'Radius','Fe/Mg','Si/Mg', 'Bulk density', 'core_wt%', 'core_rad%'
+        #'Mass', 'Radius','Fe/Mg','Si/Mg', 'wt_h2o', 'Bulk density', 'core_wt%', 'core_rad%'
         dat = np.genfromtxt(f_name)
-    
+
         dat_row = dat[row,:]
-    
-        Rads[i]    = dat_row[1] 
+
+        Rads[i]    = dat_row[1]
         t_femg[i]  = dat_row[2]
         t_simg[i]  = dat_row[3]
-        rho[i]     = dat_row[4]
-        cmf[i]     = dat_row[5]
-        crf[i]     = dat_row[6]
-        
+        t_wth2o[i]  = dat_row[4]
+        rho[i]     = dat_row[5]
+        cmf[i]     = dat_row[6]
+        crf[i]     = dat_row[7]
+
     keys = ['Mass', 'Radius','FeMg','SiMg', 'rho', 'CMF', 'CRF']
-    
+
     return(dict(zip(keys,[Mass, Rads, t_femg, t_simg, rho, cmf, crf])))
-   
+
 ####
 # plot limits: pure fe, pure mantle and pure water/ice
-#### 
+####
+
 
 def plot_limits(f_name, i_anno):
     
     text = ['100% Fe', '100% mantle', '100% H$_2$O']
     colr  = ['dimgray', 'darkolivegreen', 'darkcyan']
+
     dat = np.genfromtxt(f_name)
     mas = dat[:,0]
     rads = dat[:,1]
@@ -182,10 +201,11 @@ def plot_limits(f_name, i_anno):
      xytext = (np.median(mas), np.median(rads)*0.990), fontsize = 16, \
      rotation=8, weight = 'bold')
 
+
 ####
 # take composition, find data arrays, interpolate to find radius
 # plot on MvR
-#### 
+####
 def plot_comps(femg, simg, mass, err):
     import random
     r = lambda: random.randint(0,255)
@@ -197,22 +217,21 @@ def plot_comps(femg, simg, mass, err):
         rho = dat.get('rho')
         cmf = dat.get('cmf')
         crf = dat.get('crf')
-        
+
         #find interpolation value
         mid, lo, hi = bissect(Mass, mass)
-        
+
         q = interpolant(Mass[lo],Mass[hi],mass)
-     
+
         radius = interpd_data(q, Rads[lo], Rads[hi])
-        
+
         return radius, Rads
-    
-    
+
     plot_limits('pure_Fe.dat', 0)
     plot_limits('pure_rock(1,1).dat', 1)
     plot_limits('pure_h2o.dat', 2)
 
-    
+
     lab_size = 23
     tic_size = 18
 
@@ -224,7 +243,7 @@ def plot_comps(femg, simg, mass, err):
     ax.set_xlim(min(Mass)*.9, 3.3)
     ax.set_ylim(0.5, 3)
     for i in range(len(femg)):
-        
+
         radius, rads = find_radius(femg[i], simg[i], mass[i])
         no_lab = "_nolegend_"
         l1 = 'Fe/Mg = {}; Si/Mg = {}'.format(femg[i],simg[i])
@@ -232,7 +251,7 @@ def plot_comps(femg, simg, mass, err):
             l2 = 'Fe/Mg = {}; Si/Mg = {}'.format(femg[i+1],simg[i+1])
         else:
             l2 = 'dummd'
-        
+
         j = ('#%02X%02X%02X' % (r(),r(),r()))
         ax.scatter(mass[i],radius, marker = 'H', linewidth = 7, c = j, edgecolor=j,  \
                   label = 'R(M={})={}'.format(mass[i], radius))
@@ -248,6 +267,7 @@ def plot_comps(femg, simg, mass, err):
     
     
     plt.legend(loc = 'upper left', fontsize = tic_size, scatterpoints=1)
+
     plt.show()
 
     return radius
@@ -269,9 +289,9 @@ Q = interpolant(Mass[lo], Mass[high], test)
 print '\n{} is at location = {} '.format(test, mid)
 print 'mid = {} \nlow = {} \nhi = {}\n'.format(mid, lo, high)
 print 'interpolant between M_lo = {} and M_hi = {} \nis q = {}'.format(Mass[lo], \
-                                Mass[high],Q) 
+                                Mass[high],Q)
 
-print Mass  
+print Mass
 
 
 
