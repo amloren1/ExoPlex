@@ -199,6 +199,7 @@ def compress_fixed_mass(*args):
         
         Planet['pressure']    = minphys.calc_pressure(Planet, layers)
         
+        #pdb.set_trace()
         
         Planet['temperature'] = minphys.get_temperature(Planet,grids,structural_params,layers)
         
