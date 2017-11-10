@@ -6,14 +6,14 @@
 
 #**********************************************************************#
 '''
-The goal of this example is to benchmark various models of Earth with 
+The goal of this example is to benchmark various models of Earth with
 the PREM
 The function below, Earth_model, takes in composition and builds an
 Earth mass planet. Radius is a function of mass and composition. This can
 be inverted as other examples show.
-Go from a full description of earth composition and core mass to only 
+Go from a full description of earth composition and core mass to only
 vague knowledge of Earth's bulk elemental abundances indicated by the solar
-photosphere. 
+photosphere.
 '''
 #**********************************************************************#
 
@@ -52,27 +52,27 @@ Inputs:
 
 def Earth_model(composition, coreComp, fix_core):
     #import parameters not related to planet composition
-    
-    
+
+
     #mass of planet in terms of Earth mass
     Mass = 1.0 #Earth!
-    
+
     #Molar ratios for mantle or whole planet
     SiMg       = composition.get('SiMg')
     FeMg       = composition.get('FeMg')
     CaMg       = composition.get('CaMg')
     AlMg       = composition.get('AlMg')
-    fFeO_m     = composition.get('fFeO') 
+    fFeO_m     = composition.get('fFeO')
     wt_h2o     = composition.get('wt_h2o')
 
-    
+
     #composition of core
     wt_frac_Si_core = coreComp.get('wtSi')
     wt_frac_O_core  = coreComp.get('wtO')
     wt_frac_S_core  = coreComp.get('wtS')
 
 
-    wt_frac_water      = wt_h2o # Earth = 0.0002 
+    wt_frac_water      = wt_h2o # Earth = 0.0002
 
     #lists of compositional and structural inputs used to build planet
     compositional_params = [wt_frac_water,FeMg,SiMg,CaMg,AlMg,fFeO_m ,wt_frac_Si_core, \
@@ -83,21 +83,21 @@ def Earth_model(composition, coreComp, fix_core):
                          Core_rad_frac_guess,Mantle_potential_temp, h20_radfrac_guess, T_surface_h2o]
 
     layers = [num_mantle_layers,num_core_layers,number_h2o_layers]
-    
+
     sol_filename = 'Star_Boy37'
-    
-    
+
+
     #Here is where the ExoPlex model is called
-    #result is a profile for density, mass, radius, 
+    #result is a profile for density, mass, radius,
     #heat capacity, emissivity of heat and mineralogy
     Planet = exo.run_planet_mass(Mass, compositional_params,structure_params,layers,sol_filename,  fix_core)
 
     #print this stuff to make sure you are not going insane in da membrane
     if verbose:
-        
+
         print 'radius of planet'
         print Planet['radius'][-1]/1000
-        
+
         print
         print "Mass = ", '%.3f'%(Planet['mass'][-1]/5.97e24), "Earth masses"
         print "Core Mass Fraction = ", '%.3f'%(100.*Planet['mass'][num_core_layers]/Planet['mass'][-1])
@@ -105,22 +105,22 @@ def Earth_model(composition, coreComp, fix_core):
         print "CMB Pressure = " ,'%.3f' % (Planet['pressure'][num_core_layers]/10000), "GPa"
         print "Central pressure = {} GPa".format(Planet['pressure'][0]/10000)
 
-    
+
     return Planet
-    
+
 def plot_vs_PREM(Planet):
     #import prem data (rad, depth, rho_depth, rho_rad)
     #keys: 'radius', 'depth', 'rho_depth', 'rho_radius' , \
     #     'VPV', 'VPH', 'VSV', 'VSH'}
     prem_dat = p.prem()
-    
+
     depth_prm = prem_dat.get('depth')
     rho_dep   = prem_dat.get('rho_depth')
-    
+
     #setup plotting data from ExoPlex model
     depth_ep = (Planet['radius'][-1]-Planet['radius'])/1e3
     rho_ep = Planet['density']/1e3
-    
+
     #setup plots
     fig, ax =  plt.subplots(figsize = (15,10))
 
@@ -134,28 +134,28 @@ def plot_vs_PREM(Planet):
     ax.tick_params(direction='in', length=6, labelsize = tic_size)
     ax.grid(color='grey', linestyle='-', alpha = 0.4, linewidth=.7)
 
-    
+
     #Plot the PREM and Exoplex model
     ax.plot(depth_prm, rho_dep, label = 'PREM',  lw = 5, ls = '-.', color = 'black')
     ax.plot(depth_ep, rho_ep, label = 'ExoPlex', lw = 4, color = 'magenta')
-    
+
     plt.legend(loc = 'lower right', fontsize = tic_size)
-    
+
     #store the figure somewhere?
     #path_to_figs = '/home/alejandro/Documents/M-R Stuff/ThesisFigs'
     #plt.savefig(path_to_figs+'/Earth_v_PREM_describe.png')
-    
+
     plt.show()
 
     #send model data to a file?
     data = np.array([depth_ep, Planet['density']/1e3])
     data = data.T
     #np.savetxt('Earth_McD_bulk.dat', data, fmt = '%.4f', delimiter = '\t', header = "depth (km)\tdensity (kg/m^3)")
-    
+
     return
 
 
-    
+
 
 
 
@@ -164,13 +164,13 @@ def plot_vs_PREM(Planet):
 #----------------------------------------------------------------
 '''
 Suggested composition inputs for the various cases above
-'''        
+'''
 #----------------------------------------------------------------
 
 ##
-#bulk earth ratios from McDonough O3. 
-# fFeO = 0 and fFeO =  0.1324012  
-#where fFeO is freaction of total Fe moles in mantle as FeO  
+#bulk earth ratios from McDonough O3.
+# fFeO = 0 and fFeO =  0.1324012
+#where fFeO is freaction of total Fe moles in mantle as FeO
 ##
 bulk_Earth_comp = {'FeMg': 2.969696 , 'SiMg': 0.90303030 , \
                  'AlMg': 0.090909090 , 'CaMg': 0.06666 , \
@@ -219,15 +219,28 @@ wtCore = .323 #McDonough 03
 '''
 Run ExoPlex for a variety of cases
 '''
-
+import pdb
 #########################################################################
 #1) Model Earth with full knowledge of composition and core mass fraction
 plan = Earth_model(mantle_Earth_comp, light_core_composition, man_only)
-plot_vs_PREM(plan)
+
+mass = plan['mass'][num_core_layers:]
+rad = plan['radius'][num_core_layers:]
+rho = plan['density'][num_core_layers:]
+P   = plan['pressure'][num_core_layers:]
+T   = plan['temperature'][num_core_layers:]
+
+dat_header = '{:25}{:25}{:25}{:25}{:25}'.format('mass', 'radius', 'density', 'pres', 'temp')
+phase_header = '{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}\
+    {:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}'.format(*plan['phase_names'])
+#pdb.set_trace()
+np.savetxt('Earth_phase.dat', plan['phases'][num_core_layers:] , delimiter = ' , ' ,header = phase_header)
+np.savetxt('Earth_mantle.dat', np.transpose([mass, rad, rho, P, T]), delimiter = ' , ' ,header = dat_header)
+#plot_vs_PREM(plan)
 
 #2) Earth with knowledge of its bulk composition only
 #use McD values with and without Fe in mantle
-#left light core just because 
+#left light core just because
 #Earth_fix_Mcor(bulk_Earth_comp_fFeO, Fe_only_core, bulk_inputs)
 
 
