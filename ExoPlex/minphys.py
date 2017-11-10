@@ -77,7 +77,7 @@ def get_rho(Planet,grids,Core_wt_per,layers):
         for i in range(len(test)):
 
             if np.isnan(test[i]) == True:
-                print to_switch_P[i] / 1e5, to_switch_T[i]
+                print to_switch_P[i], to_switch_T[i]
                 print "UM Rho Outside of range!"
                 sys.exit()
             else:
