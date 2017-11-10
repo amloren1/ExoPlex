@@ -44,6 +44,7 @@ wt_Sc  = 0.0
 
 Mass = np.arange(0.5, 4.0 , 0.1)
 
+
 def file_names(mass):
     mass_string = repr(round(mass,2)).replace('.', ',')
     name = mass_string+'.dat'
@@ -63,7 +64,7 @@ def plot_rho(Planet):
     lab_size = 23
     tic_size = 18
     ax.set_xlim(0., max(depth_ep))
-    #ax.set_ylim(.90, 4)
+    #ax.set_ylim(3, 5)
 
     ax.set_ylabel("Density (g/cm$^3$)", fontsize = lab_size )
     ax.set_xlabel("Depth (km)", fontsize = lab_size)
@@ -86,8 +87,6 @@ produce core, mantle, and water, planets here
 #######################################################################
 
 
-
-def grid_make_special(i_file):
 
     #fix_core = {'fix_man': True, 'wtCore': 0.0000000000000000001}
 
@@ -120,8 +119,9 @@ def grid_make_special(i_file):
 
     for m in range(len(Mass)):
         if Mass[m] > 2.0 and i_file == 0:
-            Mantle_potential_temp = 2600
+            Mantle_potential_temp = 1400
         else:
+
             Mantle_potential_temp = 1800
 
         compositional_params = [wt_h2o,FeMg,SiMg,CaMg,AlMg,0. ,wt_Sic, \
@@ -153,7 +153,7 @@ def grid_make_special(i_file):
 #######################
 '''
 try:
-    grid_make_special(0)
+    grid_make_special(1)
 except:
     import pygame
 
