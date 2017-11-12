@@ -234,8 +234,12 @@ dat_header = '{:25}{:25}{:25}{:25}{:25}'.format('mass', 'radius', 'density', 'pr
 phase_header = '{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}\
     {:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}'.format(*plan['phase_names'])
 #pdb.set_trace()
-np.savetxt('Earth_phase.dat', plan['phases'][num_core_layers:] , delimiter = ' , ' ,header = phase_header)
-np.savetxt('Earth_mantle.dat', np.transpose([mass, rad, rho, P, T]), delimiter = ' , ' ,header = dat_header)
+dat = np.transpose([mass, rad, rho, P, T])
+phase = plan['phases'][num_core_layers:]
+kitchen_sink = np.concatenate([dat,phase],axis=1)
+
+np.savetxt('Earth_nofmt.dat', kitchen_sink , delimiter = ',' ,header = dat_header+phase_header)
+#np.savetxt('Earth_mantle.dat', np.transpose([mass, rad, rho, P, T]), delimiter = ' , ' ,header = dat_header)
 #plot_vs_PREM(plan)
 
 #2) Earth with knowledge of its bulk composition only
