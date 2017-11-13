@@ -58,6 +58,67 @@ def solfile_name(*args):
     
 
 verbose = False
+
+
+#function used to exchange the input molar ratio of composition to
+#mass ratios for creating a Perplex file based on input MANTLE comp
+#this will bypass internal function which
+def get_mantle_percents(args, cor_wt):
+    #constants, atomic masses
+    mFe      = 55.845
+    mMg      = 24.306
+    mSi      = 28.0867
+    mO       = 15.9994
+    mS       = 32.0650
+    mCa      = 40.078
+    mAl      = 26.981
+    
+    femg = args[1]
+    simg = args[2]
+    camg = args[3]
+    almg = args[4]
+
+    A = np.array([[0, 0, simg, -1, 0, 0],
+                [-1, 0, femg, 0, 0, 0],
+                    [0, 0, camg, 0, -1, 0],
+                    [0, 0, almg, 0, 0, -1],
+                    [mFe ,mO ,mMg ,mSi ,mCa ,mAl],
+                    [ 1, -1, 1, 2, 1, 1.5]])
+    
+    b = np.array([0, 0, 0, 0, 100., 0])
+
+    #mol = [nFe, nO, nMg, nSi, nCa, nAl]
+    mol  = np.linalg.solve(A,b)
+    
+    if verbose:
+        print '\nCompare composition inputs with calculated outputs:'
+        print 'Fe/Mg_in = {} = {} = FeMg_calc'.format(femg, mol[0]/mol[2])
+        print 'Si/Mg_in = {} = {} = SiMg_calc'.format(simg, mol[3]/mol[2])
+        print 'Ca/Mg_in = {} = {} = CaMg_calc'.format(camg, mol[4]/mol[2])
+        print 'Al/Mg_in = {} = {} = alMg_calc\n'.format(almg, mol[5]/mol[2])
+    
+    M_man = 100.
+    
+    #these are the inputs for perplex
+    feo   = round(100*(mFe+mO)*mol[0]/M_man, 6)
+    mgo   = round(100*(mMg+mO)*mol[2]/M_man, 6)
+    sio2  = round(100*(mSi+2*mO)*mol[3]/M_man, 6)
+    cao   = round(100*(mCa+mO)*mol[4]/M_man, 6)
+    al2o3 = round(100*(mAl+1.5*mO)*mol[5]/M_man, 6)
+    
+    wtTot = feo+mgo+sio2+cao+al2o3
+    
+    if verbose:
+        print '\nMantle composition input for perplex:'
+        print 'FeO = {}\nMgO = {}\nSiO2 = {} \nCaO = {} \nAl2O3 = {}'.format(feo, mgo, sio2, \
+            cao, al2o3)
+        print '\nwtTot = {}'.format(wtTot)
+    
+    comp_truncate = {'FeO': feo, 'SiO2': sio2, 'MgO': mgo, \
+                     'CaO': cao,'Al2O3': al2o3, 'cor_wt': cor_wt}
+
+    return(comp_truncate)
+    
 def get_percents(*args):
     FeMg = args[1]
     SiMg = args[2]
@@ -774,10 +835,7 @@ def R_of_M(mass_planet, core_mass_frac, structure_params, compositional_params, 
     # iterate until the max change in density of any given layer is 1e-6
     
     Planet = planet.compress_fixed_mass(*[Planet, grids, Core_wt_per, structure_params, layers])
-
-    print Planet['mass']/5.972e24 
     
-
     
     
 

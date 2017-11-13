@@ -28,16 +28,6 @@ def initialize_by_radius(*args):
     # if there is a water layer, the imput temperature is lowered because that temperature is for the crustal layer
     # also 50 shells are used for the water layer hence the nh20 vaiable
 
-    #Safety check for non-matching inputs, probably just remove this
-    if wt_frac_water == 0. and number_h2o_layers > 0:
-       print "***Build error: excess in water layers for water mass fraction = 0 wt%*** {}".format(number_h2o_layers)
-       print "Solution: removing water layer"
-       number_h2o_layers     = 0
-       water_thickness_guess = 0
-    elif wt_frac_water > 0 and number_h2o_layers == 0:
-        print "***Build error: no layers for water mass fraction > 0 wt%***"
-        print "Solution: Adding 100 layers for water envelope"
-        number_h2o_layers = 100
 
     num_layers = num_core_layers+num_mantle_layers + number_h2o_layers
 
@@ -67,10 +57,10 @@ def initialize_by_radius(*args):
 
 
     for i in range(num_layers):
-        if i <=num_core_layers:
-            radius_layers[i]      = ((float(i)/num_core_layers)*core_thickness_guess)
+        if i < num_core_layers:
+            radius_layers[i]      = ((float(i)/(num_core_layers-1.))*core_thickness_guess)
             density_layers[i]     = 8280.0
-            Temperature_layers[i] = 4500.+ (float((3000.-4500.))/float(num_core_layers))\
+            Temperature_layers[i] = 4500.+ (float((3000.-4500.))/float(num_core_layers-1.))\
                                                             *float((i))
 
         elif i < (num_core_layers+num_mantle_layers):
@@ -78,9 +68,9 @@ def initialize_by_radius(*args):
             density_layers[i]     = 4100.
             Temperature_layers[i] = 2700.
 
-        else:
+        elif number_h2o_layers>0:
             radius_layers[i]      = core_thickness_guess+mantle_thickness_guess+\
-                                   ((float(i-num_core_layers-num_mantle_layers)/(number_h2o_layers-1))*water_thickness_guess)
+                                   ((float(i-num_core_layers-num_mantle_layers)/(number_h2o_layers-1.))*water_thickness_guess)
             density_layers[i]     = 1100.
             Temperature_layers[i] = 300.
 
@@ -180,12 +170,11 @@ def compress_fixed_mass(*args):
         #copy the previous density before updating again
         plan = copy.deepcopy(Planet)
         old_rho = plan['density']
-        
-        #print 'running get_rho'
-        #new_rho = minphys.get_rho(Planet,grids,Core_wt_per,layers)
+        import pdb
+        #pdb.set_trace()
+        #find new density
         Planet['density'] = minphys.get_rho(Planet,grids,Core_wt_per,layers)
         
-
         
         for i in range(len(Planet['density'])):
             if np.isnan(Planet['density'][i]) == True:
@@ -204,21 +193,23 @@ def compress_fixed_mass(*args):
         Planet['radius']      = update[0]
         delta = update[1]
         
+       
         #update gravity, pressure, and temperature using minphys,calc_ routines :)
         Planet['gravity']     = minphys.calc_gravity(Planet, layers)
-    
+        
         Planet['pressure']    = minphys.calc_pressure(Planet, layers)
+        
+        #pdb.set_trace()
         
         Planet['temperature'] = minphys.get_temperature(Planet,grids,structural_params,layers)
         
         
-        
+        #pdb.set_trace()
         if n_iterations < n_min:
             converge = False
         if n_iterations> n_min and delta < 1e-6:
             converge = True
             print 'convergence reached\ndelta = {}'.format(delta)
-        
         n_iterations+=1
         
     return Planet
@@ -248,6 +239,8 @@ def initialize_by_mass(*args):
     #total number of layers 
     n_tot = num_core_layers+num_mantle_layers + number_h2o_layers
     num_layers = n_tot
+    
+    
     # these grids are initialized in this function and are then a passed around through the other routines and edited each iteration
     radius_layers      = np.zeros(num_layers)
     density_layers     = np.zeros(num_layers)
@@ -292,10 +285,9 @@ def initialize_by_mass(*args):
 
 
     #define center of planet
-    radius_layers[0]      = ((float(0)/num_core_layers)*R_core)
+    radius_layers[0]      = 0.0
     density_layers[0]     = 8280.0
-    Temperature_layers[0] = 4500.+ (float((3000.-4500.))/float(num_core_layers))\
-                                                    *float((0))
+    Temperature_layers[0] = 4500.
     volume_layers[0]      = (4.0 / 3) * np.pi * (radius_layers[0] ** 3)
     mass_layers[0]        = volume_layers[0]*density_layers[0]
     cumulative_mass[0]    = mass_layers[0]
@@ -306,10 +298,10 @@ def initialize_by_mass(*args):
 
     for i in range(1, n_tot):
         
-        if i <=num_core_layers:
-            radius_layers[i]      = ((float(i)/(num_core_layers))*R_core)
+        if i <num_core_layers:
+            radius_layers[i]      = ((float(i)/(num_core_layers-1))*R_core)
             density_layers[i]     = rhoCor
-            Temperature_layers[i] = 4500.+ (float((3000.-4500.))/float(num_core_layers))\
+            Temperature_layers[i] = 4500.+ (float((3000.-4500.))/float(num_core_layers-1.))\
                                                             *float((i))
             volume_layers[i]      = (4.0 / 3) * np.pi * (radius_layers[i] ** 3 - radius_layers[i-1] ** 3)
             mass_layers[i]        = volume_layers[i]*density_layers[i]
@@ -317,16 +309,16 @@ def initialize_by_mass(*args):
             
         elif i < (num_core_layers+num_mantle_layers):
             #print (float(i-num_core_layers)/(num_mantle_layers-1))
-            radius_layers[i]      = (R_core+((float(i-num_core_layers)/(num_mantle_layers-1))*(R_man-R_core)))
+            radius_layers[i]      = (R_core+((float(i-num_core_layers)/(num_mantle_layers-1.))*(R_man-R_core)))
             density_layers[i]     = rhoMan
             Temperature_layers[i] = 2700.
             volume_layers[i]      = (4.0 / 3) * np.pi * (radius_layers[i] ** 3 - radius_layers[i-1] ** 3)
             mass_layers[i]        = volume_layers[i]*density_layers[i]
             cumulative_mass[i]    = mass_layers[i]+cumulative_mass[i-1]
 
-        else:
+        elif number_h2o_layers>0:
             radius_layers[i]      = R_man+\
-                                   ((float(i-num_core_layers-num_mantle_layers)/number_h2o_layers)*(R_h20-R_man))
+                                   ((float(i-num_core_layers-num_mantle_layers)/(number_h2o_layers-1.))*(R_h2o-R_man))
             density_layers[i]     = rhoH20
             Temperature_layers[i] = 300.
             volume_layers[i]      = (4.0 / 3) * np.pi * (radius_layers[i] ** 3 - radius_layers[i-1] ** 3)
@@ -335,12 +327,13 @@ def initialize_by_mass(*args):
 
 
     for i in range(num_layers):
+
         if i > num_core_layers+num_mantle_layers:
             Pressure_layers[i] = 1
         else:
             Pressure_layers[i] = (float((5000.-(300.*10000))/float(num_core_layers+num_mantle_layers-1))*float(i)
                                   + 300.*10000)
-
+            #print 'P[{}] = {}'.format(i,Pressure_layers[i])
 
     keys = ['radius','density','temperature','gravity','pressure',\
             'alpha','cp','Vphi','Vp','Vs','K', 'dmass', 'mass', 'volume']
