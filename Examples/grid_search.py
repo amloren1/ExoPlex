@@ -56,6 +56,7 @@ Steps:
 ################
 
 
+
 ###########################################
 # simple bisection method to find indicies
 ###########################################
@@ -112,11 +113,13 @@ def loc_data(FeMg_grid, SiMg_grid, h2o_grid, femg, simg, wt_h2o):
     simg_i   = bissect(SiMg_grid, simg)[0]
     wt_h2o_i = bissect(h2o_grid, wt_h2o)
 
+
     
 #find the location on the grids which corresponds to
 #desired compostiion
 def loc_data_no_h2o(FeMg_grid, SiMg_grid, femg, simg):
     
+
     femg_i = bissect(FeMg_grid, femg)[0]
     simg_i = bissect(SiMg_grid, simg)[0]
 
@@ -182,7 +185,6 @@ def make_data_arrays(femg, simg):
 # plot limits: pure fe, pure mantle and pure water/ice
 ####
 
-
 def plot_limits(f_name, i_anno):
     
     text = ['100% Fe', '100% mantle', '100% H$_2$O']
@@ -191,6 +193,7 @@ def plot_limits(f_name, i_anno):
     dat = np.genfromtxt(f_name)
     mas = dat[:,0]
     rads = dat[:,1]
+
 
     print text[i_anno]
 
@@ -226,6 +229,7 @@ def plot_comps(femg, simg, mass, err):
         radius = interpd_data(q, Rads[lo], Rads[hi])
 
         return radius, Rads
+
 
     plot_limits('pure_Fe.dat', 0)
     plot_limits('pure_rock(1,1).dat', 1)
@@ -263,7 +267,6 @@ def plot_comps(femg, simg, mass, err):
             ax.plot(Mass, rads, label = l1, lw = 5, alpha = 0.7
             , color = j)
         plt.draw()
-    
     
     
     plt.legend(loc = 'upper left', fontsize = tic_size, scatterpoints=1)

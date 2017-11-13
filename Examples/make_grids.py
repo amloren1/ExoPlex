@@ -46,7 +46,7 @@ wt_Sic = 0.0
 wt_Oc  = 0.0
 wt_Sc  = 0.0
 
-Mass = np.arange(0.6, 4.0, 0.2)
+Mass = np.arange(0.8, 4.1, 0.2)
 
 
 #####################################################################
@@ -117,6 +117,9 @@ def grid_make():
         f_name = file_names(Mass[m])
         if os.path.exists(f_name):
             continue
+        elif Mass[m]>= 2.5:
+            Mantle_potential_temp = 1700.
+
         n = 0
         for i in range(len(FeMg)):
 
@@ -155,7 +158,7 @@ def grid_make():
 
         dat_row_header = '{0:15}{1:15}{2:15}{3:15}{4:15}{5:15}{6:15}{7:15}'.format('Mass', 'Radius','Fe/Mg', \
                         'Si/Mg', 'wt%+h2o', 'Bulk density', 'core_wt%', 'core_rad%')
-        np.savetxt(f_name, np.transpose([mass_grid,rad_grid, femg_grid, simg_grid,h2o, h2o_grid,bulk_rho_grid, CMF_grid, CRF_grid]), \
+        np.savetxt(f_name, np.transpose([mass_grid,rad_grid, femg_grid, simg_grid, h2o_grid,bulk_rho_grid, CMF_grid, CRF_grid]), \
                     delimiter = '    ',  fmt = '%-10.5f', header = dat_row_header)
 
 
