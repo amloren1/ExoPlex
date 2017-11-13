@@ -1,6 +1,3 @@
-
-
-
 #(Perplex) P&T parameter space definitions for phase diagram
 #reducing resolution can dramatically reduce run time of Perple_x files
 #however, this comes at a cost of accuracy in mineralogy
@@ -24,6 +21,10 @@ Mantle_potential_temp = 1800.
 #h2o potential Temp, surface temperature if there exists an h2o layer
 T_surface_h2o = 300. # K
 
+#water mass fraction
+wt_frac_water = 0.0
+
+
 #initialize planet with these guesses for radial fraction of core and water layer
 Core_rad_frac_guess = .54
 h20_radfrac_guess   = 0.0
@@ -31,17 +32,11 @@ h20_radfrac_guess   = 0.0
 #request exoplex to print extra details on progress and results
 verbose = True
 
-#run only perple_x solution files?
-perplex_only = False
 
 #multiprocess perple_x?
 multi_process = True
 
 
-REarth = 6371 #kilometers
-
-
-
-
-
+MEarth = 5.972e24  #kg
+REarth = 6.371e3   #kilometers
 
