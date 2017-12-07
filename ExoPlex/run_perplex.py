@@ -10,14 +10,11 @@ if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
 
 def run_perplex(*args):
 
+
     Mantle_wt_per = args[0]
 
-    FeMg = args[1][1]
-    SiMg = args[1][2]
-    CaMg = args[1][3]
-    AlMg = args[1][4]
-    mol_frac_Fe_mantle = args[1][5]
-    wt_frac_Si_core = args[1][6]
+
+    solutionFileNameMan = args[1]
 
     Pressure_range_mantle = args[2][0]
     Temperature_range_mantle = args[2][1]
@@ -31,44 +28,35 @@ def run_perplex(*args):
              + ' ' + str(Mantle_wt_per.get('Al2O3'))+ ' ' + str(0.) #last value included for Na
 
 
-    #this filename convention excludes wtO and wtS in the core
-    solfileparamsString0 = '_' + str(round(SiMg, 3)) + '_' + str(round(FeMg, 3)) + '_' + str(
-        round(CaMg, 3)) + '_' + str(round(AlMg, 3)) \
-                           + '_' + str(round(mol_frac_Fe_mantle, 3)) + '_' + str(round(wt_frac_Si_core, 3))
 
-    # changes periods to commas
-    solfileparamsString = solfileparamsString0.replace('.', ',')
-    solutionFileNameMan = 'SiMg_FeMg_CaMg_AlMg_XFeO_fSic' + solfileparamsString + '_MANTLE'
+    filename ='../Solutions/'+solutionFileNameMan
 
-    #RENAME FILENAME
-    #TODO: come up with a better way to handle the filenames
-    #
-    filename = solutionFileNameMan
 
-    
-    if os.path.isfile('../Solutions/'+filename+'_UM.tab') and UMLM == True:
+    if os.path.isfile(filename+'_UM.tab') and UMLM == True:
         print '\nThe Upper mantle .tab already exists, please wait briefly for solution:'
         print  filename+'_UM.tab\n'
-        return '../Solutions/' + filename
+        return filename
 
-    if os.path.isfile('../Solutions/'+filename+'_LM.tab') and UMLM == False:
+    if os.path.isfile(filename+'_LM.tab') and UMLM == False:
         print '\nThe Lower mantle .tab already exists, please wait briefly for solution'
         print  filename+'_LM.tab\n'
-        return '../Solutions/' + filename
+        return filename
 
     else:
         if UMLM == True:
-            print 'Making upper mantle PerPlex phase file. \n This will be stored in: ../Solutions/'+ filename+'_UM.tab'
+            print 'Making upper mantle PerPlex phase file. \n This will be stored in: '+ filename+'_UM.tab'
             description = '_UM'
         else:
-            print 'Making lower mantle PerPlex phase file. \n This will be stored in: ../Solutions/'+ filename+'_LM.tab'
+            print 'Making lower mantle PerPlex phase file. \n This will be stored in: '+ filename+'_LM.tab'
             description = '_LM'
 
         #we need to shorten the file name for PerPlex to accept it
-        solutionFileNameMan_short = list(solutionFileNameMan)
-        solutionFileNameMan_short[0:30] = []
+        solutionFileNameMan_short = list(filename)
+        solutionFileNameMan_short[0:33] = []
 
         solutionFileNameMan = "".join(solutionFileNameMan_short)+description
+
+
     # define perplex inputs in terms of components, this is for legibility
 
     component1 = 'MGO'
@@ -138,7 +126,7 @@ def run_perplex(*args):
     p.sendline('Opx')
     p.sendline('Cpx')
     p.sendline('Aki')
-    p.sendline('Gt_maj') #kitchen sink
+    p.sendline('Gt') #kitchen sink
     p.sendline('Ppv')
     p.sendline('CF')
     p.sendline('')
@@ -249,9 +237,9 @@ def run_perplex(*args):
         print "Done with PerPlex"
 
         if UMLM == True:
-            os.rename(solutionFileNameMan+'_1.tab','../Solutions/'+filename+'_UM.tab')
+            os.rename(solutionFileNameMan+'_1.tab', filename+'_UM.tab')
         else:
-            os.rename(solutionFileNameMan + '_1.tab', '../Solutions/' + filename + '_LM.tab')
+            os.rename(solutionFileNameMan + '_1.tab', filename + '_LM.tab')
 
         successful = True
     except:
@@ -272,8 +260,6 @@ def run_perplex(*args):
     os.remove(solutionFileNameMan+'_VERTEX_options.txt')
     os.remove(solutionFileNameMan+'_WERAMI_options.txt')
     os.remove(solutionFileNameMan+'_auto_refine.txt')
-
-    filename = '../Solutions/'+filename
 
     return filename
 

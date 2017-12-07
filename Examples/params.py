@@ -1,13 +1,13 @@
 #(Perplex) P&T parameter space definitions for phase diagram
 #reducing resolution can dramatically reduce run time of Perple_x files
 #however, this comes at a cost of accuracy in mineralogy
-Pressure_range_mantle_UM    = '3000 1400000'
-Temperature_range_mantle_UM = '1400 3000'
-resolution_UM               = '60 60' 
+Pressure_range_mantle_UM    = '5000 1250001'
+Temperature_range_mantle_UM = '1500 3200'
+resolution_UM               = '30 30'
 
 Pressure_range_mantle_LM    = '1250000 6500000'
 Temperature_range_mantle_LM = '2500 5000'
-resolution_LM               = '50 50'
+resolution_LM               = '20 20'
 
 
 #layers, like concentric shells set here in each region: core, mantle, h20 envelope
@@ -37,6 +37,19 @@ verbose = True
 multi_process = True
 
 
+#skip model and run perple_x only?
+perplex_only = False
+
+
 MEarth = 5.972e24  #kg
 REarth = 6.371e3   #kilometers
+
+#example of how to fix core mass so user can define mantle composition seperately
+
+fix_core = {'fix_man': True, 'wtCore': 0.323}
+
+
+
+
+
 

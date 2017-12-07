@@ -17,19 +17,19 @@ import run_perplex
 import params
 
 multi_process = params.multi_process
-
+perplex_only  = params.perplex_only
 import multiprocessing as mp
 
 
 def check_input_consistency(compositional_params, structure_params, layers):
-    
-    
+
+
     num_mantle_layers, num_core_layers, number_h2o_layers = layers
 
     wt_frac_water, FeMg, SiMg, CaMg, AlMg, mol_frac_Fe_mantle, wt_frac_Si_core, \
      wt_frac_O_core, wt_frac_S_core = compositional_params
-    
-    
+
+
     #Safety check for non-matching inputs, probably just remove this
     if wt_frac_water == 0. and number_h2o_layers > 0:
        print '#============================#'
@@ -44,25 +44,25 @@ def check_input_consistency(compositional_params, structure_params, layers):
         print "Solution: Adding 100 layers for water envelope"
         print '#============================#'
         number_h2o_layers = 100
-        
+
     new_layers = [num_mantle_layers, num_core_layers, number_h2o_layers]
-    
+
     return(new_layers)
 
 def run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename, truncate_comp):
 
     #find compositional percentages: abun. of each element, core mass frac, core composition and Perplex inputs
-    
+
     #DEBUG
     #print 'Core comp'
     #print Core_wt_per.get('Fe')
     #print Core_wt_per.get('Si')
     #print Core_wt_per.get('S')
     #print Core_wt_per.get('O')
-    
+
     layers = check_input_consistency(compositional_params, structure_params, layers)
 
-    
+
     if truncate_comp == False:
         print '\n*********************************'
         print '\nUsing molar ratios as bulk planet composiiton\n'
@@ -70,63 +70,70 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
         Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac = functions.get_percents(*compositional_params)
 
     else:
-        core_mass_frac = truncate_comp.get('cor_wt')
+        core_mass_frac = truncate_comp.get('wtCore')
+        Mantle_wt_per = functions.get_mantle_percents(compositional_params, core_mass_frac)
+
+        compositional_params[5] = Mantle_wt_per.get('XFeO')
+
+        print compositional_params
+        print 'XFeO = {}'.format(compositional_params[5])
+
         print '\n*********************************'
         print '\nUsing molar ratios to define mantle only'
         print 'Entered core wt%% = {}\n'.format(round(core_mass_frac*100.,6))
         print '*********************************\n'
         wtFe = round(100.*(1- sum(compositional_params[6:])), 8)
-        
+
         Mantle_wt_per  = truncate_comp
         Core_wt_per = {'Fe': wtFe,'Si':round(100.*compositional_params[6],8) \
           ,'O':round(100.*compositional_params[7],8),'S':round(100.*compositional_params[8],8)}
         Core_mol_per = 'place holder?'
-        
-        
+
+
     print 'Core_wt_per: ' , Core_wt_per
-    print 'Mantle_wt_per: ', Mantle_wt_per 
-    print 'Core_mol_per: ', Core_mol_per 
+    print 'Mantle_wt_per: ', Mantle_wt_per
+    print 'Core_mol_per: ', Core_mol_per
     print 'core_mass_frac: ', core_mass_frac
-    
-    
+
+
     #Run perplex either in series or parallel for upper and lower mantle
     if multi_process:
         #must generate filenames with seperate function due to IO issues
         #with multiprocessing
-        
+
         #(Perplex)Run fine mesh grid, Upper mantle mineralogy
         upper_man_file = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
         [structure_params[0],structure_params[1],structure_params[2]],filename,True])
-    
+
         lower_man_file = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
-        
-    
+
+
         #setup and run lower and upper mantle .tab files simultaneously
         p_LM = mp.Process(target = run_perplex.run_perplex, args = ([Mantle_wt_per,compositional_params, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False]))
-        
+
         p_UM = mp.Process(target = run_perplex.run_perplex, args=([Mantle_wt_per,compositional_params, \
                                 [structure_params[0],structure_params[1],structure_params[2]],filename,True]))
-       
-       
+
+
         p_UM.start()
         p_LM.start()
         p_UM.join()
         p_LM.join()
-    
+
     else:
         lower_man_file = run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
-        
+
         upper_man_file  = run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
                                 [structure_params[0],structure_params[1],structure_params[2]],filename,True])
 
-    
+
     #only make perplex files?
     if perplex_only:
         return
-    
+
 
     ##store upper mantle data grids: T, P, rho etc.
     grids_low, names = functions.make_mantle_grid(upper_man_file,True)
@@ -140,7 +147,7 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
         names.append('ice_Ih')
 
 
-    #lower mantle data grids    
+    #lower mantle data grids
     grids_high = functions.make_mantle_grid(lower_man_file,False)[0]
 
 
@@ -164,93 +171,117 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
 
 
 
-#def run_planet_mass(mass_planet, compositional_params, structure_params, layers,filename, truncate_comp):
-    
-    
-    
-    
-    #Mass, compositional_params,structure_params,layers,'planet', False)
 
-    
+
+
+
+
+
+
+
+
 def run_planet_mass(mass_planet, compositional_params, structure_params, layers,filename, truncate_comp):
 
     #find compositional percentages: abun. of each element, core mass frac, core composition and Perplex inputs
-    
+
     #DEBUG
     #print 'Core comp'
     #print Core_wt_per.get('Fe')
     #print Core_wt_per.get('Si')
     #print Core_wt_per.get('S')
     #print Core_wt_per.get('O')
-    
+
     layers = check_input_consistency(compositional_params, structure_params, layers)
-    
+
     if truncate_comp == False:
         print '\n*********************************'
         print '\nUsing molar ratios as bulk planet composiiton\n'
         print '*********************************\n'
-        Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac = functions.get_percents(*compositional_params)
+        Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac, Mantle_ratios = functions.get_percents(*compositional_params)
+
+        bulk_ratios = compositional_params[1:6]
 
     else:
         core_mass_frac = truncate_comp.get('wtCore')
-        Mantle_wt_per = functions.get_mantle_percents(compositional_params, core_mass_frac)
-        
+
         print '\n*********************************'
         print '\nUsing molar ratios to define mantle only'
         print 'Entered core wt%% = {}\n'.format(round(core_mass_frac*100.,6))
         print '*********************************\n'
+        Mantle_wt_per, bulk_ratios = functions.get_mantle_percents(compositional_params, core_mass_frac)
+
+        #set list of mantle ratios to be consistent with bulk compostiion version
+
+        Mantle_ratios = compositional_params[1:5]
+
+
+        print 'XFeO = {}'.format(bulk_ratios[4])
+
+
         wtFe = round(100.*(1- sum(compositional_params[6:])), 8)
-        
+
         Core_wt_per = {'Fe': wtFe,'Si':round(100.*compositional_params[6],8) \
           ,'O':round(100.*compositional_params[7],8),'S':round(100.*compositional_params[8],8)}
         Core_mol_per = 'place holder?'
-        
-        
+
+
     print 'Core_wt_per: ' , Core_wt_per
-    print 'Mantle_wt_per: ', Mantle_wt_per 
-    print 'Core_mol_per: ', Core_mol_per 
+    print 'Mantle_wt_per: ', Mantle_wt_per
+    print 'Core_mol_per: ', Core_mol_per
     print 'core_mass_frac: ', core_mass_frac
-   
-   
-    
+
+    #DEBUG
+    import pdb
+    #pdb.set_trace()
+    #if True:
+    #    return
+
     if multi_process:
         #must generate filenames with seperate function due to IO issues
         #with multiprocessing
-        
+
         #(Perplex)Run fine mesh grid, Upper mantle mineralogy
-        upper_man_file = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
+        upper_man_file = functions.solfile_name(*[Mantle_wt_per,Mantle_ratios, \
         [structure_params[0],structure_params[1],structure_params[2]],filename,True])
-    
-        lower_man_file = functions.solfile_name(*[Mantle_wt_per,compositional_params, \
+
+        lower_man_file = functions.solfile_name(*[Mantle_wt_per,Mantle_ratios, \
         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
-        
-    
+
+
         #setup and run lower and upper mantle .tab files simultaneously
-        p_LM = mp.Process(target = run_perplex.run_perplex, args = ([Mantle_wt_per,compositional_params, \
+        p_LM = mp.Process(target = run_perplex.run_perplex, args = ([Mantle_wt_per,lower_man_file, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False]))
-        
-        p_UM = mp.Process(target = run_perplex.run_perplex, args=([Mantle_wt_per,compositional_params, \
+
+        p_UM = mp.Process(target = run_perplex.run_perplex, args=([Mantle_wt_per,upper_man_file , \
                                 [structure_params[0],structure_params[1],structure_params[2]],filename,True]))
-       
-       
+
+
         p_UM.start()
         p_LM.start()
         p_UM.join()
         p_LM.join()
-    
+
     else:
-        lower_man_file = run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
+        upper_man_file = functions.solfile_name(*[Mantle_wt_per,Mantle_ratios, \
+            [structure_params[0],structure_params[1],structure_params[2]],filename,True])
+
+        lower_man_file = functions.solfile_name(*[Mantle_wt_per,Mantle_ratios, \
+            [structure_params[3],structure_params[4],structure_params[5]],filename,False])
+
+
+        LM = run_perplex.run_perplex(*[Mantle_wt_per,lower_man_file, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
-        
-        upper_man_file  = run_perplex.run_perplex([Mantle_wt_per,compositional_params, \
+
+        UM  = run_perplex.run_perplex(*[Mantle_wt_per,upper_man_file, \
                                 [structure_params[0],structure_params[1],structure_params[2]],filename,True])
 
-    
+
     #only make perplex files?
     if perplex_only:
         return
-    
 
+    upper_man_file = '../Solutions/'+upper_man_file
+    lower_man_file = '../Solutions/'+lower_man_file
     ##store upper mantle data grids: T, P, rho etc.
     grids_low, names = functions.make_mantle_grid(upper_man_file,True)
     names.append('Fe')
@@ -263,7 +294,7 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
         names.append('ice_Ih')
 
 
-    #lower mantle data grids    
+    #lower mantle data grids
     grids_high = functions.make_mantle_grid(lower_man_file,False)[0]
 
 
@@ -272,8 +303,8 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
 
     #find RADIUS of planet as a function of MASS and composition
     #Planet = functions.find_Planet_radius(radius_planet, core_mass_frac,structure_params, compositional_params, grids, Core_wt_per, layers)
-   
-    
+
+
     Planet = functions.R_of_M(mass_planet, core_mass_frac, structure_params, compositional_params, grids, Core_wt_per, layers)
 
     Planet['phases'] = functions.get_phases(Planet, grids, layers)
@@ -281,7 +312,10 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
     Planet['phase_names'] = names
 
     Planet['Vphi'], Planet['Vp'], Planet['Vs'] = functions.get_speeds(Planet, Core_wt_per, grids, layers)
-    
+
+    Planet['bulk_ratios']   = bulk_ratios
+    Planet['mantle_ratios'] = Mantle_ratios
+
     return Planet
 
 
@@ -359,15 +393,15 @@ def run_perplex_only(compositional_params, structure_params, layers, filename, t
                                                   filename, True])
 
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
+
