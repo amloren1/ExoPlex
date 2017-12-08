@@ -57,12 +57,12 @@ Bulk elemental abundances input as lists or arrays (e.g. FeMg = (Fe/Mg)_mol)
 '''
 ######
 
-define_mantle = 0.0 #or dictionary to define mantle comp directly: = {'fix_man': True, 'wtCore': .50}
+define_mantle = False #or dictionary to define mantle comp directly: = {'fix_man': True, 'wtCore': .50}
 
-CaMg = [0.0, 0.06]
-AlMg = [0.0, 0.08]
-FeMg = [0.5,.7,.8,.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7, 1.8, 1.9, 2.0]
-SiMg = [0.5,.7,.8,.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8, 1.9, 2.0]
+CaMg = [0.06]
+AlMg = [0.08]
+FeMg = np.arange(0.8, 2.0, 0.1)
+SiMg = np.arange(0.8, 2.0, 0.1)
 
 ####
 '''
@@ -75,8 +75,8 @@ fFeO = 0.0
 
 ######
 '''
-Core composition of Si, O, and S input as core mass fraction. 
-These have no impact if you are defining the mantle directly. 
+Core composition of Si, O, and S input as core mass fraction.
+These have no impact if you are defining the mantle directly.
 Otherwise, they will impact the stoichiometry of the mantle.
 '''
 ######

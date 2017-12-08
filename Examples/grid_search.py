@@ -24,7 +24,7 @@ from params import *
 import pdb
 
 
-#Composition domain 
+#Composition domain
 # Fe/Mg is from 0.7-1.6, Si/Mg is 0.7-1.6
 FeMg = np.arange(0.7, 1.7, 0.1)
 SiMg = np.arange(0.7, 1.7, 0.1)
@@ -39,7 +39,7 @@ Rads = np.zeros(len(Mass))
 ##Setup plots
 #plt.rc('font', family='serif', serif='cm10')
 
-fig, ax = plt.subplots(figsize = (20,10))
+#fig, ax = plt.subplots(figsize = (20,10))
 plt.rc('font', family='serif')
 
 
@@ -65,6 +65,10 @@ def bissect(grid, value):
     mid = int(len(grid)/2.)
     hi  = int(len(grid)-1)
     lo  = 0
+
+    value = round(value,2)
+    #grid  = round(grid,2)
+    #pdb.set_trace()
     if value/max(grid) > 1.0+1e-6 :
 
         print 'Exiting. The following value is not in the grids yet:'
@@ -72,15 +76,28 @@ def bissect(grid, value):
         print 'Max = {}'.format(max(grid))
         print 'ratio = {}'.format(value/max(grid))
         sys.exit()
-    for i in range(len(grid)):
-        if value > grid[mid]:
+    #for i in range(len(grid)):
+    while True:
+        if value > round(grid[mid],2):
             lo = mid
             mid = int((hi+lo)/2.)
-            #print mid
-        elif value < grid[mid]:
+
+            #print 'value >'
+            #print mid, lo, hi
+            if mid == lo:
+                mid = hi
+            #raw_input()
+        elif value < round(grid[mid],2):
             hi  = mid
             mid = int((hi+lo)/2.)
-            #print mid
+            #print 'value <'
+            #print mid, lo, hi
+            if mid == hi:
+                mid = lo
+            #raw_input()
+        else:
+            #print 'Value = {} \nfound = {}'.format(value, grid[mid])
+            return mid, lo, hi
     return mid, lo, hi
 
 
@@ -114,11 +131,11 @@ def loc_data(FeMg_grid, SiMg_grid, h2o_grid, femg, simg, wt_h2o):
     wt_h2o_i = bissect(h2o_grid, wt_h2o)
 
 
-    
+
 #find the location on the grids which corresponds to
 #desired compostiion
 def loc_data_no_h2o(FeMg_grid, SiMg_grid, femg, simg):
-    
+
 
     femg_i = bissect(FeMg_grid, femg)[0]
     simg_i = bissect(SiMg_grid, simg)[0]
@@ -127,7 +144,7 @@ def loc_data_no_h2o(FeMg_grid, SiMg_grid, femg, simg):
     loc    = femg_i*len(FeMg_grid)+simg_i
 
     return loc
-    
+
 ###
 #File names for the data files
 ###
@@ -136,9 +153,9 @@ def file_names(mass):
     name = mass_string+'.dat'
 
     return name
-    
-    
-    
+
+
+
 
 ########################################################################
 '''
@@ -186,7 +203,7 @@ def make_data_arrays(femg, simg):
 ####
 
 def plot_limits(f_name, i_anno):
-    
+
     text = ['100% Fe', '100% mantle', '100% H$_2$O']
     colr  = ['dimgray', 'darkolivegreen', 'darkcyan']
 
@@ -197,9 +214,9 @@ def plot_limits(f_name, i_anno):
 
     print text[i_anno]
 
-    ax.plot(mas, rads, lw = 5, color = colr[i_anno], alpha = 0.75)   
-    
-    
+    ax.plot(mas, rads, lw = 5, color = colr[i_anno], alpha = 0.75)
+
+
     ax.annotate(text[i_anno], xy=(np.median(mas), np.median(rads)*0.990), \
      xytext = (np.median(mas), np.median(rads)*0.990), fontsize = 16, \
      rotation=8, weight = 'bold')
@@ -267,8 +284,8 @@ def plot_comps(femg, simg, mass, err):
             ax.plot(Mass, rads, label = l1, lw = 5, alpha = 0.7
             , color = j)
         plt.draw()
-    
-    
+
+
     plt.legend(loc = 'upper left', fontsize = tic_size, scatterpoints=1)
 
     plt.show()
@@ -278,6 +295,7 @@ def plot_comps(femg, simg, mass, err):
 #plot_comps([0.7,1.4], [1.2,1.6], [0.67, 1.2], \
 #               [0.07, 0.2])
 
+'''
 plot_comps([0.7,1.4, 1.2,1.2], [1.2,1.6, 1.5, 1.5], [0.67, 1.2, 0.5, 1.0], \
                [0.07, 0.2, 0.09, 0.5])
 
@@ -297,7 +315,7 @@ print 'interpolant between M_lo = {} and M_hi = {} \nis q = {}'.format(Mass[lo],
 print Mass
 
 
-
+'''
 
 
 
