@@ -14,7 +14,7 @@ from params import *
 import scipy.stats
 import grid_search as gs
 
-file_name = 'test.dat'
+file_name = 'tester.dat'
 plt.rc('font', family='serif')
 ########################################################################
 '''
@@ -152,14 +152,20 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
     #pdb.set_trace()
     for i in range(n_samp):
         for k in range(0,3):
-            test_val = int(np.random.normal(params[k], sigma_p))
+            print i
 
+            test_val = int(np.random.normal(params[k]*10, sigma_p))/10.
+            #print 'test_val = {}'.format(test_val)
+            #print 'curr_val = {}'.format(params[k])
+
+            #raw_input()
+            #continue
             if test_val < 0 or test_val > len(params_grid[k])-1:
 
                 alpha = 0
                 continue
             else:
-                params_test[k] = params_grid[k][test_val]
+                params_test[k] = test_val
                 #print test_val
                 #print params_test
                 #print params
@@ -168,6 +174,7 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
                 #raw_input()
 
                 q_test = scipy.stats.norm(params[k], sigma_p).pdf(test_val)
+
                 q_cur =  scipy.stats.norm(test_val, sigma_p).pdf(params[k])
 
                 point_test = search_grid(params_test, CMF, FeMg_m, SiMg_m)
@@ -178,20 +185,17 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
                 f_cur  = [EP[0][point_cur], EP[1][point_cur], EP[2][point_cur]]
 
                 prior_test    = priors_uniform(params_grid[1], params_grid[2], params_grid[0])
-
                 prior_current = priors_uniform(params_grid[1], params_grid[2], params_grid[0])
 
                 likely_test = likelihood_normal(d[0], sig[0], f_test[0])* \
                                 likelihood_normal(d[1], sig[1], f_test[1])*\
                                   likelihood_normal(d[2], sig[2], f_test[2])
 
-
                 likely_current = likelihood_normal(d[0], sig[0], f_cur[0])* \
                                     likelihood_normal(d[1], sig[1], f_cur[1])*\
                                       likelihood_normal(d[2], sig[2], f_cur[2])
 
                 posterior_test = prior_test*likely_test*q_cur
-
                 posterior_current = prior_current*likely_current*q_test
 
                 alpha = min([1, np.exp(np.log(posterior_test)-np.log(posterior_current))])
@@ -202,7 +206,9 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
                 if alpha > u:
                     accept +=1
                     params[k] = params_test[k]
-                    if accept > 200:
+
+                    if accept > 0:
+                        print 'here'
                         cmf_dist = np.append(cmf_dist, params[0])
                         femg_dist = np.append(femg_dist, params[1])
                         simg_dist = np.append(simg_dist, params[2])
@@ -210,6 +216,7 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
                         femg_b_dist = np.append(femg_b_dist, f_cur[1])
                         simg_b_dist = np.append(simg_b_dist, f_cur[2])
                         print 'i = {}'.format(i)
+                    continue
                 else:
                     #print 'rejected!'
                     params_test[k] = params[k]
@@ -254,6 +261,12 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
     plt.tight_layout()
     plt.show()
 
+    data = np.stack((T_chain, v_chain), axis = -1)
+#figure = corner.corner(data)
+
+
+
+
     pdb.set_trace()
 
 ########################################################################
@@ -264,6 +277,10 @@ Call sampler, test samples and accept/reject
 
 
 
+def cornering(data):
+
+    figure = corner.corner(data, labels = ['T (mK)', r'$\nu_0$'], show_titles = True,\
+                       title_kwargs = {'fontsize': 18}, label_kwargs = {'fontsize': 18}, plot_contours = True)
 
 
 
@@ -291,10 +308,9 @@ RUN CODE HERE
 ########################################################################
 ########################################################################
 
-FeMg = np.arange(0.0,0.5,0.1)
-SiMg = np.arange(0.1,0.5,0.1)
-CMF  = np.arange(0.1,0.4,0.1)
-
+FeMg = np.arange(0, 2.1,0.1)
+SiMg = np.arange(0.1,2.1,0.1)
+CMF  = np.arange(0.1,0.9,0.1)
 
 
 
