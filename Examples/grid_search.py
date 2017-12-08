@@ -39,7 +39,7 @@ Rads = np.zeros(len(Mass))
 ##Setup plots
 #plt.rc('font', family='serif', serif='cm10')
 
-fig, ax = plt.subplots(figsize = (20,10))
+#fig, ax = plt.subplots(figsize = (20,10))
 plt.rc('font', family='serif')
 
 
@@ -62,7 +62,6 @@ Steps:
 ###########################################
 def bissect(grid, value):
 
-    print 'eheheheh'
     mid = int(len(grid)/2.)
     hi  = int(len(grid)-1)
     lo  = 0
@@ -97,7 +96,7 @@ def bissect(grid, value):
                 mid = lo
             #raw_input()
         else:
-            print 'Value = {} \nfound = {}'.format(value, grid[mid])
+            #print 'Value = {} \nfound = {}'.format(value, grid[mid])
             return mid, lo, hi
     return mid, lo, hi
 

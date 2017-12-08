@@ -184,6 +184,7 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
 
     #find compositional percentages: abun. of each element, core mass frac, core composition and Perplex inputs
 
+    params_copy = [mass_planet, compositional_params, structure_params, layers,filename, truncate_comp]
     #DEBUG
     #print 'Core comp'
     #print Core_wt_per.get('Fe')
@@ -304,8 +305,23 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
     #find RADIUS of planet as a function of MASS and composition
     #Planet = functions.find_Planet_radius(radius_planet, core_mass_frac,structure_params, compositional_params, grids, Core_wt_per, layers)
 
+    try:
+    #(mass_planet, compositional_params, structure_params, layers,filename, truncate_comp)
+        Planet = functions.R_of_M(mass_planet, core_mass_frac, structure_params, compositional_params, grids, Core_wt_per, layers)
 
-    Planet = functions.R_of_M(mass_planet, core_mass_frac, structure_params, compositional_params, grids, Core_wt_per, layers)
+    except SystemExit:
+        import time
+
+        print '***************\nDeleting the solution files and starting over\n***************\n'
+        print("3")
+        time.sleep(1.5)
+        print("2")
+        time.sleep(2.5)
+        print("1")
+        time.sleep(.5)
+        os.remove(upper_man_file+'_UM.tab')
+        Planet = run_planet_mass(mass_planet, compositional_params, structure_params, layers,filename, truncate_comp)
+        return Planet
 
     Planet['phases'] = functions.get_phases(Planet, grids, layers)
 
@@ -321,6 +337,7 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
 
 def run_perplex_only(compositional_params, structure_params, layers, filename, truncate_comp):
     # find compositional percentages: abun. of each element, core mass frac, core composition and Perplex inputs
+
 
     # DEBUG
     # print 'Core comp'

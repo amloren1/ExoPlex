@@ -11,11 +11,11 @@ import ExoPlex as exo
 import pdb
 
 from params import *
-
+import scipy.stats
 import grid_search as gs
 
-file_name = '1_ME_TESTER.dat'
-
+file_name = 'test.dat'
+plt.rc('font', family='serif')
 ########################################################################
 '''
 -Import data grids: CMF, Fe/Mg_bulk, Si/Mg_bulk, Radius
@@ -71,13 +71,14 @@ Priors: (Fe/Mg)_mantle, (Si/Mg)_mantle, CMF (core mass fraction)
 
 def priors_uniform(FeMg_m, SiMg_m, CMF):
 
+    #pdb.set_trace()
     n_femg = len(FeMg_m)
     n_simg = len(SiMg_m)
     n_cmf  = len(CMF)
 
-    p_femg = 1/n_femg
-    p_simg = 1/n_simg
-    p_cmf  = 1/n_cmf
+    p_femg = 1./n_femg
+    p_simg = 1./n_simg
+    p_cmf  = 1./n_cmf
 
     joint_prior = p_femg*p_simg*p_cmf
 
@@ -123,9 +124,18 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
     d   = [1.0, 0.8128, 0.9549 ]
     sig = [0.01, 0.1*0.8128, 0.1*0.9549]
 
+    accept = 0
+
     n_cmf  = len(CMF)
     n_femg = len(FeMg_m)
     n_simg = len(SiMg_m)
+
+    cmf_dist = np.empty(0)
+    femg_dist = np.empty(0)
+    simg_dist = np.empty(0)
+    R_dist    = np.empty(0)
+    femg_b_dist = np.empty(0)
+    simg_b_dist = np.empty(0)
 
     cmf  = np.random.randint(0,n_cmf-1)
     femg = np.random.randint(0,n_femg-1)
@@ -138,10 +148,11 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
     #params_grid = np.transpose([CMF, FeMg_m, SiMg_m], axis = 0)
     params_grid = [CMF, FeMg_m, SiMg_m]
 
+    sigma_p = 1.2
     #pdb.set_trace()
     for i in range(n_samp):
         for k in range(0,3):
-            test_val = np.random.randint(params[k]-2, params[k]+2)
+            test_val = int(np.random.normal(params[k], sigma_p))
 
             if test_val < 0 or test_val > len(params_grid[k])-1:
 
@@ -149,22 +160,26 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
                 continue
             else:
                 params_test[k] = params_grid[k][test_val]
-                print test_val
-                print params_test
-                print params
-                print 'k = {}'.format(k)
-                print 'i = {}'.format(i)
-                raw_input()
+                #print test_val
+                #print params_test
+                #print params
+                #print 'k = {}'.format(k)
+                #print 'i = {}'.format(i)
+                #raw_input()
+
+                q_test = scipy.stats.norm(params[k], sigma_p).pdf(test_val)
+                q_cur =  scipy.stats.norm(test_val, sigma_p).pdf(params[k])
 
                 point_test = search_grid(params_test, CMF, FeMg_m, SiMg_m)
                 point_cur  = search_grid(params, CMF, FeMg_m, SiMg_m)
-                #R, Fe/Mg_bulk, Si/Mg_bulk
+
+                #EP = R, Fe/Mg_bulk, Si/Mg_bulk
                 f_test = [EP[0][point_test], EP[1][point_test], EP[2][point_test]]
                 f_cur  = [EP[0][point_cur], EP[1][point_cur], EP[2][point_cur]]
 
-                prior_test    = priors_uniform(params_test[1], params_test[2], params_test[0])
+                prior_test    = priors_uniform(params_grid[1], params_grid[2], params_grid[0])
 
-                prior_current = priors_uniform(params[1], params[2], params[0])
+                prior_current = priors_uniform(params_grid[1], params_grid[2], params_grid[0])
 
                 likely_test = likelihood_normal(d[0], sig[0], f_test[0])* \
                                 likelihood_normal(d[1], sig[1], f_test[1])*\
@@ -175,18 +190,71 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
                                     likelihood_normal(d[1], sig[1], f_cur[1])*\
                                       likelihood_normal(d[2], sig[2], f_cur[2])
 
-                posterior_test = prior_test*likely_test
-                posterior_current = prior_current*likely_current
+                posterior_test = prior_test*likely_test*q_cur
 
-                alpha = min([1, posterior_test/posterior_current])
+                posterior_current = prior_current*likely_current*q_test
+
+                alpha = min([1, np.exp(np.log(posterior_test)-np.log(posterior_current))])
 
                 u = np.random.uniform(0,1)
 
-                pdb.set_trace()
+                #pdb.set_trace()
                 if alpha > u:
+                    accept +=1
                     params[k] = params_test[k]
+                    if accept > 200:
+                        cmf_dist = np.append(cmf_dist, params[0])
+                        femg_dist = np.append(femg_dist, params[1])
+                        simg_dist = np.append(simg_dist, params[2])
+                        R_dist    = np.append(R_dist, f_cur[0])
+                        femg_b_dist = np.append(femg_b_dist, f_cur[1])
+                        simg_b_dist = np.append(simg_b_dist, f_cur[2])
+                        print 'i = {}'.format(i)
                 else:
+                    #print 'rejected!'
+                    params_test[k] = params[k]
                     continue
+
+    fs =22
+    ls =16
+
+    fig, (ax1, ax2, ax3) = plt.subplots(3,1, figsize = (10,8))
+
+    ax1.hist(cmf_dist,  bins = len(CMF))
+    ax2.hist(femg_dist, bins = len(FeMg_m))
+    ax3.hist(simg_dist, bins = len(SiMg_m))
+
+    ax1.set_ylabel('count', fontsize = fs)
+
+    ax1.set_xlabel('CMF', fontsize = fs)
+    ax2.set_xlabel('Fe/Mg_m', fontsize = fs)
+    ax3.set_xlabel('Si/Mg_m', fontsize = fs)
+
+    ax1.tick_params(axis='both', size=1, labelsize=ls)
+
+    plt.tight_layout()
+
+
+    fig, (ax4, ax5, ax6) = plt.subplots(3,1 ,figsize = (12,8))
+
+    ax4.hist(R_dist)
+    ax5.hist(femg_b_dist,range = (min(femg_b_dist), max(femg_b_dist)))
+    ax6.hist(simg_b_dist, bins = len(SiMg_m))
+
+    ax6.set_ylabel('count', fontsize = fs)
+
+    ax4.set_xlabel('R', fontsize = fs)
+    ax5.set_xlabel('Fe/Mg_bulk', fontsize = fs)
+    ax6.set_xlabel('Si/Mg_bulk', fontsize = fs)
+
+    ax4.tick_params(axis='both', size=1, labelsize=ls)
+    ax5.tick_params(axis='both', size=1, labelsize=ls)
+    ax6.tick_params(axis='both', size=1, labelsize=ls)
+
+    plt.tight_layout()
+    plt.show()
+
+    pdb.set_trace()
 
 ########################################################################
 '''
@@ -234,7 +302,7 @@ R_p, FeMg_b, SiMg_b = data_grids(file_name, CMF, FeMg, SiMg)
 
 EP = [R_p, FeMg_b, SiMg_b]
 
-component_MH(1000, CMF, FeMg, SiMg, EP)
+component_MH(50000, CMF, FeMg, SiMg, EP)
 
 ########################################################################
 

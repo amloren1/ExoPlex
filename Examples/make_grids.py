@@ -383,8 +383,9 @@ def M_simple_CMF(FeMg,SiMg,CMF):
 
                 #sys.exit()
 
-                #if True:
-                #    continue
+                if True:
+                    t3 = 4
+                    continue
                 #mass_grid[n]     = 1.0
 
                 femg_bulk[n]     = Planet['bulk_ratios'][0]
@@ -404,9 +405,9 @@ def M_simple_CMF(FeMg,SiMg,CMF):
                 delimiter = '    ',  fmt = '%-10.4f', header = dat_row_header)
 
 
-FeMg = np.arange(0.0,1.0,0.1)
-SiMg = np.arange(0.1,1.2,0.1)
-CMF  = np.arange(0.1,0.6,0.1)
+FeMg = np.arange(0, 2.1,0.1)
+SiMg = np.arange(0.1,2.1,0.1)
+CMF  = np.arange(0.1,0.9,0.1)
 
 M_simple_CMF(FeMg,SiMg,CMF)
 

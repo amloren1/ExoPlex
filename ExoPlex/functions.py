@@ -131,7 +131,7 @@ def get_mantle_percents(args, cor_wt):
         print 'FeO = {}\nMgO = {}\nSiO2 = {} \nCaO = {} \nAl2O3 = {}'.format(feo, mgo, sio2, \
             cao, al2o3)
         print '\nwtTot = {}'.format(wtTot)
-        print '\nCalculated bulk elemental ratios (these will be for solution file names)'
+        print '\nCalculated bulk elemental ratios'
         print 'Si/Mg = {} \nFe/Mg = {}\n'.format(simg_blk, femg_blk)
 
 
