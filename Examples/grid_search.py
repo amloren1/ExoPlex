@@ -78,14 +78,14 @@ def bissect(grid, value):
         sys.exit()
     #for i in range(len(grid)):
     while True:
-        print 'here'
-        print value
-        print round(grid[mid],2)
-        print round(grid[hi],2)
-        print round(grid[lo],2)
+        #print 'here'
+        #print value
+        #print round(grid[mid],2)
+        #print round(grid[hi],2)
+        #print round(grid[lo],2)
 
-        print max(grid)
-        raw_input()
+        #print max(grid)
+        #raw_input()
         if value > round(grid[mid],2):
             lo = mid
             mid = int((hi+lo)/2.)
@@ -98,14 +98,17 @@ def bissect(grid, value):
         elif value < round(grid[mid],2):
             hi  = mid
             mid = int((hi+lo)/2.)
-            print 'value <'
+            #print 'value <'
             #print mid, lo, hi
             if round(grid[mid],2) == round(grid[hi],2):
+                if mid == lo:
+                    mid = 0
+                    return mid, lo, hi
                 mid = lo
             #raw_input()
         else:
             #print 'Value = {} \nfound = {}'.format(value, grid[mid])
-            print 'here'
+            #print 'here'
             return mid, lo, hi
     return mid, lo, hi
 

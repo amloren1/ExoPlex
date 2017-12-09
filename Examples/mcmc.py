@@ -13,6 +13,7 @@ import pdb
 from params import *
 import scipy.stats
 import grid_search as gs
+import corner
 
 file_name = 'tester.dat'
 plt.rc('font', family='serif')
@@ -33,6 +34,7 @@ def data_grids(filename, cmf, femg_m, simg_m):
     FeMg_b    = dat[:,4]
     SiMg_b    = dat[:,5]
 
+
     #pdb.set_trace()
     return(R_p, FeMg_b, SiMg_b)
 
@@ -42,6 +44,7 @@ def search_grid(loc, CMF, FeMg_m, SiMg_m):
     femg_m = loc[1]
     simg_m = loc[2]
 
+    #pdb.set_trace()
     c = gs.bissect(CMF, cmf)[0]
     f = gs.bissect(FeMg_m, femg_m)[0]
     s = gs.bissect(SiMg_m, simg_m)[0]
@@ -75,6 +78,7 @@ def priors_uniform(FeMg_m, SiMg_m, CMF):
     n_femg = len(FeMg_m)
     n_simg = len(SiMg_m)
     n_cmf  = len(CMF)
+
 
     p_femg = 1./n_femg
     p_simg = 1./n_simg
@@ -152,15 +156,16 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
     #pdb.set_trace()
     for i in range(n_samp):
         for k in range(0,3):
-            print i
+            #   print i
 
             test_val = int(np.random.normal(params[k]*10, sigma_p))/10.
             #print 'test_val = {}'.format(test_val)
             #print 'curr_val = {}'.format(params[k])
 
+            #pdb.set_trace()
             #raw_input()
             #continue
-            if test_val < 0 or test_val > len(params_grid[k])-1:
+            if test_val < 0 or test_val > max(params_grid[k]):
 
                 alpha = 0
                 continue
@@ -207,8 +212,8 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
                     accept +=1
                     params[k] = params_test[k]
 
-                    if accept > 0:
-                        print 'here'
+                    if accept > 200:
+                        #print 'here'
                         cmf_dist = np.append(cmf_dist, params[0])
                         femg_dist = np.append(femg_dist, params[1])
                         simg_dist = np.append(simg_dist, params[2])
@@ -216,6 +221,7 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
                         femg_b_dist = np.append(femg_b_dist, f_cur[1])
                         simg_b_dist = np.append(simg_b_dist, f_cur[2])
                         print 'i = {}'.format(i)
+                        print 'accept = {}'.format(accept)
                     continue
                 else:
                     #print 'rejected!'
@@ -261,8 +267,8 @@ def component_MH(n_samp, CMF, FeMg_m, SiMg_m, EP):
     plt.tight_layout()
     plt.show()
 
-    data = np.stack((T_chain, v_chain), axis = -1)
-#figure = corner.corner(data)
+    data = np.stack((cmf_dist,femg_dist, simg_dist), axis = -1)
+    figure = corner.corner(data)
 
 
 
@@ -308,17 +314,16 @@ RUN CODE HERE
 ########################################################################
 ########################################################################
 
-FeMg = np.arange(0, 2.1,0.1)
-SiMg = np.arange(0.1,2.1,0.1)
-CMF  = np.arange(0.1,0.9,0.1)
-
+FeMg = np.arange(0, 1.7,0.1)
+SiMg = np.arange(0.1,1.2,0.1)
+CMF  = np.arange(0.1,0.6,0.1)
 
 
 R_p, FeMg_b, SiMg_b = data_grids(file_name, CMF, FeMg, SiMg)
 
 EP = [R_p, FeMg_b, SiMg_b]
 
-component_MH(50000, CMF, FeMg, SiMg, EP)
+component_MH(60000, CMF, FeMg, SiMg, EP)
 
 ########################################################################
 
