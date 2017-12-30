@@ -383,7 +383,7 @@ def M_simple_CMF(FeMg,SiMg,CMF):
 
                 #sys.exit()
 
-                if True:
+                if False:
                     t3 = 4
                     continue
                 #mass_grid[n]     = 1.0
