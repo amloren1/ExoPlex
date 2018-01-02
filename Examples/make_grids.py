@@ -409,11 +409,17 @@ FeMg = np.arange(0, 2.1,0.1)
 SiMg = np.arange(0.1,2.1,0.1)
 CMF  = np.arange(0.1,0.9,0.1)
 
-M_simple_CMF(FeMg,SiMg,CMF)
+#M_simple_CMF(FeMg,SiMg,CMF)
 
 
 
 
+
+#######################################################################
+'''
+mass and radius grids for M vr R plots
+'''
+#######################################################################
 
 
 

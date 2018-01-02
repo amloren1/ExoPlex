@@ -42,7 +42,7 @@ perplex_only = False#True # False
 
 
 MEarth = 5.972e24  #kg
-REarth = 6.371e3   #kilometers
+REarth = 6.371e6   #meters
 
 #example of how to fix core mass so user can define mantle composition seperately
 

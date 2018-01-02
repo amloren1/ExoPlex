@@ -50,12 +50,12 @@ Inputs:
 '''
 #=======================================================================
 
-def Earth_model(composition, coreComp, fix_core):
+def Earth_model(composition, coreComp, fix_core, Mass):
     #import parameters not related to planet composition
 
 
     #mass of planet in terms of Earth mass
-    Mass = 1.0 #Earth!
+    #Mass = 1.0 #Earth!
 
     #Molar ratios for mantle or whole planet
     SiMg       = composition.get('SiMg')
@@ -216,12 +216,22 @@ man_only = {'fix_man': True, 'wtCore': 0.323}
 
 wtCore = .323 #McDonough 03
 
+
+
+
+
 '''
 Run ExoPlex for a variety of cases
 '''
 import pdb
+
+
+
+
+
 #########################################################################
 #1) Model Earth with full knowledge of composition and core mass fraction
+'''
 plan = Earth_model(mantle_Earth_comp, light_core_composition, man_only)
 
 mass = plan['mass'][num_core_layers:]
@@ -234,13 +244,16 @@ dat_header = '{:25}{:25}{:25}{:25}{:25}'.format('mass', 'radius', 'density', 'pr
 phase_header = '{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}\
     {:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}'.format(*plan['phase_names'])
 #pdb.set_trace()
+
 dat = np.transpose([mass, rad, rho, P, T])
 phase = plan['phases'][num_core_layers:]
 kitchen_sink = np.concatenate([dat,phase],axis=1)
 
 #np.savetxt('Earth_nofmt.dat', kitchen_sink , delimiter = ',' ,header = dat_header+phase_header)
 #np.savetxt('Earth_mantle.dat', np.transpose([mass, rad, rho, P, T]), delimiter = ' , ' ,header = dat_header)
-plot_vs_PREM(plan)
+#plot_vs_PREM(plan)
+
+'''
 
 #2) Earth with knowledge of its bulk composition only
 #use McD values with and without Fe in mantle
