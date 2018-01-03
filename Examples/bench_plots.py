@@ -54,6 +54,13 @@ def ZS_model():
     
 def ExoPlex_model(wtCore):
     
+    #Change file name appropriately. Earth core refers to Fe core with 
+    # McD 03 light elements amounts
+    
+    file_name = '{}%_Earth_Core'.format(wtCore*100)
+    header = '{:6}{:6}'.format('Mass (ME)', 'radius (RE)')
+    
+    
     mantle_Earth_comp = {'FeMg': 0.121212121 , 'SiMg': 0.79797979797,  \
               'AlMg': 0.09090909 , 'CaMg': 0.0656565, \
               'fFeO': 0.0,  'wt_h2o': 0.0}
@@ -61,10 +68,10 @@ def ExoPlex_model(wtCore):
     light_core_composition = {'wtSi': 0.06, 'wtO': 0.0, 'wtS':0.019}
     man_only = {'fix_man': True, 'wtCore': wtCore}
 
-    res  = 10
-    dMin = 0.3
-    dMax = 3.5
-    dMas = (dMax-dMin)/res
+    res  = 50
+    dMin = 0.1
+    dMax = 5.1
+    dMas = (dMax-dMin)/(res-1)
     
     mass_grid   = np.zeros(res)
     radius_grid = np.zeros(res)
@@ -77,6 +84,8 @@ def ExoPlex_model(wtCore):
         mass_grid[i] = planet.get('mass')[-1]/MEarth
         radius_grid[i] = planet.get('radius')[-1]/REarth
     
+    
+    np.savetxt(file_name, np.transpose([mass_grid,radius_grid]),delimiter = ',',  fmt = '%-10.4f', header = header)
         #pdb.set_trace()
     return(mass_grid, radius_grid)
     
@@ -91,7 +100,7 @@ def ExoPlex_model(wtCore):
 def plot(data1):
     
     
-    cmf_grid = [0.1,0.32,0.5, 0.7]
+    cmf_grid = [0.3,0.5, 0.7]
     
     fig, ax =  plt.subplots(figsize = (15,10))
 
@@ -99,7 +108,7 @@ def plot(data1):
     plt.rc('font', family='serif')
     lab_size = 23
     tic_size = 18
-    ax.set_xlim(0.0625 , 4)
+    ax.set_xlim(0.1 , 5)
     ax.set_xlabel(r"Mass (M$_\oplus$)", fontsize = lab_size )
     ax.set_ylabel(r"Radius (R$_\oplus$)", fontsize = lab_size)
     ax.tick_params(direction='in', length=6, labelsize = tic_size)
@@ -108,12 +117,13 @@ def plot(data1):
 
     #Plot the PREM and Exoplex model
     #ax.plot(depth_prm, rho_dep, label = 'PREM',  lw = 5, ls = '-.', color = 'black')
-    ax.plot(data1[:,0], data1[:,-1], label = 'rock', lw = 4, color = 'blue')
-    ax.plot(data1[:,0], data1[:,1], label = '100% Fe', lw = 4, color = 'grey')
-    
-    
+    ax.plot(data1[:,0], data1[:,-1], label = 'rock', lw = 4, color = 'black', ls = ':')
+    ax.plot(data1[:,0], data1[:,1], label = '100% Fe', lw = 4, color = 'black', ls = ':')
+    ax.plot(data1[:,0], data1[:,11], label = '50% Fe', lw = 4, color = 'black', ls = ':')
+
 
     for i in range(len(cmf_grid)):
+        #continue
         mas, rad = ExoPlex_model(cmf_grid[i])
         
         ax.plot(mas, rad, label = '{} Core'.format(cmf_grid[i]*100), lw = 4)
