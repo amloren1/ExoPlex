@@ -5,9 +5,9 @@ Pressure_range_mantle_UM    = '5000 1250001'
 Temperature_range_mantle_UM = '1500 3200'
 resolution_UM               = '30 30'
 
-Pressure_range_mantle_LM    = '1250000 6700000'
+Pressure_range_mantle_LM    = '1250000 7000000'
 Temperature_range_mantle_LM = '2500 5000'
-resolution_LM               = '20 20'
+resolution_LM               = '30 30'
 
 
 #layers, like concentric shells set here in each region: core, mantle, h20 envelope
