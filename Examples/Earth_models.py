@@ -108,7 +108,8 @@ def Earth_model(composition, coreComp, fix_core, Mass):
 
     return Planet
 
-def plot_vs_PREM(Planet):
+def plot_vs_PREM(Planet, Planet1):
+    
     #import prem data (rad, depth, rho_depth, rho_rad)
     #keys: 'radius', 'depth', 'rho_depth', 'rho_radius' , \
     #     'VPV', 'VPH', 'VSV', 'VSH'}
@@ -117,17 +118,20 @@ def plot_vs_PREM(Planet):
     depth_prm = prem_dat.get('depth')
     rho_dep   = prem_dat.get('rho_depth')
 
+
     #setup plotting data from ExoPlex model
     depth_ep = (Planet['radius'][-1]-Planet['radius'])/1e3
     rho_ep = Planet['density']/1e3
 
+    depth_ep_Fe = (Planet1['radius'][-1]-Planet['radius'])/1e3
+    rho_ep_Fe = Planet1['density']/1e3
     #setup plots
     fig, ax =  plt.subplots(figsize = (15,10))
 
     #plotting parameters, can change
     plt.rc('font', family='serif')
-    lab_size = 23
-    tic_size = 18
+    lab_size = 24
+    tic_size = 20
     ax.set_xlim(0., max(depth_prm))
     ax.set_ylabel("Density (g/cm$^3$)", fontsize = lab_size )
     ax.set_xlabel("Depth (km)", fontsize = lab_size)
@@ -138,6 +142,7 @@ def plot_vs_PREM(Planet):
     #Plot the PREM and Exoplex model
     ax.plot(depth_prm, rho_dep, label = 'PREM',  lw = 5, ls = '-.', color = 'black')
     ax.plot(depth_ep, rho_ep, label = 'ExoPlex', lw = 4, color = 'magenta')
+    ax.plot(depth_ep_Fe, rho_ep_Fe, label = 'ExoPlex Pure Fe core', lw = 4, color = 'green', alpha = 0.5)
 
     plt.legend(loc = 'lower right', fontsize = tic_size)
 
@@ -231,29 +236,33 @@ import pdb
 
 #########################################################################
 #1) Model Earth with full knowledge of composition and core mass fraction
-'''
-plan = Earth_model(mantle_Earth_comp, light_core_composition, man_only)
 
-mass = plan['mass'][num_core_layers:]
-rad = plan['radius'][num_core_layers:]
-rho = plan['density'][num_core_layers:]
-P   = plan['pressure'][num_core_layers:]
-T   = plan['temperature'][num_core_layers:]
+def run():
+    plan = Earth_model(mantle_Earth_comp, light_core_composition, man_only, 1.0)
 
-dat_header = '{:25}{:25}{:25}{:25}{:25}'.format('mass', 'radius', 'density', 'pres', 'temp')
-phase_header = '{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}\
-    {:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}'.format(*plan['phase_names'])
-#pdb.set_trace()
+    mass = plan['mass'][num_core_layers:]
+    rad = plan['radius'][num_core_layers:]
+    rho = plan['density'][num_core_layers:]
+    P   = plan['pressure'][num_core_layers:]
+    T   = plan['temperature'][num_core_layers:]
 
-dat = np.transpose([mass, rad, rho, P, T])
-phase = plan['phases'][num_core_layers:]
-kitchen_sink = np.concatenate([dat,phase],axis=1)
+    dat_header = '{:25}{:25}{:25}{:25}{:25}'.format('mass', 'radius', 'density', 'pres', 'temp')
+    phase_header = '{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}\
+        {:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}'.format(*plan['phase_names'])
+    #pdb.set_trace()
 
-#np.savetxt('Earth_nofmt.dat', kitchen_sink , delimiter = ',' ,header = dat_header+phase_header)
-#np.savetxt('Earth_mantle.dat', np.transpose([mass, rad, rho, P, T]), delimiter = ' , ' ,header = dat_header)
-#plot_vs_PREM(plan)
+    dat = np.transpose([mass, rad, rho, P, T])
+    phase = plan['phases'][num_core_layers:]
+    kitchen_sink = np.concatenate([dat,phase],axis=1)
 
-'''
+    plan2 = Earth_model(mantle_Earth_comp, Fe_only_core, man_only, 1.0)
+
+    
+    #np.savetxt('Earth_nofmt.dat', kitchen_sink , delimiter = ',' ,header = dat_header+phase_header)
+    #np.savetxt('Earth_mantle.dat', np.transpose([mass, rad, rho, P, T]), delimiter = ' , ' ,header = dat_header)
+    plot_vs_PREM(plan, plan2)
+
+run()
 
 #2) Earth with knowledge of its bulk composition only
 #use McD values with and without Fe in mantle
