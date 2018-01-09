@@ -3,16 +3,16 @@
 #however, this comes at a cost of accuracy in mineralogy
 Pressure_range_mantle_UM    = '5000 1250001'
 Temperature_range_mantle_UM = '1500 3200'
-resolution_UM               = '30 30'
+resolution_UM               = '100 100'
 
-Pressure_range_mantle_LM    = '1250000 7000000'
+Pressure_range_mantle_LM    = '1250000 6000000'
 Temperature_range_mantle_LM = '2500 5000'
-resolution_LM               = '30 30'
+resolution_LM               = '80 80'
 
 
 #layers, like concentric shells set here in each region: core, mantle, h20 envelope
-num_mantle_layers = 1000
-num_core_layers   = 1000
+num_mantle_layers = 2000
+num_core_layers   = 2000
 number_h2o_layers = 0
 
 #temperature at surface if no water layer. Essentially temperature below the crust

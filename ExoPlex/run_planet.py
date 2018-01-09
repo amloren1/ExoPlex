@@ -70,21 +70,27 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
         Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac = functions.get_percents(*compositional_params)
 
     else:
+        
         core_mass_frac = truncate_comp.get('wtCore')
-        Mantle_wt_per = functions.get_mantle_percents(compositional_params, core_mass_frac)
-
-        compositional_params[5] = Mantle_wt_per.get('XFeO')
-
-        print compositional_params
-        print 'XFeO = {}'.format(compositional_params[5])
 
         print '\n*********************************'
         print '\nUsing molar ratios to define mantle only'
         print 'Entered core wt%% = {}\n'.format(round(core_mass_frac*100.,6))
         print '*********************************\n'
+        Mantle_wt_per, bulk_ratios = functions.get_mantle_percents(compositional_params, core_mass_frac)
+        
+
+
+        #set list of mantle ratios to be consistent with bulk compostiion version
+
+        Mantle_ratios = compositional_params[1:5]
+
+
+        print 'XFeO = {}'.format(bulk_ratios[4])
+
+
         wtFe = round(100.*(1- sum(compositional_params[6:])), 8)
 
-        Mantle_wt_per  = truncate_comp
         Core_wt_per = {'Fe': wtFe,'Si':round(100.*compositional_params[6],8) \
           ,'O':round(100.*compositional_params[7],8),'S':round(100.*compositional_params[8],8)}
         Core_mol_per = 'place holder?'
@@ -94,8 +100,8 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
     print 'Mantle_wt_per: ', Mantle_wt_per
     print 'Core_mol_per: ', Core_mol_per
     print 'core_mass_frac: ', core_mass_frac
-
-
+    
+    sys.exit()
     #Run perplex either in series or parallel for upper and lower mantle
     if multi_process:
         #must generate filenames with seperate function due to IO issues
@@ -230,7 +236,7 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
     print 'Mantle_wt_per: ', Mantle_wt_per
     print 'Core_mol_per: ', Core_mol_per
     print 'core_mass_frac: ', core_mass_frac
-
+    sys.exit()
     #DEBUG
     import pdb
     #pdb.set_trace()

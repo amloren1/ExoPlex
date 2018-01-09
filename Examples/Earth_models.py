@@ -90,8 +90,12 @@ def Earth_model(composition, coreComp, fix_core, Mass):
     #Here is where the ExoPlex model is called
     #result is a profile for density, mass, radius,
     #heat capacity, emissivity of heat and mineralogy
+    #run_planet_mass(mass_planet, compositional_params, structure_params, layers,filename, truncate_comp)
+    
     Planet = exo.run_planet_mass(Mass, compositional_params,structure_params,layers,sol_filename,  fix_core)
 
+    #run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename, truncate_comp)
+    Planet = exo.run_planet_radius(1.0, compositional_params,structure_params,layers,sol_filename, fix_core)
     #print this stuff to make sure you are not going insane in da membrane
     if verbose:
 
@@ -118,29 +122,37 @@ def plot_vs_PREM(Planet, Planet1):
     depth_prm = prem_dat.get('depth')
     rho_dep   = prem_dat.get('rho_depth')
 
-
     #setup plotting data from ExoPlex model
     depth_ep = (Planet['radius'][-1]-Planet['radius'])/1e3
     rho_ep = Planet['density']/1e3
 
     depth_ep_Fe = (Planet1['radius'][-1]-Planet['radius'])/1e3
     rho_ep_Fe = Planet1['density']/1e3
+
+
+
+    depth_prm   = depth_prm/depth_prm[-1]
+    depth_ep    = depth_ep/depth_ep[0]
+    depth_ep_Fe = depth_ep_Fe/depth_ep_Fe[0]
+    
+    pdb.set_trace()
+
     #setup plots
     fig, ax =  plt.subplots(figsize = (15,10))
 
     #plotting parameters, can change
     plt.rc('font', family='serif')
-    lab_size = 24
-    tic_size = 20
+    lab_size = 25
+    tic_size = 23
     ax.set_xlim(0., max(depth_prm))
     ax.set_ylabel("Density (g/cm$^3$)", fontsize = lab_size )
-    ax.set_xlabel("Depth (km)", fontsize = lab_size)
+    ax.set_xlabel("Fraction of planet depth", fontsize = lab_size)
     ax.tick_params(direction='in', length=6, labelsize = tic_size)
     ax.grid(color='grey', linestyle='-', alpha = 0.4, linewidth=.7)
 
 
     #Plot the PREM and Exoplex model
-    ax.plot(depth_prm, rho_dep, label = 'PREM',  lw = 5, ls = '-.', color = 'black')
+    #ax.plot(depth_prm, rho_dep, label = 'PREM',  lw = 5, ls = '-.', color = 'black')
     ax.plot(depth_ep, rho_ep, label = 'ExoPlex', lw = 4, color = 'magenta')
     ax.plot(depth_ep_Fe, rho_ep_Fe, label = 'ExoPlex Pure Fe core', lw = 4, color = 'green', alpha = 0.5)
 
@@ -246,10 +258,12 @@ def run():
     P   = plan['pressure'][num_core_layers:]
     T   = plan['temperature'][num_core_layers:]
 
-    dat_header = '{:25}{:25}{:25}{:25}{:25}'.format('mass', 'radius', 'density', 'pres', 'temp')
-    phase_header = '{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}\
-        {:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}'.format(*plan['phase_names'])
+    print "***\n\ntest core size and composition of earth analog here\n\n***"
     #pdb.set_trace()
+    #dat_header = '{:25}{:25}{:25}{:25}{:25}'.format('mass', 'radius', 'density', 'pres', 'temp')
+    #phase_header = '{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}\
+     #   {:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}'.format(*plan['phase_names'])
+    pdb.set_trace()
 
     dat = np.transpose([mass, rad, rho, P, T])
     phase = plan['phases'][num_core_layers:]
