@@ -15,9 +15,8 @@ def solfile_name(*args):
     CaMg = args[1][2]
     AlMg = args[1][3]
 
-
     filename = args[3]
-    UMLM = args[4]
+    UMLM     = args[4]
 
     plxMan = str(Mantle_wt_per.get('MgO')) + ' ' + str(Mantle_wt_per.get('SiO2')) + ' ' \
              + str(Mantle_wt_per.get('FeO')) + ' ' + str(Mantle_wt_per.get('CaO')) \

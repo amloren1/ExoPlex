@@ -92,7 +92,7 @@ def Earth_model(composition, coreComp, fix_core, Mass):
     #heat capacity, emissivity of heat and mineralogy
     #run_planet_mass(mass_planet, compositional_params, structure_params, layers,filename, truncate_comp)
     
-    Planet = exo.run_planet_mass(Mass, compositional_params,structure_params,layers,sol_filename,  fix_core)
+    #Planet = exo.run_planet_mass(Mass, compositional_params,structure_params,layers,sol_filename,  fix_core)
 
     #run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename, truncate_comp)
     Planet = exo.run_planet_radius(1.0, compositional_params,structure_params,layers,sol_filename, fix_core)
