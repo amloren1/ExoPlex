@@ -50,6 +50,7 @@ Inputs:
 '''
 #=======================================================================
 
+
 def Earth_model(composition, coreComp, fix_core, Mass):
     #import parameters not related to planet composition
 
@@ -111,6 +112,13 @@ def Earth_model(composition, coreComp, fix_core, Mass):
 
 
     return Planet
+    
+############################
+'''
+Plotting function
+'''
+############################
+
 
 def plot_vs_PREM(Planet, Planet1):
     
@@ -126,43 +134,38 @@ def plot_vs_PREM(Planet, Planet1):
     depth_ep = (Planet['radius'][-1]-Planet['radius'])/1e3
     rho_ep = Planet['density']/1e3
 
-    depth_ep_Fe = (Planet1['radius'][-1]-Planet['radius'])/1e3
+    depth_ep_Fe = (Planet1['radius'][-1]-Planet1['radius'])/1e3
     rho_ep_Fe = Planet1['density']/1e3
 
-
-
-    depth_prm   = depth_prm/depth_prm[-1]
-    depth_ep    = depth_ep/depth_ep[0]
-    depth_ep_Fe = depth_ep_Fe/depth_ep_Fe[0]
-    
-    pdb.set_trace()
 
     #setup plots
     fig, ax =  plt.subplots(figsize = (15,10))
 
     #plotting parameters, can change
-    plt.rc('font', family='serif')
-    lab_size = 25
-    tic_size = 23
+    plt.rc('font', family='serif', weight = 'medium')
+    lab_size = 36
+    tic_size = 34
     ax.set_xlim(0., max(depth_prm))
     ax.set_ylabel("Density (g/cm$^3$)", fontsize = lab_size )
-    ax.set_xlabel("Fraction of planet depth", fontsize = lab_size)
+    ax.set_xlabel("Depth (km)", fontsize = lab_size)
     ax.tick_params(direction='in', length=6, labelsize = tic_size)
     ax.grid(color='grey', linestyle='-', alpha = 0.4, linewidth=.7)
 
 
     #Plot the PREM and Exoplex model
-    #ax.plot(depth_prm, rho_dep, label = 'PREM',  lw = 5, ls = '-.', color = 'black')
+    ax.plot(depth_prm, rho_dep, label = 'PREM',  lw = 5, ls = '-.', color = 'black')
     ax.plot(depth_ep, rho_ep, label = 'ExoPlex', lw = 4, color = 'magenta')
     ax.plot(depth_ep_Fe, rho_ep_Fe, label = 'ExoPlex Pure Fe core', lw = 4, color = 'green', alpha = 0.5)
 
-    plt.legend(loc = 'lower right', fontsize = tic_size)
+    plt.legend(loc = 'lower right', fontsize = 32)
 
     #store the figure somewhere?
     #path_to_figs = '/home/alejandro/Documents/M-R Stuff/ThesisFigs'
     #plt.savefig(path_to_figs+'/Earth_v_PREM_describe.png')
 
     plt.show()
+    
+    pdb.set_trace()
 
     #send model data to a file?
     data = np.array([depth_ep, Planet['density']/1e3])
@@ -173,10 +176,33 @@ def plot_vs_PREM(Planet, Planet1):
 
 
 
+############################
+'''
+Print result for modeled planets
+'''
+############################
 
+def verbo(Planet):
+    
+        print 'radius of planet in km = {}'.format(Planet['radius'][-1]/1000.)
+        print 
 
+        print
+        print "Mass = ", '%.3f\n'%(Planet['mass'][-1]/5.97e24), "Earth masses"
+        print "Core Mass Fraction = ", '%.3f'%(100.*Planet['mass'][num_core_layers]/Planet['mass'][-1])
+        print "Core Radius Fraction = ", '%.3f'%(100.*Planet['radius'][num_core_layers]/Planet['radius'][-1])
+        print "CMB Pressure = " ,'%.3f\n' % (Planet['pressure'][num_core_layers]/10000), "GPa"
+        print "Central pressure = {} GPa".format(Planet['pressure'][0]/10000)
+        
+        
+        
+        
+        
+        
+        
+        
 
-
+#----------------------------------------------------------------
 
 #----------------------------------------------------------------
 '''
@@ -263,7 +289,7 @@ def run():
     #dat_header = '{:25}{:25}{:25}{:25}{:25}'.format('mass', 'radius', 'density', 'pres', 'temp')
     #phase_header = '{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}\
      #   {:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}'.format(*plan['phase_names'])
-    pdb.set_trace()
+
 
     dat = np.transpose([mass, rad, rho, P, T])
     phase = plan['phases'][num_core_layers:]
