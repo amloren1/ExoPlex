@@ -97,6 +97,8 @@ def Earth_model(composition, coreComp, fix_core, Mass):
 
     #run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename, truncate_comp)
     Planet = exo.run_planet_radius(1.0, compositional_params,structure_params,layers,sol_filename, fix_core)
+
+
     #print this stuff to make sure you are not going insane in da membrane
     if verbose:
 
@@ -255,6 +257,8 @@ Fe_only_core = {'wtSi': 0.0, 'wtO': 0.0, 'wtS':0.0}
 #  composition seperately
 ##
 light_core_composition = {'wtSi': 0.06, 'wtO': 0.0, 'wtS':0.019}
+lightest_core = {'wtSi': 0.20, 'wtO': 0.0, 'wtS':0.10}
+
 man_only = {'fix_man': True, 'wtCore': 0.323}
 
 wtCore = .323 #McDonough 03
@@ -276,7 +280,7 @@ import pdb
 #1) Model Earth with full knowledge of composition and core mass fraction
 
 def run():
-    plan = Earth_model(mantle_Earth_comp, light_core_composition, man_only, 1.0)
+    plan = Earth_model(mantle_Earth_comp, lightest_core, man_only, 1.0)
 
     mass = plan['mass'][num_core_layers:]
     rad = plan['radius'][num_core_layers:]
