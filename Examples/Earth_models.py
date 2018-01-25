@@ -328,7 +328,7 @@ density plots of Earth mass with earth mantle and various core mass fractions
 
 def run_cores():
 
-    cores = [0.0, 0.05, 0.1, 0.2, 0.3]
+    cores = [0.0, 0.35, 0.1, 0.2, 0.3]
     #colors = ['','','','']
     #plotting parameters
     #
@@ -339,7 +339,7 @@ def run_cores():
     plt.rc('font', family='serif', weight='medium')
     lab_size = 36
     tic_size = 34
-    #ax.set_xlim(0., REarth)
+    ax.set_xlim(0., REarth)
     ax.set_ylabel("Density (g/cm$^3$)", fontsize=lab_size)
     ax.set_xlabel("Depth (km)", fontsize=lab_size)
     ax.tick_params(direction='in', length=6, labelsize=tic_size)
@@ -349,7 +349,6 @@ def run_cores():
         core_comp = {'wtSi': cores[i], 'wtO': 0.0, 'wtS': 0.0}
 
         plan = Earth_model(mantle_Earth_comp, core_comp, man_only, 1.0)
-        #pdb.set_trace()
         mass = plan['mass'][num_core_layers:]
         rad = plan['radius'][num_core_layers:]
         rho = plan['density'][num_core_layers:]
@@ -357,17 +356,17 @@ def run_cores():
         T = plan['temperature'][num_core_layers:]
         alpha = plan['alpha']
         cp    = plan['cp']
-        pdb.set_trace()
         depth = (plan['radius'][-1] - plan['radius']) / 1e3
         rho = plan['density'] / 1e3
-
+        #pdb.set_trace()
+        #ax.set_xlim(0., depth[1000])
         # Plot the PREM and Exoplex model
         if i == 0:
-            ax.plot(depth, cp, label='pure Fe'.format(cores[i]), lw=5, color = 'black')
+            ax.plot(depth, rho, label='pure Fe'.format(cores[i]), lw=5, color = 'black')
         elif i == 4:
-            ax.plot(depth, cp, label='wtSi = {}'.format(cores[i]), lw=5, alpha = 0.7)
+            ax.plot(depth, rho, label='wtSi = {}'.format(cores[i]), lw=5, alpha = 0.7)
         else:
-            ax.plot(depth, cp, label='wtSi = {}'.format(cores[i]), lw=5)
+            ax.plot(depth, rho, label='wtSi = {}'.format(cores[i]), lw=5)
     plt.legend(loc = 'lower right', fontsize = 30)
     plt.show()
 

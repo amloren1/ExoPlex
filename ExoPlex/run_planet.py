@@ -177,6 +177,8 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
     Planet['phase_names'] = names
 
     Planet['Vphi'], Planet['Vp'], Planet['Vs'] = functions.get_speeds(Planet, Core_wt_per, grids, layers)
+    Planet['alpha'] = functions.get_alpha(Planet, Core_wt_per, grids, layers)
+
 
     return Planet
 
