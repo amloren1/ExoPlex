@@ -217,7 +217,7 @@ def grid_make_special(i_file):
 
     for m in range(len(Mass)):
         if Mass[m] > 2.0 and i_file == 0:
-            Mantle_potential_temp = 1400
+            Mantle_potential_temp = 1500
         else:
 
             Mantle_potential_temp = 1800
@@ -421,6 +421,6 @@ mass and radius grids for M vr R plots
 '''
 #######################################################################
 
-
+grid_make_special(0)
 
 

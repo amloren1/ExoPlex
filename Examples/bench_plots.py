@@ -34,7 +34,7 @@ import Earth_models as em
 def ZS_model():
     
     core_mantle = np.arange(0,23)
-    print core_mantle
+    #print core_mantle
     f_name = 'Dat/MR_Zeng_short.txt'
     
     
@@ -68,7 +68,7 @@ def ExoPlex_model(wtCore):
     light_core_composition = {'wtSi': 0.06, 'wtO': 0.0, 'wtS':0.019}
     man_only = {'fix_man': True, 'wtCore': wtCore}
 
-    res  = 50
+    res  = 200
     dMin = 0.1
     dMax = 5.1
     dMas = (dMax-dMin)/(res-1)
@@ -100,7 +100,7 @@ def ExoPlex_model(wtCore):
 def plot(data1):
     
     
-    cmf_grid = [0.3,0.5, 0.7]
+    cmf_grid = [0.1, 0.25, 0.5, 0.75]
     
     fig, ax =  plt.subplots(figsize = (15,10))
 
@@ -117,9 +117,10 @@ def plot(data1):
 
     #Plot the PREM and Exoplex model
     #ax.plot(depth_prm, rho_dep, label = 'PREM',  lw = 5, ls = '-.', color = 'black')
-    ax.plot(data1[:,0], data1[:,-1], label = 'rock', lw = 4, color = 'black', ls = ':')
-    ax.plot(data1[:,0], data1[:,1], label = '100% Fe', lw = 4, color = 'black', ls = ':')
-    ax.plot(data1[:,0], data1[:,11], label = '50% Fe', lw = 4, color = 'black', ls = ':')
+    ax.plot(data1[:,0], data1[:,-1], label = 'CMF = 10% ', lw = 4, color = 'black', ls = ':')
+    ax.plot(data1[:,0], data1[:,16], label = 'CMF = 25%', lw = 4, color = 'black', ls = ':')
+    ax.plot(data1[:,0], data1[:,11], label = 'CMF = 50%', lw = 4, color = 'black', ls = ':')
+    ax.plot(data1[:,0], data1[:,6], label = 'CMF = 75%', lw = 4, color = 'black', ls = ':')
 
 
     for i in range(len(cmf_grid)):

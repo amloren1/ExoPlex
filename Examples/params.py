@@ -5,14 +5,14 @@ Pressure_range_mantle_UM    = '5000 1250001'
 Temperature_range_mantle_UM = '1500 3200'
 resolution_UM               = '100 100'
 
-Pressure_range_mantle_LM    = '1250000 6000000'
-Temperature_range_mantle_LM = '2500 5000'
+Pressure_range_mantle_LM    = '1250000 8500000'
+Temperature_range_mantle_LM = '2500 5200'
 resolution_LM               = '80 80'
 
 
 #layers, like concentric shells set here in each region: core, mantle, h20 envelope
-num_mantle_layers = 2000
-num_core_layers   = 2000
+num_mantle_layers = 1000
+num_core_layers   = 1000
 number_h2o_layers = 0
 
 #temperature at surface if no water layer. Essentially temperature below the crust
@@ -34,7 +34,7 @@ verbose = True
 
 
 #multiprocess perple_x?
-multi_process = False
+multi_process = True
 
 
 #skip model and run perple_x only?

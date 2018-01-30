@@ -96,7 +96,8 @@ def Earth_model(composition, coreComp, fix_core, Mass):
     #Planet = exo.run_planet_mass(Mass, compositional_params,structure_params,layers,sol_filename,  fix_core)
 
     #run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename, truncate_comp)
-    Planet = exo.run_planet_radius(1.0, compositional_params,structure_params,layers,sol_filename, fix_core)
+
+    Planet = exo.run_planet_Radius(1.0, compositional_params,structure_params,layers,sol_filename, fix_core)
 
 
     #print this stuff to make sure you are not going insane in da membrane
@@ -212,36 +213,67 @@ Suggested composition inputs for the various cases above
 '''
 #----------------------------------------------------------------
 
-##
-#bulk earth ratios from McDonough O3.
-# fFeO = 0 and fFeO =  0.1324012
-#where fFeO is freaction of total Fe moles in mantle as FeO
-##
+####
+#  1) Define the bulk Earth composition from McDonough 03
+#  
+#  This is the composition for the bulk planet
+#  so core mass fraction (CMF) is calculated through stoichiometry and assumption of mantle 
+#  and core composition
+#   
+#  fFeO is the fraction of total Fe moles in mantle as FeO. This is not something we can
+#  constrain from observation
+# 
+#   bulk_comp_core = False  ensures that the CMF will be convolved with the bulk stoichiometry. 
+#   This is input for the fix_core parameter in the Earth_model function above
+#
+####
+
+#this one does not assume fFeO
 bulk_Earth_comp = {'FeMg': 2.969696 , 'SiMg': 0.90303030 , \
                  'AlMg': 0.090909090 , 'CaMg': 0.06666 , \
                    'fFeO': 0.0, 'wt_h2o': 0.0}
 
-bulk_inputs = False
-
-
+#this input does assume an fFeO or 0.1324 (McDonough 03)
 bulk_Earth_comp_fFeO = {'FeMg': 2.969696 , 'SiMg': 0.90303030 , \
                  'AlMg': 0.090909090 , 'CaMg': 0.06666 ,  \
                         'fFeO': 0.13240, 'wt_h2o': 0.0}
+                        
+bulk_comp_core = {'fix_man': False, 'wtCore': None}
+#.....................................................................#
 
-##
-#arth mantle elemental molar ratios from McDonough O3
-#fFeO already considered in ratios
-# -see man_only parameter below
-##
-mantle_Earth_comp = {'FeMg': 0.121212121 , 'SiMg': 0.79797979797,  \
+####
+#   2) Set the mantle composition seperately.
+#
+#   In this situation, the core and mantle are independent. So we define the composition of 
+#   each one seperately. Because we are not assuming a certain bulk composition, ExoPlex cannot
+#   calculate the core mass fraction. CMF must then be an input (0.323 in Earth's case). fFeO
+#   is not a neccesary parameter here so leave it equal to 0.0
+#
+#   *Earth mantle elemental molar ratios from McDonough O3, CMF from Yoder 95
+#   Note: fFeO already considered in ratios so leave it at 0.
+# 
+####
+
+Earth_mantle = {'FeMg': 0.121212121 , 'SiMg': 0.79797979797,  \
               'AlMg': 0.09090909 , 'CaMg': 0.0656565, \
               'fFeO': 0.0,  'wt_h2o': 0.0}
 
+Earth_core = {'wtSi': 0.06, 'wtO': 0.0, 'wtS':0.019}
 
-##
-#Solar values from Lodders 2003
-#use Al/Mg, Ca/Mg composition for Earth mantle but no FeO
-##
+Earth_man_only = {'fix_man': True, 'wtCore': 0.323}
+
+
+
+#.....................................................................#
+
+####
+#   3) Use solar composition to make a model of the Earth.(values from Lodders 2003
+#   
+#   Below we input the solar values as a bulk composition of the planet. We assume the core to
+#   be pure Fe. We neglect the existence of Al, Ca because they are much less prevalent in the 
+#   mantle compared to Fe,Mg,Si.
+####
+
 solar_comp = {'FeMg': 0.813 , 'SiMg': 0.955 , \
                 'AlMg': 0.090909090 , 'CaMg': 0.0656565 , \
                 'fFeO': 0.0, 'wt_h2o': 0.0}
@@ -256,10 +288,10 @@ Fe_only_core = {'wtSi': 0.0, 'wtO': 0.0, 'wtS':0.0}
 # -parameter that tells exoplex to fix core mass and constrain mantle
 #  composition seperately
 ##
-light_core_composition = {'wtSi': 0.06, 'wtO': 0.0, 'wtS':0.019}
+
 lightest_core = {'wtSi': 0.20, 'wtO': 0.0, 'wtS':0.10}
 
-man_only = {'fix_man': True, 'wtCore': 0.323}
+Earth_man_only = {'fix_man': True, 'wtCore': 0.323}
 
 wtCore = .323 #McDonough 03
 
@@ -280,7 +312,7 @@ import pdb
 #1) Model Earth with full knowledge of composition and core mass fraction
 
 def run():
-    plan = Earth_model(mantle_Earth_comp, lightest_core, man_only, 1.0)
+    plan = Earth_model(mantle_Earth_comp, Earth_core, Earth_man_only, 1.0)
 
     mass = plan['mass'][num_core_layers:]
     rad = plan['radius'][num_core_layers:]
@@ -328,7 +360,7 @@ density plots of Earth mass with earth mantle and various core mass fractions
 
 def run_cores():
 
-    cores = [0.0, 0.35, 0.1, 0.2, 0.3]
+    cores = [0.0, 0.05, 0.1, 0.2, 0.35]
     #colors = ['','','','']
     #plotting parameters
     #
@@ -345,7 +377,7 @@ def run_cores():
     ax.tick_params(direction='in', length=6, labelsize=tic_size)
     ax.grid(color='grey', linestyle='-', alpha=0.4, linewidth=.7)
 
-    for i in range(2):
+    for i in range(len(cores)):
         core_comp = {'wtSi': cores[i], 'wtO': 0.0, 'wtS': 0.0}
 
         plan = Earth_model(mantle_Earth_comp, core_comp, man_only, 1.0)
@@ -370,7 +402,9 @@ def run_cores():
     plt.legend(loc = 'lower right', fontsize = 30)
     plt.show()
 
-run_cores()
+
+
+#run_cores()
 
 
 
