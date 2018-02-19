@@ -1,6 +1,7 @@
 import os
 import sys
 import pexpect as pe
+import pdb
 
 PerPlex_path = os.path.dirname(os.path.realpath(__file__))+"/PerPlex"
 
@@ -30,7 +31,6 @@ def run_perplex(*args):
 
 
     filename ='../Solutions/'+solutionFileNameMan
-
 
     if os.path.isfile(filename+'_UM.tab') and UMLM == True:
         print '\nThe Upper mantle .tab already exists, please wait briefly for solution:'

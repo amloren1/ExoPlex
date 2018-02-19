@@ -15,9 +15,8 @@ def solfile_name(*args):
     CaMg = args[1][2]
     AlMg = args[1][3]
 
-
     filename = args[3]
-    UMLM = args[4]
+    UMLM     = args[4]
 
     plxMan = str(Mantle_wt_per.get('MgO')) + ' ' + str(Mantle_wt_per.get('SiO2')) + ' ' \
              + str(Mantle_wt_per.get('FeO')) + ' ' + str(Mantle_wt_per.get('CaO')) \
@@ -533,6 +532,54 @@ def get_phases(Planet,grids,layers):
 
             Phases[i][len(Mantle_phases[0]):] = [0]
     return Phases
+
+
+
+def get_alpha(Planet,core_wt_per,grids,layers):
+
+    num_mantle_layers, num_core_layers, number_h2o_layers = layers
+
+    total_layers = num_core_layers+num_mantle_layers+number_h2o_layers
+    mantle_pressures = Planet['pressure'][num_core_layers:]
+    mantle_temperatures = Planet['temperature'][num_core_layers:]
+    core_pressures = Planet['pressure']
+    core_temperatures = Planet['temperature']
+
+    P_points_UM = []
+    T_points_UM = []
+    P_points_LM = []
+    T_points_LM = []
+
+    for i in range(len(mantle_pressures)):
+        if mantle_pressures[i]<=1250000:
+            P_points_UM.append(mantle_pressures[i])
+            T_points_UM.append(mantle_temperatures[i])
+        else:
+            P_points_LM.append(mantle_pressures[i])
+            T_points_LM.append(mantle_temperatures[i])
+
+    alpha_UM = interpolate.griddata((grids[0]['pressure'], grids[0]['temperature']), grids[0]['alpha'],
+                         (P_points_UM, T_points_UM), method='linear')
+
+    alpha_LM = interpolate.griddata((grids[1]['pressure'], grids[1]['temperature']), grids[1]['alpha'],
+                         (P_points_LM, T_points_LM), method='linear')
+
+    alpha_mantle = np.concatenate((alpha_LM,alpha_UM),axis=0)
+
+    #Core_speeds = minphys.get_core_speeds(core_pressures,core_temperatures,core_wt_per)
+    #pdb.set_trace()
+    alpha = []
+
+    for i in range(total_layers):
+
+        if i < num_mantle_layers + num_core_layers and i > num_core_layers:
+
+            alpha.append(alpha_mantle[i - num_core_layers])
+        else:
+            alpha.append(0.)
+
+    return alpha
+
 
 def get_speeds(Planet,core_wt_per,grids,layers):
     num_mantle_layers, num_core_layers, number_h2o_layers = layers
