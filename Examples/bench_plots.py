@@ -89,6 +89,25 @@ def ExoPlex_model(wtCore):
         #pdb.set_trace()
     return(mass_grid, radius_grid)
     
+    
+    
+    
+    
+
+######################################################
+#   Plots of M-R
+######################################################
+
+    
+def ExoPlex_grid(wtCore):
+    
+    file_name = '{}%_Earth_Core'.format(wtCore*100)
+    dat = np.genfromtxt(file_name, delimiter = ',', comments = '#')
+    
+    mass = dat[:,0]
+    rad  = dat[:,1]
+    
+    return(mass, rad)
 
 ######################################################
 #   Plots of M-R
@@ -100,14 +119,14 @@ def ExoPlex_model(wtCore):
 def plot(data1):
     
     
-    cmf_grid = [0.1, 0.25, 0.5, 0.75]
+    cmf_grid = [0.80, 0.85, 0.95]
     
     fig, ax =  plt.subplots(figsize = (15,10))
 
     #plotting parameters, can change
     plt.rc('font', family='serif')
-    lab_size = 23
-    tic_size = 18
+    lab_size = 36
+    tic_size = 34
     ax.set_xlim(0.1 , 5)
     ax.set_xlabel(r"Mass (M$_\oplus$)", fontsize = lab_size )
     ax.set_ylabel(r"Radius (R$_\oplus$)", fontsize = lab_size)
@@ -117,21 +136,27 @@ def plot(data1):
 
     #Plot the PREM and Exoplex model
     #ax.plot(depth_prm, rho_dep, label = 'PREM',  lw = 5, ls = '-.', color = 'black')
-    ax.plot(data1[:,0], data1[:,-1], label = 'CMF = 10% ', lw = 4, color = 'black', ls = ':')
-    ax.plot(data1[:,0], data1[:,16], label = 'CMF = 25%', lw = 4, color = 'black', ls = ':')
-    ax.plot(data1[:,0], data1[:,11], label = 'CMF = 50%', lw = 4, color = 'black', ls = ':')
-    ax.plot(data1[:,0], data1[:,6], label = 'CMF = 75%', lw = 4, color = 'black', ls = ':')
+    ax.plot(data1[:,0], data1[:,2], label = 'CMF = 95% ', lw = 5, color = 'black', ls = ':')
+    ax.plot(data1[:,0], data1[:,4], label = 'CMF = 85%', lw = 5, color = 'black', ls = ':')
+    ax.plot(data1[:,0], data1[:,5], label = 'CMF = 80%', lw = 5, color = 'black', ls = ':')
+    #ax.plot(data1[:,0], data1[:,6], label = 'CMF = 75%', lw = 5, color = 'black', ls = ':')
 
 
     for i in range(len(cmf_grid)):
-        #continue
-        mas, rad = ExoPlex_model(cmf_grid[i])
         
-        ax.plot(mas, rad, label = '{} Core'.format(cmf_grid[i]*100), lw = 4)
+        if os.path.exists('{}%_Earth_Core'.format(cmf_grid[i]*100)):
+            print 'eheheh'
+            mas,rad  = ExoPlex_grid(cmf_grid[i])
+            
+        else:
+            print 'eheheh'
+            mas, rad = ExoPlex_model(cmf_grid[i])
+        
+        ax.plot(mas, rad, label = '{} Core'.format(cmf_grid[i]*100), lw = 5, alpha = 0.7)
 
     
 
-    plt.legend(loc = 'lower right', fontsize = tic_size)
+    plt.legend(loc = 'lower right', fontsize = 24)
 
     #store the figure somewhere?
     #path_to_figs = '/home/alejandro/Documents/M-R Stuff/ThesisFigs'

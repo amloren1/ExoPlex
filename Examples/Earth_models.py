@@ -93,11 +93,11 @@ def Earth_model(composition, coreComp, fix_core, Mass):
     #heat capacity, emissivity of heat and mineralogy
     #run_planet_mass(mass_planet, compositional_params, structure_params, layers,filename, truncate_comp)
     
-    #Planet = exo.run_planet_mass(Mass, compositional_params,structure_params,layers,sol_filename,  fix_core)
+    Planet = exo.run_planet_mass(Mass, compositional_params,structure_params,layers,sol_filename,  fix_core)
 
     #run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename, truncate_comp)
 
-    Planet = exo.run_planet_Radius(1.0, compositional_params,structure_params,layers,sol_filename, fix_core)
+    #Planet = exo.run_planet_Radius(1.0, compositional_params,structure_params,layers,sol_filename, fix_core)
 
 
     #print this stuff to make sure you are not going insane in da membrane
@@ -239,6 +239,8 @@ bulk_Earth_comp_fFeO = {'FeMg': 2.969696 , 'SiMg': 0.90303030 , \
                         'fFeO': 0.13240, 'wt_h2o': 0.0}
                         
 bulk_comp_core = {'fix_man': False, 'wtCore': None}
+
+
 #.....................................................................#
 
 ####
@@ -263,7 +265,6 @@ Earth_core = {'wtSi': 0.06, 'wtO': 0.0, 'wtS':0.019}
 Earth_man_only = {'fix_man': True, 'wtCore': 0.323}
 
 
-
 #.....................................................................#
 
 ####
@@ -275,25 +276,18 @@ Earth_man_only = {'fix_man': True, 'wtCore': 0.323}
 ####
 
 solar_comp = {'FeMg': 0.813 , 'SiMg': 0.955 , \
-                'AlMg': 0.090909090 , 'CaMg': 0.0656565 , \
+                'AlMg': 0.0 , 'CaMg': 0.0 , \
                 'fFeO': 0.0, 'wt_h2o': 0.0}
+                
 solar_input = {'fix_man': False, 'wtCore': None}
+
 Fe_only_core = {'wtSi': 0.0, 'wtO': 0.0, 'wtS':0.0}
 
 
 
-##
-#other composition inputs
-# -Earth core composition as wt% of Si, S,O from McDonough 03
-# -parameter that tells exoplex to fix core mass and constrain mantle
-#  composition seperately
-##
+#----------------------------------------------------------------
 
-lightest_core = {'wtSi': 0.20, 'wtO': 0.0, 'wtS':0.10}
-
-Earth_man_only = {'fix_man': True, 'wtCore': 0.323}
-
-wtCore = .323 #McDonough 03
+#----------------------------------------------------------------
 
 
 
