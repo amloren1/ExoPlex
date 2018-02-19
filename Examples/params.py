@@ -3,11 +3,11 @@
 #however, this comes at a cost of accuracy in mineralogy
 Pressure_range_mantle_UM    = '5000 1250001'
 Temperature_range_mantle_UM = '1500 3200'
-resolution_UM               = '30 30'
+resolution_UM               = '100 100'
 
-Pressure_range_mantle_LM    = '1250000 6500000'
-Temperature_range_mantle_LM = '2500 5000'
-resolution_LM               = '20 20'
+Pressure_range_mantle_LM    = '1250000 8500000'
+Temperature_range_mantle_LM = '2500 5200'
+resolution_LM               = '80 80'
 
 
 #layers, like concentric shells set here in each region: core, mantle, h20 envelope
@@ -42,7 +42,7 @@ perplex_only = False#True # False
 
 
 MEarth = 5.972e24  #kg
-REarth = 6.371e3   #kilometers
+REarth = 6.371e6   #meters
 
 #example of how to fix core mass so user can define mantle composition seperately
 
