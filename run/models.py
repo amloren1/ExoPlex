@@ -89,6 +89,7 @@ def exoplex(script):
     or (x.n_mod) != len(x.FeMg) \
     or (x.n_mod) != len(x.SiMg) \
     or (x.n_mod) != len(x.CaMg) \
+    or (x.n_mod) != len(x.X)    \
     or (x.n_mod) != len(x.AlMg):
         print '\n***input ERROR: missing/extra list values in {}.py***'.format(script) 
         sys.exit()
@@ -96,7 +97,6 @@ def exoplex(script):
     comp_params = inputs_from_file(script)
     
     Planet = np.empty(x.n_mod,dtype = object)
-    
     for i in range(x.n_mod):
         
         cmf2 = {'fix_man': x.fix_core, 'wtCore': x.cmf[i]}
@@ -116,31 +116,31 @@ def exoplex(script):
         
         if x.indp == 'M' or x.indp == 'm':
             #sys.exit()
+            #pdb.set_trace()
             Planet[i] = exo.run_planet_mass(x.X[i], compositional_params,structure_params,layers,sol_filename, cmf2)
         else:
             #sys.exit()
             Planet[i] = exo.run_planet_radius(x.X[i], compositional_params, structure_params, layers,sol_filename, cmf2)
 
-
+        
         if verbose:
 
             print 'radius of planet'
-            print Planet['radius'][-1]/1000
+            print Planet[i]['radius'][-1]/1000
 
             print
-            print "Mass = ", '%.3f'%(Planet['mass'][-1]/5.97e24), "Earth masses"
-            print "Core Mass Fraction = ", '%.3f'%(100.*Planet['mass'][num_core_layers]/Planet['mass'][-1])
-            print "Core Radius Fraction = ", '%.3f'%(100.*Planet['radius'][num_core_layers]/Planet['radius'][-1])
-            print "CMB Pressure = " ,'%.3f' % (Planet['pressure'][num_core_layers]/10000), "GPa"
-            print "Central pressure = {} GPa".format(Planet['pressure'][0]/10000)
+            print "Mass = ", '%.3f'%(Planet[i]['mass'][-1]/5.97e24), "Earth masses"
+            print "Core Mass Fraction = ", '%.3f'%(100.*Planet[i]['mass'][num_core_layers]/Planet[i]['mass'][-1])
+            print "Core Radius Fraction = ", '%.3f'%(100.*Planet[i]['radius'][num_core_layers]/Planet[i]['radius'][-1])
+            print "CMB Pressure = " ,'%.3f' % (Planet[i]['pressure'][num_core_layers]/10000), "GPa"
+            print "Central pressure = {} GPa".format(Planet[i]['pressure'][0]/10000)
             
+    return Planet
             
         
     
 
 
-exoplex('in1')
-sys.exit()
 
 
 
