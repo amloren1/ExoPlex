@@ -96,16 +96,40 @@ Where the third line alters the path to enable the script to run functions from 
 
 ## Functions
 
-#### run.exoplex(inputs_file)
+### run.exoplex(inputs_file)
 Calls ExoPlex functions and executes desired models based on input python script. 
 
-###### args
+##### args
  * inputs_file: String, name of a python script with input parameters. Example format is given in ```start_here/input_example.py```
+ 
+##### returns
+ * numpy array of dictionaries which contain model information with keys: 
+ ['volume', 'phases', 'phase_names', 'temperature', 'density', 'dmass', 'K', 'mantle_ratios', 'gravity', 'Vp', 'pressure', 'Vs', 'radius', 'Vphi', 'bulk_ratios', 'alpha', 'cp', 'mass']
 
-#### run.plot_vs_PREM(*kwargs)
+ 
+##### example
 
-###### kwargs
- * inputs_file: String, name of a python script with input parameters. Example format is given in '''start_here/input_example.py'''
+```python
+>>>planets = run.exoplex('inputs_1')
+```
+
+### run.plot_vs_PREM(*kwargs)
+Radial density profile of each modeled planet plotted with the PREM (A. M. Dziewonski & D. L. Anderson 1981).
+
+##### kwargs
+ * planet: results from `run.exoplex()`  
+ * label: string array (or list), label for each model to be plotted. This will be displayed in a legend on theplot. 
+ 
+##### returns
+ 
+ * None
+ 
+##### example
+
+ ```python
+ planets = run.exoplex('inputs_1')
+ run.plot_vs_PREM(planet = planets, label = ['Mg/Si=1', 'Mg/Si=2'])
+ ```
 
 ## Examples
 
