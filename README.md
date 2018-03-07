@@ -35,7 +35,7 @@ Below we detail the dependencies for the full version of ExoPLex which does rely
   - burnman: solves equations of state BME II,III, IV for the core and ice layers
 
  
-### Installing on Ubuntu and its derivatives
+#### Installing on Ubuntu and its derivatives
 
 1. Clone the master branch of this repository. 
 2. Extract tar file within the ```Solutions/``` directory:
@@ -51,13 +51,15 @@ tar -xvzf solutions.tar.gz
 
 4. Move the following executable programs into the ```ExoPlex/PerPlex/``` directory:
    - build, vertex, werami
-   - e.g. from within the ExoPlex/PerPlex   ```path/to/perplex/install .```
    - the other files from the Perple_x install will not be used by ExoPlex
 
-5. Install the libraries mentioned above. All of these are available in the PyPI and can be installed with pip, ```pip install package```
+5. Install the libraries mentioned above. All of these are available in the PyPI and can be installed with pip, 
+```
+pip install package_name
+```
 
 
-### Installing on MAC OS
+#### Installing on MAC OS
 
 1. Clone the master branch of this repository. 
 2. Extract tar file within the ```Solutions/``` directory:
@@ -72,19 +74,67 @@ tar -xvzf solutions.tar.gz
 
 4. Move the following executable programs into the ```ExoPlex/PerPlex/``` directory:
    - build, vertex, werami
-   - e.g. from within the ExoPlex/PerPlex   ```path/to/perplex/install .```
    - the other files from the Perple_x install will not be used by ExoPlex
 
-5. Install the libraries mentioned above. All of these are available in the PyPI and can be installed with pip, ```pip install package```
+5. Install the libraries mentioned above. All of these are available in the PyPI and can be installed with pip, 
+```
+pip install package_name
+```
+## Using ExoPlex
 
+ExoPlex is meant to be run as a library complimentary to python scripts. The idea is to store your scripts in a directory on the same level as the ```ExoPlex/``` directory. Most of the functions the user will be interacting with are located in the ```run/``` directory. To use these from the  ```start_here/``` directory, for example, scripts should begin with:
+
+```python
+import os
+import sys
+if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
+    sys.path.insert(1, os.path.abspath('..'))
+import run
+```
+
+Where the third line alters the path to enable the script to run functions from the other directories. 
+
+## Functions
+
+### run.exoplex(inputs_file)
+Calls ExoPlex functions and executes desired models based on input python script. 
+
+##### args
+ * inputs_file: String, name of a python script with input parameters. Example format is given in ```start_here/input_example.py```
+ 
+##### returns
+ * numpy array of dictionaries which contain model information with keys: 
+ ['volume', 'phases', 'phase_names', 'temperature', 'density', 'dmass', 'K', 'mantle_ratios', 'gravity', 'Vp', 'pressure', 'Vs', 'radius', 'Vphi', 'bulk_ratios', 'alpha', 'cp', 'mass']
+
+ 
+##### example
+
+```python
+>>>planets = run.exoplex('inputs_1')
+```
+
+### run.plot_vs_PREM(*kwargs)
+Radial density profile of each modeled planet plotted with the PREM (A. M. Dziewonski & D. L. Anderson 1981).
+
+##### kwargs
+ * planet: results from `run.exoplex()`  
+ * label: string array (or list), label for each model to be plotted. This will be displayed in a legend on theplot. 
+ 
+##### returns
+ 
+ * None
+ 
+##### example
+
+ ```python
+ planets = run.exoplex('inputs_1')
+ run.plot_vs_PREM(planet = planets, label = ['Mg/Si=1', 'Mg/Si=2'])
+ ```
 
 ## Examples
 
-Learning how to use ExoPlex is best done by working through the examples provided in the ```Examples/``` directory. A new user should be abe to gain enough insight from the current examples to use ExoPlex to its fullest however, we will be adding more exampes in the future.
+Learning how to use ExoPlex is best done by working through the examples provided in the ```start_here/``` directory. A new user should be abe to gain enough insight from the current examples to use ExoPlex to its fullest however, we will be adding more exampes in the future.
 
-### Earth_models.py
-
-### autonio.py
 
 ## Contributing
 
