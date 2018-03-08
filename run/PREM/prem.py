@@ -10,9 +10,9 @@ import sys
 import numpy as np
 
 import matplotlib.pyplot as plt
-
+import pdb
 #location from file which called this module
-prem_dat = 'PREM/PREM.csv'
+prem_dat = 'PREM.csv'
 
 REarth = 6371 #kilometers
 
@@ -47,8 +47,10 @@ def prem():
     #	8 epsilon,	an	anisotropy	parameter	(ignore)
     #	9 Qmu	Quality	factor	relating	to	rigidity,	 (ignore)
     #	10 Qkappa.	Quality	factor	relating	to	incompressibility,	(ignore)
+    
+    cwd = os.path.dirname(__file__)
 
-    dat = np.genfromtxt('PREM/PREM.csv', delimiter = ',', usecols = (0,1,2,3,4,5,6))
+    dat = np.genfromtxt(cwd+'/PREM.csv', delimiter = ',', usecols = (0,1,2,3,4,5,6))
     
     #radius where r[0] is the center
     rad         = dat[:,0]

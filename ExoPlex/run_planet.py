@@ -18,6 +18,7 @@ import params
 
 multi_process = params.multi_process
 perplex_only  = params.perplex_only
+update_minphys = params.update_minphys
 import multiprocessing as mp
 
 
@@ -115,6 +116,9 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
         lower_man_file = functions.solfile_name(*[Mantle_wt_per,Mantle_ratios, \
         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
 
+        if update_minphys:
+            os.remove('../Solutions/'+upper_man_file+'_UM.tab')
+            os.remove('../Solutions/'+lower_man_file+'_LM.tab')
         #setup and run lower and upper mantle .tab files simultaneously
         p_LM = mp.Process(target = run_perplex.run_perplex, args = ([Mantle_wt_per,lower_man_file, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False]))
@@ -134,6 +138,10 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
         lower_man_file = functions.solfile_name(*[Mantle_wt_per,Mantle_ratios, \
         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
         
+        
+        if update_minphys:
+            os.remove('../Solutions/'+upper_man_file+'_UM.tab')
+            os.remove('../Solutions/'+lower_man_file+'_LM.tab')
         
         LM = run_perplex.run_perplex(*[Mantle_wt_per,lower_man_file, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
@@ -243,7 +251,7 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
 
         Core_wt_per = {'Fe': wtFe,'Si':round(100.*compositional_params[6],8) \
           ,'O':round(100.*compositional_params[7],8),'S':round(100.*compositional_params[8],8)}
-        Core_mol_per = 'place holder?'
+        Core_mol_per = ''
 
 
     print 'Core_wt_per: ' , Core_wt_per
@@ -268,6 +276,9 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
         lower_man_file = functions.solfile_name(*[Mantle_wt_per,Mantle_ratios, \
         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
 
+        if update_minphys:
+            os.remove('../Solutions/'+upper_man_file+'_UM.tab')
+            os.remove('../Solutions/'+lower_man_file+'_LM.tab')
         #setup and run lower and upper mantle .tab files simultaneously
         p_LM = mp.Process(target = run_perplex.run_perplex, args = ([Mantle_wt_per,lower_man_file, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False]))
@@ -288,7 +299,10 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
         lower_man_file = functions.solfile_name(*[Mantle_wt_per,Mantle_ratios, \
             [structure_params[3],structure_params[4],structure_params[5]],filename,False])
 
-
+        if update_minphys:
+            os.remove('../Solutions/'+upper_man_file+'_UM.tab')
+            os.remove('../Solutions/'+lower_man_file+'_LM.tab')
+            
         LM = run_perplex.run_perplex(*[Mantle_wt_per,lower_man_file, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
 

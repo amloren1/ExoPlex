@@ -3,7 +3,7 @@ import numpy as np
 Earth_radius = 6.371e6
 Earth_mass   = 5.972e24 # kg 
 import minphys
-
+import pdb
 def initialize_by_radius(*args):
     radius_planet        = args[0]
     structural_params    = args[1]
