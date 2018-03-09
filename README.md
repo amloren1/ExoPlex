@@ -20,7 +20,7 @@ Below we detail the dependencies for the full version of ExoPLex which does rely
 
 - Mac OS or Linux/Unix
 
-- Perplex_x version 6.7
+- Perplex_x version 6.7 (Connolly (2009))
 
 - Python 2.7+
 
@@ -151,3 +151,8 @@ GPL v2 or later.
 
 * James Connolly (PerPle_X) for providing tips and source code
 * This project was done as part of the NASA NExSS grant
+
+## References 
+
+Connolly JAD (2009) The geodynamic equation of state: what and how. Geochemistry, Geophysics, Geosystems 10:Q10014 DOI:10.1029/2009GC002540.
+
