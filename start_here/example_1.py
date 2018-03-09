@@ -39,7 +39,7 @@ run.write(planet = Planets)
 
 
 #our first output will be a plot against the PREM (Dziewonski & Anderson 1981)
-run.plot_vs_PREM(planet = Planets)
+run.pltprem(planet = Planets)
 
 
 

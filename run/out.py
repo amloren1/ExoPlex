@@ -118,7 +118,7 @@ def writeall(**kwargs):
         
         for i in range(n):
             names[i] = 'planet0{}.dat'.format(i)
-            pdb.set_trace()
+            
     elif len(kwargs.get('file_names')) == n:
         names = kwargs.get('file_names')
     else:
@@ -141,10 +141,6 @@ def writeall(**kwargs):
         n_phase = len(Planet[i]['phase_names'])
         for phases in Planet[i]['phase_names']:
             phase_header += '{:10}'.format(phases)
-        #pdb.set_trace()    
-        #phase_header = '{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}\
-        #    {:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}{:10}'.format(*Planet[i]['phase_names'])
-
 
         dat = np.transpose([mass, rad, rho, P, T])
         phase = Planet[i]['phases'][num_core_layers:]
@@ -173,7 +169,7 @@ def write(**kwargs):
         
         for i in range(n):
             names[i] = 'planet0{}.dat'.format(i)
-            pdb.set_trace()
+            
     elif len(kwargs.get('file_names')) == n:
         names = kwargs.get('file_names')
     else:
@@ -191,19 +187,14 @@ def write(**kwargs):
         T   = Planet[i]['temperature'][num_core_layers:]
     
         dat_header = '{:25}{:25}{:25}{:25}{:25}'.format('mass', 'radius', 'density', 'pres', 'temp')
-        phase_header = ''
+        
         
         
 
         dat = np.transpose([mass, rad, rho, P, T])
-        #phase = Planet[i]['phases'][num_core_layers:]
-        kitchen_sink = np.concatenate([dat,phase],axis=1)
 
-
-        #if kwargs.get()
         np.savetxt(names[i], dat , delimiter = ',' ,header = dat_header)
-        #np.savetxt('Earth_mantle.dat', np.transpose([mass, rad, rho, P, T]), delimiter = ' , ' ,header = dat_header)
-    
+    return
 
 ############################
 '''
@@ -230,7 +221,7 @@ def pltrho(**kwargs):
     ax.set_xlim(0., max(depth_prm))
     rho_dep   = prem_dat.get('rho_depth')
     #in the case of multiple planet dictionaries, otherwise
-        if kwargs.get('planet') is not None:
+    if kwargs.get('planet') is not None:
         Planet = kwargs.get('planet')
         depth_ep = np.empty(len(Planet),dtype = object)
         rho_ep = np.empty(len(Planet),dtype = object)
