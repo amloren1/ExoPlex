@@ -29,13 +29,13 @@ import run
 #**NOTE: ENTER FILENAME WITHOUT .py**
 # inputs_1 asks exoplex to model one planet. 
 
-Planets = run.exoplex('input_2')
+Planets = run.exoplex('input_1')
 
 
 #all model data is now in Planets. Lets make some plots and print the 
 # results to a file
 
-run.data_grid_full(planet = Planets)
+run.write(planet = Planets)
 
 
 #our first output will be a plot against the PREM (Dziewonski & Anderson 1981)
