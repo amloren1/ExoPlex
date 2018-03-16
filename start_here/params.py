@@ -7,7 +7,7 @@ resolution_UM               = '30 30'
 
 Pressure_range_mantle_LM    = '1250000 8500000'
 Temperature_range_mantle_LM = '2500 5200'
-resolution_LM               = '20 20'
+resolution_LM               = '30 30'
 
 #delete current mineral physics file and update on subsequent run?
 # check True when you change the values above. Otherwise old params will

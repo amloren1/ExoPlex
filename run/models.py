@@ -121,7 +121,8 @@ def exoplex(script):
         else:
             #sys.exit()
             Planet[i] = exo.run_planet_radius(x.X[i], compositional_params, structure_params, layers,sol_filename, cmf2)
-
+        if perplex_only:
+            sys.exit()
         
         if verbose:
 
@@ -259,10 +260,9 @@ def exoplex_single(**kwargs):
 
 #TODO:
 '''
-1) finish inputs_from_file function. This will read file and set the compositional_params list
-2) then build up for loop to create planet dictionaries
+
 3) edit input file to allow users to select output
-4) Find a way to have all functions available when opening script __init__.py?
+
 
 
 '''

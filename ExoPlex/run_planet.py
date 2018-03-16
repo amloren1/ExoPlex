@@ -318,6 +318,7 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
     lower_man_file = '../Solutions/'+lower_man_file
     ##store upper mantle data grids: T, P, rho etc.
     grids_low, names = functions.make_mantle_grid(upper_man_file,True)
+    
     names.append('Fe')
 
     #if there is a water mass fraction 0, then append h2o phases to phase list

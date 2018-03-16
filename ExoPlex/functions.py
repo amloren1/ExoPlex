@@ -399,6 +399,7 @@ def verbosity(x, mcor, mSi):
 def make_mantle_grid(Mantle_filename,LMUM):
 
     if LMUM == True:
+        
         file = open(Mantle_filename+'_UM.tab','r')
     else:
         file = open(Mantle_filename+'_LM.tab','r')

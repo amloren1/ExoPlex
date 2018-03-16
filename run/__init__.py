@@ -3,5 +3,6 @@ from .models import inputs
 from .models import exoplex
 from .models import exoplex_single
 from .out    import pltprem
+from .out    import pltrho
 from .out    import writeall
 from .out    import write

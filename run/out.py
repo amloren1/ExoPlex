@@ -164,16 +164,16 @@ def write(**kwargs):
     Planet = kwargs.get('planet')
     n      =  len(Planet)
     
-    if kwargs.get('file_names') == None:
+    if kwargs.get('filenames') == None:
         names = np.empty(n, dtype='S20')
         
         for i in range(n):
             names[i] = 'planet0{}.dat'.format(i)
             
-    elif len(kwargs.get('file_names')) == n:
-        names = kwargs.get('file_names')
+    elif len(kwargs.get('filenames')) == n:
+        names = kwargs.get('filenames')
     else:
-        print '\n\n***ERROR: file_name list does not match number of models***'
+        print '\n\n***ERROR: filename list does not match number of models***'
         print 'Exiting program'
         sys.exit()
     
@@ -218,27 +218,33 @@ def pltrho(**kwargs):
     ax.tick_params(direction='in', length=6, labelsize = tic_size)
     ax.grid(color='grey', linestyle='-', alpha = 0.4, linewidth=.7)
 
-    ax.set_xlim(0., max(depth_prm))
-    rho_dep   = prem_dat.get('rho_depth')
+    
+  
     #in the case of multiple planet dictionaries, otherwise
     if kwargs.get('planet') is not None:
-        Planet = kwargs.get('planet')
+        
+        
+        Planet   = kwargs.get('planet')
         depth_ep = np.empty(len(Planet),dtype = object)
-        rho_ep = np.empty(len(Planet),dtype = object)
-    
+        rho_ep   = np.empty(len(Planet),dtype = object)
+        maxDepth = np.empty(len(Planet))
+        
         for i in range(len(Planet)):
             #setup plotting data from ExoPlex model
             #pdb.set_trace()
             depth_ep[i] = (Planet[i]['radius'][-1]-Planet[i]['radius'])/1e3
             rho_ep[i]   = Planet[i]['density']/1e3
-
+            maxDepth[i] = max(depth_ep[i])
             
             #Plot the Exoplex model
             if kwargs.get('label') != None:
                 ax.plot(depth_ep[i], rho_ep[i], label = kwargs.get('label')[i] , lw = 4)
             else:
                 ax.plot(depth_ep[i], rho_ep[i], label = 'ExoPlex' , lw = 4)
+      
+    
         
+    ax.set_xlim(0., max(maxDepth))
     plt.legend(loc = 'lower right', fontsize = 32)
 
     #store the figure somewhere?
@@ -257,6 +263,33 @@ def pltrho(**kwargs):
     return
     
     
+ 
+ 
+############################
+'''
+plot Mass-radius diagram
+'''
+############################
     
+   
+def pltmvr(**kwargs):
+    
+    #setup plots
+    fig, ax =  plt.subplots(figsize = (15,10))
+
+    #plotting parameters, can change
+    plt.rc('font', family='serif', weight = 'medium')
+    lab_size = 36
+    tic_size = 34
+    
+    ax.set_ylabel("Density (g/cm$^3$)", fontsize = lab_size )
+    ax.set_xlabel("Depth (km)", fontsize = lab_size)
+    ax.tick_params(direction='in', length=6, labelsize = tic_size)
+    ax.grid(color='grey', linestyle='-', alpha = 0.4, linewidth=.7)
+
+    
+  
+    #in the case of multiple planet dictionaries, otherwise
+    #if kwargs.get('planet') is not None:
     
     
