@@ -3,12 +3,16 @@
 #however, this comes at a cost of accuracy in mineralogy
 Pressure_range_mantle_UM    = '5000 1250001'
 Temperature_range_mantle_UM = '1500 3200'
-resolution_UM               = '50 50'
+resolution_UM               = '30 30'
 
 Pressure_range_mantle_LM    = '1250000 8500000'
 Temperature_range_mantle_LM = '2500 5200'
 resolution_LM               = '30 30'
 
+#delete current mineral physics file and update on subsequent run?
+# check True when you change the values above. Otherwise old params will
+# remain
+update_minphys = False  
 
 #layers, like concentric shells set here in each region: core, mantle, h20 envelope
 num_mantle_layers = 1000
@@ -39,6 +43,7 @@ multi_process = True
 
 #skip model and run perple_x only?
 perplex_only = False#True # False
+
 
 
 MEarth = 5.972e24  #kg

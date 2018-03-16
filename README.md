@@ -20,7 +20,8 @@ Below we detail the dependencies for the full version of ExoPLex which does rely
 
 - Mac OS or Linux/Unix
 
-- Perplex_x version 6.8.1 (Connolly (2009))
+
+- Perplex_x version 6.8.1 (updated 3.16.18)
 
 - Python 2.7+
 
@@ -68,7 +69,9 @@ pip install package_name
 tar -xvzf solutions.tar.gz
 ```
 
+
 3. In a directory above ExoPlex, or otherwise not within the ExoPlex directory, install Perple_X version 6.8.1
+
     - [Perple_X MAC OS version](http://www.perplex.ethz.ch/perplex/ibm_and_mac_archives/OSX/) 
     
 

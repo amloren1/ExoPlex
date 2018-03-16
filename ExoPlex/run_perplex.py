@@ -71,7 +71,7 @@ def run_perplex(*args):
 
     p.sendline(solutionFileNameMan)
     p.sendline('../ExoPlex/PerPlex/stx11ver.dat')
-    p.sendline('../ExoPlex/PerPlex/perplex_options.dat')
+    p.sendline('../ExoPlex/PerPlex/perplex_option.dat')
     # Transform them (Y/N)?
     p.sendline('N')
     # Calculations with saturated components (Y/N)?
@@ -257,9 +257,9 @@ def run_perplex(*args):
     os.remove(solutionFileNameMan+'.dat')
     os.remove(solutionFileNameMan+'.plt')
     os.remove(solutionFileNameMan+'.tof')
-    os.remove(solutionFileNameMan+'_VERTEX_options.txt')
-    os.remove(solutionFileNameMan+'_WERAMI_options.txt')
-    os.remove(solutionFileNameMan+'_auto_refine.txt')
+    #os.remove(solutionFileNameMan+'_VERTEX_options.txt')
+    #os.remove(solutionFileNameMan+'_WERAMI_options.txt')
+    #os.remove(solutionFileNameMan+'_auto_refine.txt')
 
     return filename
 
