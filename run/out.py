@@ -129,13 +129,20 @@ def writeall(**kwargs):
     for i in range(len(Planet)):
         
             
-        mass = Planet[i]['mass'][num_core_layers:]
-        rad = Planet[i]['radius'][num_core_layers:]
-        rho = Planet[i]['density'][num_core_layers:]
-        P   = Planet[i]['pressure'][num_core_layers:]
-        T   = Planet[i]['temperature'][num_core_layers:]
-    
-        dat_header = '{:25}{:25}{:25}{:25}{:25}'.format('mass', 'radius', 'density', 'pres', 'temp')
+
+        mass = Planet[i]['mass']
+        rad = Planet[i]['radius']
+        rho = Planet[i]['density']
+        P   = Planet[i]['pressure']
+        T   = Planet[i]['temperature']
+        mntl = Planets[i]['mantle_ratios']
+        
+        
+
+        dat_header = 'Mantle composition:\n{:10}{:10}{:10}{:10}\n{:<5}  {:<5}  {:<5}  {:<5}\n\n{:25}{:25}{:25}{:25}{:25}'\
+            .format('Fe/Mg','Si/Mg','Ca/Mg','Al/Mg',mntl[0] ,mntl[1] ,mntl[2] ,mntl[3] , \
+                'mass', 'radius', 'density', 'pres', 'temp')
+        
         phase_header = ''
         
         n_phase = len(Planet[i]['phase_names'])
@@ -180,14 +187,17 @@ def write(**kwargs):
     for i in range(len(Planet)):
         
             
-        mass = Planet[i]['mass'][num_core_layers:]
-        rad = Planet[i]['radius'][num_core_layers:]
-        rho = Planet[i]['density'][num_core_layers:]
-        P   = Planet[i]['pressure'][num_core_layers:]
-        T   = Planet[i]['temperature'][num_core_layers:]
-    
-        dat_header = '{:25}{:25}{:25}{:25}{:25}'.format('mass', 'radius', 'density', 'pres', 'temp')
+        mass = Planet[i]['mass']
+        rad  = Planet[i]['radius']
+        rho  = Planet[i]['density']
+        P    = Planet[i]['pressure']
+        T    = Planet[i]['temperature']
+        mntl = Planet[i]['mantle_ratios']
         
+        
+        dat_header = 'Mantle composition:\n{:10}{:10}{:10}{:10}\n{:<5}  {:<5}  {:<5}  {:<5}\n\n{:25}{:25}{:25}{:25}{:25}'\
+            .format('Fe/Mg','Si/Mg','Ca/Mg','Al/Mg',mntl[0] ,mntl[1] ,mntl[2] ,mntl[3] , \
+                'mass', 'radius', 'density', 'pres', 'temp')
         
         
 
