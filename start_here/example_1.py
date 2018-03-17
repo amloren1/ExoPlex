@@ -29,18 +29,19 @@ import run
 #**NOTE: ENTER FILENAME WITHOUT .py**
 # inputs_1 asks exoplex to model one planet. 
 
-Planets = run.exoplex('input_2')
-
+Planets = run.exoplex('input_1')
+#pdb.set_trace()
 
 #all model data is now in Planets. Lets make some plots and print the 
 # results to a file
 
-run.write(planet = Planets, filenames = ['planet_1.dat', 'planet_2.dat'])
+run.write(planet = Planets, filenames = ['planet_1.dat'])
 
 
 #our first output will be a plot against the PREM (Dziewonski & Anderson 1981)
-#run.pltprem(planet = Planets)
 
-run.pltrho(planet = Planets,label = ['planet 1', 'planet 2'])
+#run.pltprem(planet = Planets,label = ['planet 1', 'planet 2'])
+
+#run.pltrho(planet = Planets,label = ['planet 1', 'planet 2'])
 
 
