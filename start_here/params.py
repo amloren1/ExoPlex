@@ -38,7 +38,7 @@ verbose = True
 
 
 #multiprocess perple_x?
-multi_process = True
+multi_process = False
 
 
 #skip model and run perple_x only?

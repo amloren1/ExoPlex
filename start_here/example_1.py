@@ -23,6 +23,22 @@ import pdb
 import run 
 
 
+
+#####
+'''
+testing grids functions
+'''
+
+####
+
+FeMg = np.arange(0, .2,0.1)
+SiMg = np.arange(0.1,.3,0.1)
+CMF  = np.arange(0.3,0.5,0.1)
+
+run.cmf_grid(mass = 1.0,femg = FeMg, simg = SiMg, cmf = CMF, filename = 'testing1212.dat')
+
+sys.exit()
+
 #Use inputs python file to call exoplex
 # this creates an array of planet model data that you may use
 # to plot or output files
@@ -30,7 +46,7 @@ import run
 # inputs_1 asks exoplex to model one planet. 
 
 Planets = run.exoplex('input_1')
-#pdb.set_trace()
+pdb.set_trace()
 
 #all model data is now in Planets. Lets make some plots and print the 
 # results to a file

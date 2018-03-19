@@ -75,7 +75,7 @@ option_list_files         default | [F] T => echo run-time options to my_project
 order_check               default | [on] on => compare order-disorder solutions with fully ordered and disordered states
 output_iteration_details  default | [F] T => output intermediate adaptive optimization information
 output_iteration_G        default | [F] T => print iteration G to monitor convergence during optimization
-pause_on_error            default | [T] T => wait for user response after errors
+pause_on_error            default | [F] T => wait for user response after errors
 pc_perturbation           default | [5d-3] pseudo-compound composition perturbation; only relevant for CONVEX
 poisson_ratio             default | [on 0.35] value 1: on, off or all; value 2: 0->0.5; controls use of poisson ratio estimates for shear moduli
 poisson_test              default | [F] T => use poisson ratio to check for valid results
@@ -90,7 +90,7 @@ reject_negative_sites     default | [T] reject compositions with negative site p
 seismic_output            default | [some] all, some, none
 short_print               default | [on] suppress output of equilibrium coordinates to the print file, only relevant for CONVEX
 solution_names            default | [mod] mod, abb or ful; use the model, abbreviation, or full name for solution models for output
-solvus_tolerance          default | [auto] auto or 0->1, should be > initial_resolution/auto_refine_factor
+solvus_tolerance          1       | [auto] auto or 0->1, should be > initial_resolution/auto_refine_factor
 solvus_tolerance_II       default | [0.2] 0->1 
 speciation_factor         default | [100] >1, speciation precision = final resolution/speciation factor
 speciation_max_it         default | [100] maximum number of iterations permitted in iterative calculations
