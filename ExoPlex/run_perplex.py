@@ -150,6 +150,7 @@ def run_perplex(*args):
     p.read()
     p.wait()
 
+    
     print 'Finished with Vertex, beginning Werami'
 
     try:
@@ -175,51 +176,24 @@ def run_perplex(*args):
         p.sendline('19')
         p.sendline('N')
         ####### the next lines will pass requests to perplex to print phases and their proportions into the .tab file
-
-        # 21 species, in all for Fe-Si-Mg-O regime
+        phases = ['C2/c', 'Wus', 'Pv', 'an', 'Sp', 'O', 'Wad', \
+        'Ring', 'Opx', 'Cpx', 'Aki', 'Gt', 'Ppv', 'CF', 'st', \
+        'q', 'ca-pv', 'cfs', 'coe', 'ky', 'seif' ]
+        
         p.sendline('7')
-        p.sendline('C2/c')  # 0
-        p.sendline('7')
-        p.sendline('Wus')  # 1
-        p.sendline('7')
-        p.sendline('Pv')  # 2
-        p.sendline('7')
-        p.sendline('an')  # 3
-        p.sendline('7')
-        p.sendline('Sp')  #4
-        p.sendline('7')
-        p.sendline('O')  # 4
-        p.sendline('7')
-        p.sendline('Wad')  # 5
-        p.sendline('7')
-        p.sendline('Ring')  # 6  #if statement about no FeO or some shit
-        p.sendline('7')
-        p.sendline('Opx')  # 7
-        p.sendline('7')
-        p.sendline('Cpx')  # 8
-        p.sendline('7')
-        p.sendline('Aki')  # 9
-        p.sendline('7')
-        p.sendline('Gt_maj')  # 10
-        p.sendline('7')
-        p.sendline('Ppv')  # 11
-        p.sendline('7')
-        p.sendline('CF')   # 12
-        p.sendline('7')
-        p.sendline('st')  # 12
-        p.sendline('7')
-        p.sendline('q')  # 13
-        p.sendline('7')
-        p.sendline('ca-pv')  # 14
-        p.sendline('7')
-        p.sendline('cfs')  # 15
-        p.sendline('7')
-        p.sendline('coe')  # 16
-        p.sendline('7')
-        p.sendline('ky')  # 17
-        p.sendline('7')
-        p.sendline('seif')  # 18
-
+        for phase in phases:
+            p.sendline(phase)
+            ii = p.expect(['try again:','proportions keyword'])
+            if ii == 0:
+                print phase
+                continue
+                #sys.exit()
+            elif phase != 'seif' and ii == 1:
+                p.sendline('7')
+                continue
+            else:
+                continue
+       
         # exit parameter choosing
 
         p.sendline('0')
@@ -227,12 +201,10 @@ def run_perplex(*args):
         p.sendline('N')
 
         # Enter number of nodes in the T(K)     and P(bar)   directions:
-
         p.sendline(resolution)
+        
         p.logfile = open('werami.log','wb')
-        p.expect('    0 - EXIT', timeout=None)
-        p.sendline('0')
-        p.read()
+        p.expect('EXIT', timeout=None)
         p.terminate()
         print "Done with PerPlex"
 
@@ -263,3 +235,50 @@ def run_perplex(*args):
 
     return filename
 
+'''
+
+ p.sendline('q')  # 13
+        p.sendline('7')
+        p.sendline('ca-pv')  # 14
+        p.sendline('7')
+        p.sendline('cfs')  # 15
+        p.sendline('7')
+        p.sendline('coe')  # 16
+        p.sendline('7')
+        p.sendline('ky')  # 17
+        p.sendline('7')
+        p.sendline('seif')  # 18
+
+        # 21 species, in all for Fe-Si-Mg-O regime
+        p.sendline('7')
+        p.sendline('C2/c')  # 0
+        p.sendline('7')
+        p.sendline('Wus')  # 1
+        p.sendline('7')
+        p.sendline('Pv')  # 2
+        p.sendline('7')
+        p.sendline('an')  # 3
+        p.sendline('7')
+        p.sendline('Sp')  #4
+        p.sendline('7')
+        p.sendline('O')  # 4
+        p.sendline('7')
+        p.sendline('Wad')  # 5
+        p.sendline('7')
+        p.sendline('Ring')  # 6  
+        p.sendline('7')
+        p.sendline('Opx')  # 7
+        p.sendline('7')
+        p.sendline('Cpx')  # 8
+        p.sendline('7')
+        p.sendline('Aki')  # 9
+        p.sendline('7')
+        p.sendline('Gt')  # 10 gt_maj
+        p.sendline('7')
+        p.sendline('Ppv')  # 11
+        p.sendline('7')
+        p.sendline('CF')   # 12
+        p.sendline('7')
+        p.sendline('st')  # 12
+        p.sendline('7')
+'''
