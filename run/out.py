@@ -303,7 +303,7 @@ def pltmvr(**kwargs):
     ax.set_xlabel(r"Mass (M$_\oplus$)", fontsize = lab_size)
     ax.tick_params(direction='in', length=6, labelsize = tic_size)
     ax.grid(color='grey', linestyle='-', alpha = 0.4, linewidth=.7)
-
+    ax.set_xlim([min(masses[0]), max(masses[0])])
     for i in range(n_mod):
         ax.plot(masses[i], radii[i], lw = 4, label = labels[i])
     

@@ -60,9 +60,9 @@ FeMg = [0.2, 0.3,0.1]
 SiMg = [0.2, 0.4,0.1]
 wt_h2o = [0.0, 0.0, 0.1]
 
-run.single_grid(mass = 1.0,femg = FeMg, simg = SiMg)
+#run.single_grid(mass = 1.0,femg = FeMg, simg = SiMg)
 
-sys.exit()
+#sys.exit()
 
 
 
@@ -96,14 +96,14 @@ SiMg = [0.2, 0.4,0.1]
 CMF  = [0.3, 0.5,0.1]
 wt_h2o = [0.0, 0.0, 0.1]
 
-run.single_grid_cmf(mass = 1.0,femg = FeMg, simg = SiMg, cmf = CMF)
+#run.single_grid_cmf(mass = 1.0,femg = FeMg, simg = SiMg, cmf = CMF)
 
 
 
 
 ####
 '''
-function: mvr_grid()
+function: mvr_grid_cmf()
 
 create data grid for a range of compositions and masses. Each composition gets a file
 with mass and resulting radius.
@@ -124,12 +124,13 @@ plot      = True|False                      (optional) plot mass v radius for ea
 ####
 
 
-M    = [0.8, 1.0, 0.1]
-FeMg = [0.1, 0.3,0.1]
-SiMg = [0.2, 0.4,0.1]
+M    = [0.5, 2.5, 0.1]
+FeMg = [0.2, 0.3,0.1]
+SiMg = [0.3, 0.4,0.1]
 CMF  = [0.3, 0.5,0.1]
 wt_h2o = [0.0, 0.0, 0.1]
-run.mvr_grid(mass = M ,femg = FeMg, simg = SiMg, cmf = CMF, plot=True)
+
+run.mvr_grid_cmf(mass = M ,femg = FeMg, simg = SiMg, cmf = CMF, plot=True)
 
 
 
