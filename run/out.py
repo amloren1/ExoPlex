@@ -46,7 +46,7 @@ def pltprem(**kwargs):
     lab_size = 36
     tic_size = 34
     
-    ax.set_ylabel("Density (g/cm$^3$)", fontsize = lab_size )
+    ax.set_ylabel(r"Density (g/cm$^3$)", fontsize = lab_size )
     ax.set_xlabel("Depth (km)", fontsize = lab_size)
     ax.tick_params(direction='in', length=6, labelsize = tic_size)
     ax.grid(color='grey', linestyle='-', alpha = 0.4, linewidth=.7)
@@ -223,7 +223,7 @@ def pltrho(**kwargs):
     lab_size = 36
     tic_size = 34
     
-    ax.set_ylabel("Density (g/cm$^3$)", fontsize = lab_size )
+    ax.set_ylabel(r"Density (g/cm$^3$)", fontsize = lab_size )
     ax.set_xlabel("Depth (km)", fontsize = lab_size)
     ax.tick_params(direction='in', length=6, labelsize = tic_size)
     ax.grid(color='grey', linestyle='-', alpha = 0.4, linewidth=.7)
@@ -284,6 +284,13 @@ plot Mass-radius diagram
    
 def pltmvr(**kwargs):
     
+    
+    #arrays of mass and radius arrays
+    masses = kwargs.get('mass')
+    radii  = kwargs.get('radius')
+    labels = kwargs.get('labels')
+    n_mod = int(len(masses))
+    pdb.set_trace()
     #setup plots
     fig, ax =  plt.subplots(figsize = (15,10))
 
@@ -292,14 +299,16 @@ def pltmvr(**kwargs):
     lab_size = 36
     tic_size = 34
     
-    ax.set_ylabel("Density (g/cm$^3$)", fontsize = lab_size )
-    ax.set_xlabel("Depth (km)", fontsize = lab_size)
+    ax.set_ylabel(r"Radius (R$_\oplus$)", fontsize = lab_size )
+    ax.set_xlabel(r"Mass (M$_\oplus$)", fontsize = lab_size)
     ax.tick_params(direction='in', length=6, labelsize = tic_size)
     ax.grid(color='grey', linestyle='-', alpha = 0.4, linewidth=.7)
 
+    for i in range(n_mod):
+        ax.plot(masses[i], radii[i], lw = 4, label = labels[i])
     
-  
-    #in the case of multiple planet dictionaries, otherwise
-    #if kwargs.get('planet') is not None:
+    plt.legend(loc = 'lower right', fontsize = 25)
+    plt.show()
     
+
     
