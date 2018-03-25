@@ -254,8 +254,7 @@ wt_h2o = [0, 0.2, 0.05]
 
 run.mvr_grid(femg = FeMg, simg = SiMg, h2o = wt_h2o, plot =False)
 ```
-###### returns
-![alt text](https://i.imgur.com/OgyabcA.png)
+
 
 
 
