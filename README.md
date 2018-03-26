@@ -43,7 +43,7 @@ tar -xvzf solutions.tar.gz
 ```
 
 3. In a directory above ExoPlex, or otherwise not within the ExoPlex directory, install the latest version of Perple_X
-    - [Perple_X linux version](http://www.perplex.ethz.ch/perplex/ibm_and_mac_archives/LINUX/Links_for_the_latest_LINUX_version_of_Perple_X.html) 
+    - [Perple_X linux version](http://www.perplex.ethz.ch/ExoPlex/) 
     
 
 
@@ -69,7 +69,7 @@ tar -xvzf solutions.tar.gz
 
 3. In a directory above ExoPlex, or otherwise not within the ExoPlex directory, install Perple_X version 6.8.1
 
-    - [Perple_X MAC OS version](http://www.perplex.ethz.ch/perplex/ibm_and_mac_archives/OSX/) 
+    - [Perple_X MAC OS version](http://www.perplex.ethz.ch/ExoPlex/) 
     
 
 4. Move the following executable programs into the ```ExoPlex/PerPlex/``` directory:
