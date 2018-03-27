@@ -356,6 +356,10 @@ ExoPlex is open source and we encourage users to contribute. In this case, fork 
 Copyright (C) 2017 - by the ExoPlex team, released under the GNU
 GPL v2 or later.
 
+## DOI
+
+[![DOI](https://zenodo.org/badge/99742684.svg)](https://zenodo.org/badge/latestdoi/99742684)
+
 ## Acknowledgments
 
 * James Connolly (PerPle_X) for providing tips and source code
