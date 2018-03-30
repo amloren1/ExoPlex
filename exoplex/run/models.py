@@ -20,12 +20,23 @@ import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+
+path = os.path.dirname(os.path.realpath(__file__))
+path = path[0:-4]
+
+sys.path.insert(1, path)
+
 # hack to allow scripts to be placed in subdirectories next to burnman:
-if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
+if not os.path.exists('main') and os.path.exists('../main'):
     sys.path.insert(1, os.path.abspath('..'))
+    
+print '\n\npaths after all is set and done\n'
+print sys.path
 
 
-import ExoPlex as exo
+import main as exo
+
+
 import PREM.prem as p
 import pdb
 

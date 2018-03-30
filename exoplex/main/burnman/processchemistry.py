@@ -22,7 +22,7 @@ def read_masses():
     elements and their masses into a dictionary
     """
     datastream = pkgutil.get_data(
-        'ExoPlex', 'burnman/data/input_masses/atomic_masses.dat')
+        'main', 'burnman/data/input_masses/atomic_masses.dat')
     datalines = [line.strip()
                  for line in datastream.decode('ascii').split('\n') if line.strip()]
     lookup = dict()

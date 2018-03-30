@@ -4,11 +4,17 @@ import pexpect as pe
 import pdb
 
 PerPlex_path = os.path.dirname(os.path.realpath(__file__))+"/PerPlex"
+cur_path = os.path.dirname(os.path.realpath(__file__))
+#print '\nperplex path is:'
+#print PerPlex_path
+#print 'exiting at perplex'
+#sys.exit()
 
 # hack to allow scripts to be placed in subdirectories next to ExoPlex:
-if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
+if not os.path.exists('main') and os.path.exists('../main'):
+    
     sys.path.insert(1, os.path.abspath('..'))
-
+    
 def run_perplex(*args):
 
 
@@ -30,7 +36,7 @@ def run_perplex(*args):
 
 
 
-    filename ='../Solutions/'+solutionFileNameMan
+    filename ='Solutions/'+solutionFileNameMan
 
     if os.path.isfile(filename+'_UM.tab') and UMLM == True:
         print '\nThe Upper mantle .tab already exists, please wait briefly for solution:'
@@ -70,8 +76,8 @@ def run_perplex(*args):
 
 
     p.sendline(solutionFileNameMan)
-    p.sendline('../ExoPlex/PerPlex/stx11ver.dat')
-    p.sendline('../ExoPlex/PerPlex/perplex_option.dat')
+    p.sendline(PerPlex_path+'/stx11ver.dat')
+    p.sendline(PerPlex_path+'/perplex_option.dat')
     # Transform them (Y/N)?
     p.sendline('N')
     # Calculations with saturated components (Y/N)?
@@ -114,7 +120,7 @@ def run_perplex(*args):
 
     # Include solution models (Y/N)?
     p.sendline('Y')
-    p.sendline('../ExoPlex/PerPlex/stx11_solution_model.dat')
+    p.sendline(PerPlex_path+'/stx11_solution_model.dat')
     p.sendline('C2/c') #C2C Phase of clinopyroxene
     p.sendline('Wus')
     p.sendline('Pv')

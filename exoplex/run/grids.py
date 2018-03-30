@@ -17,7 +17,7 @@ if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
     sys.path.insert(1, os.path.abspath('..'))
 
 
-import ExoPlex as exo
+import main as exo
 import PREM.prem as p
 from params import *
 import pdb
@@ -29,13 +29,15 @@ import pdb
 
 
 
-########################################################################
-'''
-grids with range of bulk FeMg, SiMg input at some mass
-'''
-########################################################################
 
-def single_grid(**kwargs):
+def grid(**kwargs):
+    
+    ########################################################################
+    '''
+    grids with range of bulk FeMg, SiMg input at some mass
+    '''
+    ########################################################################
+
     mass = kwargs.get('mass')
     
     #FeMg, SiMg, CMF arrays in form (start,stop, interval)
@@ -49,9 +51,9 @@ def single_grid(**kwargs):
     
 
     if kwargs.get('filename') == None:
-        f_name = '../Solutions/Grids/{:2}ME_bulk.dat'.format(mass)
+        f_name = 'Solutions/Grids/{:2}ME_bulk.dat'.format(mass)
     else:
-        f_name = '../Solutions/Grids/{}'.format(kwargs.get('filename'))
+        f_name = 'Solutions/Grids/{}'.format(kwargs.get('filename'))
 
     
     CaMg       = 0.06
@@ -121,14 +123,15 @@ def single_grid(**kwargs):
 
 
 
+def grid_cmf(**kwargs):
+    
+    
+    ########################################################################
+    '''
+    grids with CMF, FeMg, SiMg input at some mass
+    '''
+    ########################################################################
 
-########################################################################
-'''
-grids with CMF, FeMg, SiMg input at some mass
-'''
-########################################################################
-
-def single_grid_cmf(**kwargs):
     mass = kwargs.get('mass')
     
     #FeMg, SiMg, CMF arrays in form (start,stop, interval)
@@ -143,9 +146,9 @@ def single_grid_cmf(**kwargs):
     
 
     if kwargs.get('filename') == None:
-        f_name = '../Solutions/Grids/{:2}ME_cmf.dat'.format(mass)
+        f_name = 'Solutions/Grids/{:2}ME_cmf.dat'.format(mass)
     else:
-        f_name = '../Solutions/Grids/{}'.format(kwargs.get('filename'))
+        f_name = 'Solutions/Grids/{}'.format(kwargs.get('filename'))
 
     
     CaMg       = 0.06
@@ -279,8 +282,8 @@ def mvr_grid(**kwargs):
                 
                 #set file names for this composition
                 if default_filename:
-                    f_temp = 'SiMg_FeMg_h2o_bulk{:3}_{:3}_{:3}'.format(SiMg[k], FeMg[j] wt_h2o[h])
-                    f_name = '../Solutions/Grids/'+f_temp.replace('.', ',')+'.dat'
+                    f_temp = 'SiMg_FeMg_h2o_bulk{:3}_{:3}_{:3}'.format(SiMg[k], FeMg[j], wt_h2o[h])
+                    f_name = 'Solutions/Grids/'+f_temp.replace('.', ',')+'.dat'
                 else:
                     f_name = kwargs.get('filename') 
               
@@ -409,7 +412,7 @@ def mvr_grid_cmf(**kwargs):
                     #set file names for this composition
                     if default_filename:
                         f_temp = 'SiMg_FeMg_CMF_h2o_{:3}_{:3}_{:3}_{:3}'.format(SiMg[k], FeMg[j],CMF[i], wt_h2o[h])
-                        f_name = '../Solutions/Grids/'+f_temp.replace('.', ',')+'.dat'
+                        f_name = 'Solutions/Grids/'+f_temp.replace('.', ',')+'.dat'
                     else:
                         f_name = kwargs.get('filename') 
                   

@@ -4,12 +4,22 @@
 
 import os
 import sys
-import minphys
-import numpy as np
-# hack to allow scripts to be placed in subdirectories next to burnman:
-if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
-    sys.path.insert(1, os.path.abspath('..'))
 
+import numpy as np
+
+path1 = os.path.dirname(os.path.realpath(__file__))
+path = path1[0:-5]
+
+print '\n\nthis is the run_planet current path\n'
+print path
+sys.path.insert(1, path)
+
+#sys.exit()
+# hack to allow scripts to be placed in subdirectories next to ExoPlex:
+if not os.path.exists('main') and os.path.exists('../main'):
+    sys.path.insert(1, os.path.abspath('..'))
+    
+import minphys
 import functions
 import run_perplex
 #run perplex only or run full ExoPlex model?
@@ -117,8 +127,8 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
 
         if update_minphys:
-            os.remove('../Solutions/'+upper_man_file+'_UM.tab')
-            os.remove('../Solutions/'+lower_man_file+'_LM.tab')
+            os.remove('Solutions/'+upper_man_file+'_UM.tab')
+            os.remove('Solutions/'+lower_man_file+'_LM.tab')
         #setup and run lower and upper mantle .tab files simultaneously
         p_LM = mp.Process(target = run_perplex.run_perplex, args = ([Mantle_wt_per,lower_man_file, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False]))
@@ -140,8 +150,8 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
         
         
         if update_minphys:
-            os.remove('../Solutions/'+upper_man_file+'_UM.tab')
-            os.remove('../Solutions/'+lower_man_file+'_LM.tab')
+            os.remove('Solutions/'+upper_man_file+'_UM.tab')
+            os.remove('Solutions/'+lower_man_file+'_LM.tab')
         
         LM = run_perplex.run_perplex(*[Mantle_wt_per,lower_man_file, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
@@ -155,8 +165,8 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
     if perplex_only:
         return
 
-    upper_man_file = '../Solutions/'+upper_man_file
-    lower_man_file = '../Solutions/'+lower_man_file
+    upper_man_file = 'Solutions/'+upper_man_file
+    lower_man_file = 'Solutions/'+lower_man_file
     ##store upper mantle data grids: T, P, rho etc.
     grids_low, names = functions.make_mantle_grid(upper_man_file,True)
     names.append('Fe')
@@ -277,8 +287,8 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
 
         if update_minphys:
-            os.remove('../Solutions/'+upper_man_file+'_UM.tab')
-            os.remove('../Solutions/'+lower_man_file+'_LM.tab')
+            os.remove('Solutions/'+upper_man_file+'_UM.tab')
+            os.remove('Solutions/'+lower_man_file+'_LM.tab')
         #setup and run lower and upper mantle .tab files simultaneously
         p_LM = mp.Process(target = run_perplex.run_perplex, args = ([Mantle_wt_per,lower_man_file, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False]))
@@ -300,8 +310,8 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
             [structure_params[3],structure_params[4],structure_params[5]],filename,False])
 
         if update_minphys:
-            os.remove('../Solutions/'+upper_man_file+'_UM.tab')
-            os.remove('../Solutions/'+lower_man_file+'_LM.tab')
+            os.remove('Solutions/'+upper_man_file+'_UM.tab')
+            os.remove('Solutions/'+lower_man_file+'_LM.tab')
             
         LM = run_perplex.run_perplex(*[Mantle_wt_per,lower_man_file, \
                         [structure_params[3],structure_params[4],structure_params[5]],filename,False])
@@ -314,8 +324,8 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
     if perplex_only:
         return
 
-    upper_man_file = '../Solutions/'+upper_man_file
-    lower_man_file = '../Solutions/'+lower_man_file
+    upper_man_file = 'Solutions/'+upper_man_file
+    lower_man_file = 'Solutions/'+lower_man_file
     ##store upper mantle data grids: T, P, rho etc.
     grids_low, names = functions.make_mantle_grid(upper_man_file,True)
     
