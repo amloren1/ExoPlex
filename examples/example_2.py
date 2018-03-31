@@ -27,7 +27,7 @@ if not os.path.exists('main') and os.path.exists('../main'):
     sys.path.insert(1, os.path.abspath('..'))
     
 import pdb
-import run 
+import exoplex.run as run
 
 
 #####
@@ -60,7 +60,7 @@ FeMg = [0.2, 0.3,0.1]
 SiMg = [0.2, 0.4,0.1]
 wt_h2o = [0.0, 0.0, 0.1]
 
-#run.single_grid(mass = 1.0,femg = FeMg, simg = SiMg)
+#run.grid(mass = 1.0,femg = FeMg, simg = SiMg)
 
 #sys.exit()
 
@@ -96,7 +96,7 @@ SiMg = [0.2, 0.4,0.1]
 CMF  = [0.3, 0.5,0.1]
 wt_h2o = [0.0, 0.0, 0.1]
 
-#run.single_grid_cmf(mass = 1.0,femg = FeMg, simg = SiMg, cmf = CMF)
+#run.grid_cmf(mass = 1.0,femg = FeMg, simg = SiMg, cmf = CMF)
 
 
 
@@ -126,7 +126,7 @@ plot      = True|False                      (optional) plot mass v radius for ea
 
 M    = [0.5, 2.5, 0.1]
 FeMg = [0.2, 0.3,0.1]
-SiMg = [0.3, 0.4,0.1]
+SiMg = [0.2, 0.3,0.1]
 CMF  = [0.3, 0.5,0.1]
 wt_h2o = [0.0, 0.0, 0.1]
 

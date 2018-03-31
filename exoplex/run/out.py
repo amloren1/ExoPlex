@@ -290,7 +290,7 @@ def pltmvr(**kwargs):
     radii  = kwargs.get('radius')
     labels = kwargs.get('labels')
     n_mod = int(len(masses))
-    pdb.set_trace()
+   
     #setup plots
     fig, ax =  plt.subplots(figsize = (15,10))
 

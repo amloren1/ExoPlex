@@ -5,18 +5,78 @@ import pdb
 
 PerPlex_path = os.path.dirname(os.path.realpath(__file__))+"/PerPlex"
 cur_path = os.path.dirname(os.path.realpath(__file__))
-#print '\nperplex path is:'
-#print PerPlex_path
-#print 'exiting at perplex'
-#sys.exit()
 
 # hack to allow scripts to be placed in subdirectories next to ExoPlex:
 if not os.path.exists('main') and os.path.exists('../main'):
     
     sys.path.insert(1, os.path.abspath('..'))
     
-def run_perplex(*args):
 
+
+if not os.path.exists(PerPlex_path+'/build') or not os.path.exists(PerPlex_path+'/vertex') \
+    or not os.path.exists(PerPlex_path+'/werami'):
+
+    import urllib2
+    import tarfile
+
+    print '\n\n** Downloading Perple_x. Please wait**'
+    print 'url: {}'.format('http://www.perplex.ethz.ch/perplex/exoplex/')
+
+    perplex_linux = 'http://www.perplex.ethz.ch/perplex/exoplex/linux/Perple_X_6.8.1_Linux_64_gfortran.tar.gz'
+    perplex_mac   = 'http://www.perplex.ethz.ch/perplex/exoplex/OSX/Perple_X_6.8.1_OSX_10.6+_Intel_MC_Mar_6_2018.zip'
+
+    try:
+        filename = 'perplex.tar.gz'
+        response = urllib2.urlopen(perplex_linux)
+        
+        with open(filename, 'wb') as f: f.write(response.read())
+        
+        tar = tarfile.open(filename, 'r:gz')
+        
+        tar.extract('build', PerPlex_path)
+        tar.extract('vertex', PerPlex_path)
+        tar.extract('werami', PerPlex_path)
+        
+    except:
+        print 'Unable to download Perple_x. Make sure you are connected to the internet'
+        
+    print '\nSuccessfully downloaded Perple_x. Stored in {}\n\n'.format(PerPlex_path)
+
+
+
+def download_perplex():
+    import urllib2
+    import tarfile
+    
+    print '\n\n** Downloading Perple_x. Please wait**'
+    print 'url: {}'.format('http://www.perplex.ethz.ch/perplex/exoplex/')
+    
+    perplex_linux = 'http://www.perplex.ethz.ch/perplex/exoplex/linux/Perple_X_6.8.1_Linux_64_gfortran.tar.gz'
+    perplex_mac   = 'http://www.perplex.ethz.ch/perplex/exoplex/OSX/Perple_X_6.8.1_OSX_10.6+_Intel_MC_Mar_6_2018.zip'
+    
+    try:
+        filename = 'perplex.tar.gz'
+        response = urllib2.urlopen(perplex_linux)
+        
+        with open(filename, 'wb') as f: f.write(response.read())
+        
+        tar = tarfile.open(filename, 'r:gz')
+        
+        tar.extract('build', PerPlex_path)
+        tar.extract('vertex', PerPlex_path)
+        tar.extract('werami', PerPlex_path)
+        
+    except:
+        print 'Unable to download Perple_x. Make sure you are connected to the internet'
+        return
+    print 'Successfully downloaded Perple_x. Stored in {}'.format(PerPlex_path)
+    
+    return
+    
+
+
+def run_perplex(*args):
+    
 
     Mantle_wt_per = args[0]
 
@@ -58,7 +118,7 @@ def run_perplex(*args):
 
         #we need to shorten the file name for PerPlex to accept it
         solutionFileNameMan_short = list(filename)
-        solutionFileNameMan_short[0:33] = []
+        solutionFileNameMan_short[0:30] = []
 
         solutionFileNameMan = "".join(solutionFileNameMan_short)+description
 
@@ -241,6 +301,10 @@ def run_perplex(*args):
 
     return filename
 
+
+    
+    
+    
 '''
 
  p.sendline('q')  # 13

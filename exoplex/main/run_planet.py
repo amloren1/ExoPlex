@@ -9,9 +9,9 @@ import numpy as np
 
 path1 = os.path.dirname(os.path.realpath(__file__))
 path = path1[0:-5]
-
-print '\n\nthis is the run_planet current path\n'
-print path
+#DEBUG
+#print '\n\nthis is the run_planet current path\n'
+#print path
 sys.path.insert(1, path)
 
 #sys.exit()
