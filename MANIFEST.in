@@ -1,0 +1,14 @@
+include *
+recursive-include exoplex/run/PREM/ *
+recursive-include exoplex/main/PerPlex/ *
+recursive-include exoplex/main/burnman/data/input_geotherm *.*
+recursive-include exoplex/main/burnman/data/input_masses *.*
+recursive-include exoplex/main/burnman/data/input_minphys *.*
+recursive-include exoplex/main/burnman/data/input_perplex *.*
+recursive-include exoplex/main/burnman/data/input_raw_endmember_datasets *.*
+recursive-include exoplex/main/burnman/data/input_seismic *.*
+recursive-include exoplex/main/burnman/minerals *.*
+recursive-include exoplex/main/burnman/eos *.*
+exclude exoplex/main/PerPlex/build
+exclude exoplex/main/PerPlex/vertex
+exclude exoplex/main/PerPlex/werami

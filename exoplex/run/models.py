@@ -29,9 +29,7 @@ sys.path.insert(1, path)
 # hack to allow scripts to be placed in subdirectories next to burnman:
 if not os.path.exists('main') and os.path.exists('../main'):
     sys.path.insert(1, os.path.abspath('..'))
-    
-print '\n\npaths after all is set and done\n'
-print sys.path
+
 
 
 import main as exo

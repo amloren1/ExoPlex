@@ -180,7 +180,7 @@ def run_perplex(*args):
 
     # Include solution models (Y/N)?
     p.sendline('Y')
-    p.sendline(PerPlex_path+'/stx11_solution_model.dat')
+    p.sendline(PerPlex_path+'/solution_model.dat')
     p.sendline('C2/c') #C2C Phase of clinopyroxene
     p.sendline('Wus')
     p.sendline('Pv')
