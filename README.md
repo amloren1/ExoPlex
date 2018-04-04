@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/99742684.svg)](https://zenodo.org/badge/latestdoi/99742684)
+
 # About ExoPlex
 A self-consistent mineral physics solver for exoplanets. We model rocky exoplanets with a core, lower and upper mantle, and water/ice layer. We use the Gibbs free energy minimization package, Perple_x (Connolly 09) along with a solution method from Stixrude 2011 to model mantles with natural phase transformations at depth (Pressure and Temperature dependence). 
 
@@ -356,9 +358,7 @@ ExoPlex is open source and we encourage users to contribute. In this case, fork 
 Copyright (C) 2017 - by the ExoPlex team, released under the GNU
 GPL v2 or later.
 
-## DOI
-
-[![DOI](https://zenodo.org/badge/99742684.svg)](https://zenodo.org/badge/latestdoi/99742684)
+## Citation: see [`CITATION` file](https://github.com/amloren1/ExoPlex/blob/patch-1/CITATION)
 
 ## Acknowledgments
 

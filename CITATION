@@ -1,0 +1,11 @@
+@software{AlejandroLorenzo_amloren1/ExoPlex:_2018,
+  title = {Amloren1/{{ExoPlex}}: {{ExoPlex}} Pre-Release},
+  url = {https://zenodo.org/record/1208161},
+  shorttitle = {Amloren1/{{ExoPlex}}},
+  abstract = {A self-consistent mineral physics solver for exoplanets},
+  publisher = {{Zenodo}},
+  urldate = {2018-04-04},
+  date = {2018-03-27},
+  author = {Alejandro Lorenzo and Cayman Unterborn},
+  doi = {10.5281/zenodo.1208161}
+}
