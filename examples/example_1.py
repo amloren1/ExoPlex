@@ -6,60 +6,126 @@
 
 #**********************************************************************#
 '''
+this example script will show how to call exoplex and create models
+based off of the inputs from some input file (open inputs_1.py for corresponding
+file). 
+
+
+***Before you run this script***
+-use pip to install exoplex from PYPI
+-create a directory structure for exoplex to work with
+	-this script should sit alongside a directory called Solutions/
+	and Solutions/Grids
+	-you need to have params.py and some input file (use input_1.py as a template) next to
+	this script
+	-example directory tree if you have this script in a directory called ExoPlex/
+
+	ExoPlex/
+		-example_1.py
+		-params.py
+		-input_1.py
+		Solutions/
+			#mantle thermodynamic data for each composition
+			Grids/
+				#grid results will be placed here
+
 '''
 #**********************************************************************#
 
 
 
-import os
 import sys
-import numpy as np
-import matplotlib.pyplot as plt
 
-import pdb
+import exoplex.run as run
 
-print sys.path
-
-import exoplex.run
-
-sys.exit()
 
 
 
 #####
 '''
-testing grids functions
+function: exoplex()
+
+Use inputs from python file to call exoplex
+
+returns:
+arrays of model data. Each element in the array will correspond to a dictionary of data for
+that model. 
+
+arg:
+-name of an input python file
+	- must be in the same format as input_1.py
+	- just type the name of the file without the .py
+	- input file must be stored beside the script you call
+	exoplex from
+
 '''
+#####
 
-####
 
-FeMg = np.arange(0, .2,0.1)
-SiMg = np.arange(0.1,.3,0.1)
-CMF  = np.arange(0.3,0.5,0.1)
-
-run.cmf_grid(mass = 1.0,femg = FeMg, simg = SiMg, cmf = CMF, filename = 'testing1212.dat')
-
-sys.exit()
-
-#Use inputs python file to call exoplex
-# this creates an array of planet model data that you may use
-# to plot or output files
 #**NOTE: ENTER FILENAME WITHOUT .py**
-# inputs_1 asks exoplex to model one planet. 
 
 Planets = run.exoplex('input_1')
-pdb.set_trace()
 
-#all model data is now in Planets. Lets make some plots and print the 
-# results to a file
+
+
+
+#####
+'''
+function: write(**kwargs)
+
+Writes model results to a file. 
+
+returns:
+file with results
+
+kwargs:
+planet    = dictionary array returned from run.exoplex
+filenames = (optional) list of strings that represent desired filenames for each planet model
+			defaults to planet0*.dat
+'''
+#####
+
 
 run.write(planet = Planets, filenames = ['planet_1.dat'])
 
 
-#our first output will be a plot against the PREM (Dziewonski & Anderson 1981)
+#####
+'''
+function: pltprem(**kwargs)
 
-#run.pltprem(planet = Planets,label = ['planet 1', 'planet 2'])
+Plot exoplex models against the PREM (Dziewonski & Anderson 1981) in 
+a depth vs. density diagram
 
-#run.pltrho(planet = Planets,label = ['planet 1', 'planet 2'])
+returns:
+file with results
+
+kwargs:
+planet    = dictionary array returned from run.exoplex
+label     = (optional) list of strings for labels on the plot
+'''
+#####
+
+
+
+run.pltprem(planet = Planets,label = ['planet 1'])
+
+
+#####
+'''
+function: pltrho(**kwargs)
+
+Plot exoplex models of depts vs density
+
+returns:
+file with results
+
+kwargs:
+planet    = dictionary array returned from run.exoplex
+label     = (optional) list of strings for labels on the plot
+'''
+#####
+
+
+run.pltrho(planet = Planets,label = ['planet 1'])
 
 

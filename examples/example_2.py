@@ -13,27 +13,38 @@ and mass ranges as python lists in the following format:
 [start, stop, step].
 
 
+
+***Before you run this script***
+-use pip to install exoplex from PYPI
+-create a directory structure for exoplex to work with
+	-this script should sit alongside a directory called Solutions/
+	and Solutions/Grids
+	-you need to have params.py next to
+	this script
+	-example directory tree if you have this script in a directory called ExoPlex/
+
+	ExoPlex/
+		-example_2.py
+		-params.py
+		Solutions/
+			#mantle thermodynamic data for each composition
+			Grids/
+				#grid results will be placed here
+
+
 '''
 #**********************************************************************#
 
 
 
-import os
-import sys
-import numpy as np
-import matplotlib.pyplot as plt
-# hack to allow scripts to be placed in subdirectories next to burnman:
-if not os.path.exists('main') and os.path.exists('../main'):
-    sys.path.insert(1, os.path.abspath('..'))
-    
-import pdb
+
 import exoplex.run as run
 
 
 #####
 
 '''
-function: single_grid(**kwargs)
+function: grid(**kwargs)
 
 
 create a data grid for a planet of some mass.
@@ -60,16 +71,14 @@ FeMg = [0.2, 0.3,0.1]
 SiMg = [0.2, 0.4,0.1]
 wt_h2o = [0.0, 0.0, 0.1]
 
-#run.grid(mass = 1.0,femg = FeMg, simg = SiMg)
-
-#sys.exit()
+run.grid(mass = 1.0,femg = FeMg, simg = SiMg)
 
 
 
 #####
 
 '''
-function: single_grid_cmf(**kwargs)
+function: grid_cmf(**kwargs)
 
 create a data grid for a planet of some mass
 vary MANTLE Fe/Mg, Si/Mg, water mass fraction, and the CMF (core mass fraction)
@@ -96,7 +105,7 @@ SiMg = [0.2, 0.4,0.1]
 CMF  = [0.3, 0.5,0.1]
 wt_h2o = [0.0, 0.0, 0.1]
 
-#run.grid_cmf(mass = 1.0,femg = FeMg, simg = SiMg, cmf = CMF)
+run.grid_cmf(mass = 1.0,femg = FeMg, simg = SiMg, cmf = CMF)
 
 
 
@@ -124,7 +133,7 @@ plot      = True|False                      (optional) plot mass v radius for ea
 ####
 
 
-M    = [0.5, 2.5, 0.1]
+M    = [0.5, .8, 0.1]
 FeMg = [0.2, 0.3,0.1]
 SiMg = [0.2, 0.3,0.1]
 CMF  = [0.3, 0.5,0.1]

@@ -36,3 +36,14 @@ Solutions/*.txt
 start_here/*.dat
 
 start_here/*.txt
+
+exoplex/Examples/
+
+exoplex/start_here/
+
+exoplex.egg-info/
+
+dist/
+
+tests/
+
