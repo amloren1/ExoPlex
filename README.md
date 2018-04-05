@@ -20,7 +20,7 @@ ExoPlex is written in Python 2.7 and is currently stable to its full capability 
 
 - Mac OS or Linux/Unix
 
-- Perplex_x version 6.8.1 (updated 3.16.18)
+- Perplex_x version 6.8.1 
 
 - Python 2.7+
 
@@ -35,69 +35,75 @@ ExoPlex is written in Python 2.7 and is currently stable to its full capability 
   - burnman: solves equations of state BME II,III, IV for the core and ice layers
 
  
-#### Installing on Ubuntu and its derivatives
+#### Installing on Linux
 
-1. Clone the master branch of this repository. 
-2. Extract tar file within the ```Solutions/``` directory:
+1. Install the ExoPlex package from PyPI:
+
 
 ```
-tar -xvzf solutions.tar.gz
+pip install exoplex
 ```
 
-3. In a directory above ExoPlex, or otherwise not within the ExoPlex directory, install the latest version of Perple_X
-    - [Perple_X linux version](http://www.perplex.ethz.ch/ExoPlex/) 
-    
+2. Setup your workspace so that the scripts you write which call exoplex sit next to a directory called ```Solutions/``` which itself has another directory called ```Grids/```. For your workspace called ```workspace/``` your directory tree should look like:
 
-
-4. Move the following executable programs into the ```ExoPlex/PerPlex/``` directory:
-   - build, vertex, werami
-   - the other files from the Perple_x install will not be used by ExoPlex
-
-5. Install the libraries mentioned above. All of these are available in the PyPI and can be installed with pip, 
-```
-pip install package_name
-```
-
-
-#### Installing on MAC OS
-
-1. Clone the master branch of this repository. 
-2. Extract tar file within the ```Solutions/``` directory:
 
 ```
-tar -xvzf solutions.tar.gz
+myworkspace/
+│   example.py    
+└───Solutions/ 
+│   │
+│   └───Grids/
+|   |   |   
 ```
 
+3. From the ExoPlex GitHub page, download the .tar files located in Solutions/. Put this in your local ```Solutions/``` directory and unpack. This will provide many precompiled mineral physics solutions for ExoPlex to use.     
 
-3. In a directory above ExoPlex, or otherwise not within the ExoPlex directory, install Perple_X version 6.8.1
 
-    - [Perple_X MAC OS version](http://www.perplex.ethz.ch/ExoPlex/) 
-    
+4. The first time you run ExoPlex, it will download the necessary programs from the perple_X website. These are located at http://www.perplex.ethz.ch/ExoPlex/
 
-4. Move the following executable programs into the ```ExoPlex/PerPlex/``` directory:
-   - build, vertex, werami
-   - the other files from the Perple_x install will not be used by ExoPlex
 
-5. Install the libraries mentioned above. All of these are available in the PyPI and can be installed with pip, 
-```
-pip install package_name
-```
 ## Using ExoPlex
 
-ExoPlex is meant to be run as a library complimentary to python scripts. The idea is to store your scripts in a directory on the same level as the ```ExoPlex/``` directory. Most of the functions the user will be interacting with are located in the ```run/``` directory. To use these from the  ```start_here/``` directory, for example, scripts should begin with:
+ExoPlex is meant to be run as a library complimentary to your python scripts. It is installed as a third party library from PyPI. Despite this, ExoPlex is not entirely a standalone program. Users are required to setup their workspace so ExoPlex may read and store local files. The following sections describe these dependencies.
 
-```python
-import os
-import sys
-if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
-    sys.path.insert(1, os.path.abspath('..'))
-import run
+### Workspace directory tree
+
+Your workspace should look like the following: 
+
+```
+myworkspace/
+│   example.py
+|	  params.py
+|	  input_1.py
+└───Solutions/ 
+│   │
+│   └───Grids/
+|   |   |   
 ```
 
-Where the third line alters the path to enable the script to run functions from the other directories. 
+Assuming you are working in an arbitrary directory called ```myworkspace/```. You should have at least the ```params.py``` and ```input_1.py``` files at the root. These and several example scripts can be found on the GitHub page under the ```examples``` folder.  
+
+Your scripts should be stored alongside ```Soulutions/```. The ```Soulutions/``` directory stores the outputs from perple_X which give mineralogy and thermodynamic parameters depending on composition. Each .dat file represents a different composition. We leave this at the top level so users can directly access these files to diagnose errors that may arise. In some cases, you will need to change the parameters for perple_X (located in ```params.py```. Within solutions, you will need to initialize a ```Grids/``` directory. Grid outputs will be stored here by default. 
+
+It is important to remember that ExoPlex is designed to work only in this environment. That is, the user should have a directory tree that exactly match the one above. For example, naming your solution folder ```solutions/``` instead of ```Solutions/``` will cause ExoPlex to break. 
+
+### params.py
+
+This file will hold parameters which determine how ExoPlex makes models. Each parameter is described within this file. ```params.py``` also includes the parameters for running perple_x. Be cautious when altering these parameters. 
+
+The only parameter users may need to change is the temperature and pressure ranges for the lower and upper mantle. These control the domain perple_x will use to find mineral assemblages. For creating very massive planets above 4 Earth masses (not recommended), for example, the user will need to have perple_x rerun the solution file for the desired composition with a wider range of pressure and temperature. This is because the conditions reached in the mantles of more massive planets can exceed the default temperature and pressure ranges, causing ExoPlex to break.
 
 
+### calling functions
 
+Once the above dependencies have been resolved and you are in the working directory with the proper directory tree, you may start using ExoPlex! In your script, import exoplex:
+
+
+```python
+import exoplex.run as run
+```
+
+This will set you up to run the functions detailed in the following section.
 
 
 ## Functions
@@ -106,7 +112,7 @@ Where the third line alters the path to enable the script to run functions from 
 Calls ExoPlex functions and executes desired models based on input python script. 
 
 ##### args
- * inputs_file: String, name of a python script with input parameters. Example format is given in ```start_here/input_example.py```
+ * inputs_file: String, name of a python script with input parameters. Example format is given in ```examples/input_1.py```
  
 ##### returns
  * numpy array of dictionaries which contain model information with keys: 
@@ -171,7 +177,7 @@ run.pltrho(planet = planets, label = ['Mg/Si=1', 'Mg/Si=2'])
 ![alt text](https://i.imgur.com/rPfPOGG.png)
 
 
-### run.single_grid(**kwargs)
+### run.grid(**kwargs)
 Creates a data file for a planet of some mass for a range of bulk compositions. Core mass fraction is calculated from the inputs. 
 
 ##### kwargs
@@ -199,7 +205,7 @@ run.single_grid(femg = FeMg, simg = SiMg, h2o = wt_h2o, filename = 'composition_
 
 
 
-### run.single_grid_cmf(**kwargs)
+### run.grid_cmf(**kwargs)
 Creates a data file for a planet of some mass for a range of compositions. Similar to single_grid however the user specifies the mantle composition directly along with the core mass fraction. 
 
 ##### kwargs
@@ -344,7 +350,7 @@ run.writeall(planet = planets, filenames = ['planet_1.dat', 'planet_2.dat'])
 
 ## Examples
 
-Learning how to use ExoPlex is best done by working through the examples provided in the ```start_here/``` directory. A new user should be able to gain enough insight from the current examples to use ExoPlex to its fullest however, we will be adding more exampes in the future.
+Learning how to use ExoPlex is best done by working through the examples provided in the ```examples/``` directory. A new user should be able to gain enough insight from the current examples to use ExoPlex to its fullest. If, after going through this README and you are still having some trouble, please email Alejandro at amloren1@asu.edu. 
 
 
 ## Contributing
@@ -362,7 +368,7 @@ GPL v2 or later.
 
 ## Acknowledgments
 
-* James Connolly (PerPle_X) for providing tips and source code
+* James Connolly (PerPle_X) for providing tips and a spot on the perple_X website. Please visit http://www.perplex.ethz.ch/ for more information.
 * This project was done as part of the NASA NExSS grant
 
 ## References 
