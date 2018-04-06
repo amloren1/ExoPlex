@@ -364,7 +364,7 @@ ExoPlex is open source and we encourage users to contribute. In this case, fork 
 Copyright (C) 2017 - by the ExoPlex team, released under the GNU
 GPL v2 or later.
 
-## Citation: see [`CITATION` file](https://github.com/amloren1/ExoPlex/blob/patch-1/CITATION)
+## Citation: see [`CITATION` file](https://github.com/amloren1/ExoPlex/CITATION)
 
 ## Acknowledgments
 
