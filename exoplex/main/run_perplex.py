@@ -25,9 +25,17 @@ if not os.path.exists(PerPlex_path+'/build') or not os.path.exists(PerPlex_path+
     perplex_linux = 'http://www.perplex.ethz.ch/ExoPlex/Perple_X_6.8.1_Linux_64_gfortran_edited.tar.gz'
     perplex_mac   = 'http://www.perplex.ethz.ch/ExoPlex/Perple_X_6.8.1_OSX_10.6+_Intel_MC_Mar_6_2018_edited.zip'
 
+    platform = sys.platform
+    
+    #check platform to download correct perple_x version
+    if platform != 'linux2':
+        perplex_link = perplex_mac
+    else:
+        perplex_link = perplex_linux
+        
     try:
         filename = 'perplex.tar.gz'
-        response = urllib2.urlopen(perplex_linux)
+        response = urllib2.urlopen(perplex_link)
         
         with open(filename, 'wb') as f: f.write(response.read())
         
