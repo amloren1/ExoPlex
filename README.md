@@ -72,8 +72,8 @@ Your workspace should look like the following:
 
 ```
 myworkspace/
-│   example.py
-|	  params.py
+|   example.py
+|   params.py
 |	  input_1.py
 └───Solutions/ 
 │   │
