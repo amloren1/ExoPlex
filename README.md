@@ -37,12 +37,9 @@ ExoPlex is written in Python 2.7 and is currently stable to its full capability 
  
 #### Installing on Linux
 
-1. Install the ExoPlex package from PyPI:
+1. Clone the master branch of this repo
 
 
-```
-pip install exoplex
-```
 
 2. Setup your workspace so that the scripts you write which call exoplex sit next to a directory called ```Solutions/``` which itself has another directory called ```Grids/```. For your workspace called ```workspace/``` your directory tree should look like:
 
