@@ -35,10 +35,10 @@ if not os.path.exists('main') and os.path.exists('../main'):
 import main as exo
 
 
-import PREM.prem as p
+from . import PREM.prem as p
 import pdb
 
-import StringIO as sio 
+import io as sio 
 
 
 ############################
@@ -57,7 +57,7 @@ def inputs_from_file(script):
         compositional_params[i] = [x.wt_frac_water[i],x.FeMg[i],x.SiMg[i], \
                                 x.CaMg[i],x.AlMg[i],x.xFeO[i] ,x.Si_wt[i], \
                                 x.O_wt[i],x.S_wt[i]]
-        print compositional_params
+        print(compositional_params)
     
     return(compositional_params)
     
@@ -100,7 +100,7 @@ def exoplex(script):
     or (x.n_mod) != len(x.CaMg) \
     or (x.n_mod) != len(x.X)    \
     or (x.n_mod) != len(x.AlMg):
-        print '\n***input ERROR: missing/extra list values in {}.py***'.format(script) 
+        print('\n***input ERROR: missing/extra list values in {}.py***'.format(script)) 
         sys.exit()
     
     comp_params = inputs_from_file(script)
@@ -135,15 +135,15 @@ def exoplex(script):
         
         if verbose:
 
-            print 'radius of planet'
-            print Planet[i]['radius'][-1]/1000
+            print('radius of planet')
+            print(Planet[i]['radius'][-1]/1000)
 
-            print
-            print "Mass = ", '%.3f'%(Planet[i]['mass'][-1]/5.97e24), "Earth masses"
-            print "Core Mass Fraction = ", '%.3f'%(100.*Planet[i]['mass'][num_core_layers]/Planet[i]['mass'][-1])
-            print "Core Radius Fraction = ", '%.3f'%(100.*Planet[i]['radius'][num_core_layers]/Planet[i]['radius'][-1])
-            print "CMB Pressure = " ,'%.3f' % (Planet[i]['pressure'][num_core_layers]/10000), "GPa"
-            print "Central pressure = {} GPa".format(Planet[i]['pressure'][0]/10000)
+            print()
+            print("Mass = ", '%.3f'%(Planet[i]['mass'][-1]/5.97e24), "Earth masses")
+            print("Core Mass Fraction = ", '%.3f'%(100.*Planet[i]['mass'][num_core_layers]/Planet[i]['mass'][-1]))
+            print("Core Radius Fraction = ", '%.3f'%(100.*Planet[i]['radius'][num_core_layers]/Planet[i]['radius'][-1]))
+            print("CMB Pressure = " ,'%.3f' % (Planet[i]['pressure'][num_core_layers]/10000), "GPa")
+            print("Central pressure = {} GPa".format(Planet[i]['pressure'][0]/10000))
             
     return Planet
             
@@ -212,15 +212,15 @@ def Earth_model(**kwargs):
     #print this stuff to make sure you are not going insane in da membrane
     if verbose:
 
-        print 'radius of planet'
-        print Planet['radius'][-1]/1000
+        print('radius of planet')
+        print(Planet['radius'][-1]/1000)
 
-        print
-        print "Mass = ", '%.3f'%(Planet['mass'][-1]/5.97e24), "Earth masses"
-        print "Core Mass Fraction = ", '%.3f'%(100.*Planet['mass'][num_core_layers]/Planet['mass'][-1])
-        print "Core Radius Fraction = ", '%.3f'%(100.*Planet['radius'][num_core_layers]/Planet['radius'][-1])
-        print "CMB Pressure = " ,'%.3f' % (Planet['pressure'][num_core_layers]/10000), "GPa"
-        print "Central pressure = {} GPa".format(Planet['pressure'][0]/10000)
+        print()
+        print("Mass = ", '%.3f'%(Planet['mass'][-1]/5.97e24), "Earth masses")
+        print("Core Mass Fraction = ", '%.3f'%(100.*Planet['mass'][num_core_layers]/Planet['mass'][-1]))
+        print("Core Radius Fraction = ", '%.3f'%(100.*Planet['radius'][num_core_layers]/Planet['radius'][-1]))
+        print("CMB Pressure = " ,'%.3f' % (Planet['pressure'][num_core_layers]/10000), "GPa")
+        print("Central pressure = {} GPa".format(Planet['pressure'][0]/10000))
 
 
     return Planet

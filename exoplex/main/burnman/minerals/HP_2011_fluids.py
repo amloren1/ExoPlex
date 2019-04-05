@@ -28,7 +28,7 @@ Individual terms are divided through by P, P, P^1.5, P^2, so
 
 cork_P: kbar -> multiply by 1e8
 """
-from __future__ import absolute_import
+
 
 from ..mineral import Mineral
 from ..processchemistry import read_masses, dictionarize_formula, formula_mass

@@ -2,8 +2,8 @@
 # Copyright (C) 2012 - 2015 by the BurnMan team, released under the GNU
 # GPL v2 or later.
 
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 import operator
 import bisect
@@ -160,9 +160,9 @@ def array_from_file(filename):
                  for line in datastream.split('\n') if line.strip()]
     for line in datalines:
         if line[0] != "#" and line[0] != "%":
-            data.append(map(float, line))
+            data.append(list(map(float, line)))
 
-    data = np.array(zip(*data))
+    data = np.array(list(zip(*data)))
     return data
 
 
@@ -842,8 +842,8 @@ def _pad_ndarray_inverse_mirror(array, padding):
     slices = tuple([ slice(padding[i], padding[i] + l) for i, l in enumerate(array.shape)])
     padded_array[slices] = array
 
-    padded_array_indices = list(itertools.product(*[range(n + 2*padding[i]) for i, n in enumerate(array.shape)]))
-    inserted_indices = list(itertools.product(*[range(padding[i], padding[i] + l) for i, l in enumerate(array.shape)]))
+    padded_array_indices = list(itertools.product(*[list(range(n + 2*padding[i])) for i, n in enumerate(array.shape)]))
+    inserted_indices = list(itertools.product(*[list(range(padding[i], padding[i] + l)) for i, l in enumerate(array.shape)]))
     padded_array_indices.extend(inserted_indices)
 
     counter = Counter(padded_array_indices)

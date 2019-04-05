@@ -9,7 +9,7 @@ Kurnosov, A., et al. "Evidence for a Fe3+-rich pyrolitic lower mantle from (Al, 
 Nature 543.7646 (2017): 543-546. doi:10.1038/nature21390
 """
 
-from __future__ import absolute_import
+
 
 from ..mineral import Mineral
 from ..solidsolution import SolidSolution

@@ -18,7 +18,7 @@ if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
 
 
 import main as exo
-import PREM.prem as p
+from . import PREM.prem as p
 from params import *
 import pdb
 
@@ -115,8 +115,8 @@ def grid(**kwargs):
     np.savetxt(f_name, np.transpose([CMF_grid, femg_grid, simg_grid, rad_grid, femg_man,simg_man, CRF_grid, bulk_rho_grid]), \
                 delimiter = '    ',  fmt = '%-10.4f', header = dat_row_header)
 
-    print '\n\nGrid stored in {}'.format(f_name)
-    print '\nHeader:\n{}'.format(dat_row_header) 
+    print('\n\nGrid stored in {}'.format(f_name))
+    print('\nHeader:\n{}'.format(dat_row_header)) 
     return
 
 
@@ -210,8 +210,8 @@ def grid_cmf(**kwargs):
     np.savetxt(f_name, np.transpose([CMF_grid, femg_grid, simg_grid, rad_grid, femg_bulk,simg_bulk, CRF_grid, bulk_rho_grid]), \
                 delimiter = '    ',  fmt = '%-10.4f', header = dat_row_header)
 
-    print '\n\nGrid stored in {}'.format(f_name)
-    print '\nHeader:\n{}'.format(dat_row_header) 
+    print('\n\nGrid stored in {}'.format(f_name))
+    print('\nHeader:\n{}'.format(dat_row_header)) 
     return
 
 
@@ -327,8 +327,8 @@ def mvr_grid(**kwargs):
                 dat_row_header = '{0:13}{1:13}{2:13}{3:13}{4:13}'.format('mass (ME)','Radius (RE)',\
                                              'density (g/cc)', 'CRF', 'CMF')
                                         
-                print 'header:\n\n'
-                print dat_row_header
+                print('header:\n\n')
+                print(dat_row_header)
                 np.savetxt(f_name, np.transpose([mass, rad[nn,:], rho_bulk, CRF_grid, CMF_grid]), \
                             delimiter = '    ',  fmt = '%-10.4f', header = header+dat_row_header)
             nn+=1 #count which composition  
@@ -338,7 +338,7 @@ def mvr_grid(**kwargs):
     #plot after making data files?
     
     if kwargs.get('plot') == True:
-        import out
+        from . import out
         out.pltmvr(mass = M, radius = R, labels = label)
     return
     
@@ -456,8 +456,8 @@ def mvr_grid_cmf(**kwargs):
                     dat_row_header = '{0:13}{1:13}{2:13}{3:13}{4:13}'.format('mass (ME)','Radius (RE)',\
                                                  'density (g/cc)', 'CRF', 'CMF')
                                             
-                    print 'header:\n\n'
-                    print dat_row_header
+                    print('header:\n\n')
+                    print(dat_row_header)
                     np.savetxt(f_name, np.transpose([mass, rad[nn,:], rho_bulk, CRF_grid, CMF_grid]), \
                                 delimiter = '    ',  fmt = '%-10.4f', header = header+dat_row_header)
                 nn+=1 #count which composition  
@@ -467,7 +467,7 @@ def mvr_grid_cmf(**kwargs):
     #plot after making data files?
     
     if kwargs.get('plot') == True:
-        import out
+        from . import out
         out.pltmvr(mass = M, radius = R, labels = label)
     return
     
