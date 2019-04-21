@@ -55,7 +55,7 @@ Acknowledgement and Support:
     Bill McDonough, Quentin Williams, Wendy Panero, and Wolfgang Bangerth.
 
 """
-from __future__ import absolute_import
+
 
 from .version import version as __version__
 

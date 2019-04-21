@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 from scipy import interpolate
-import minphys
+from . import minphys
 import os
 import pdb
 
@@ -89,11 +89,11 @@ def get_mantle_percents(args, cor_wt):
 
 
     if verbose:
-        print '\nCompare composition inputs with calculated outputs:'
-        print 'Fe/Mg_in = {} = {} = FeMg_calc'.format(femg, mol[0]/mol[2])
-        print 'Si/Mg_in = {} = {} = SiMg_calc'.format(simg, mol[3]/mol[2])
-        print 'Ca/Mg_in = {} = {} = CaMg_calc'.format(camg, mol[4]/mol[2])
-        print 'Al/Mg_in = {} = {} = alMg_calc\n'.format(almg, mol[5]/mol[2])
+        print('\nCompare composition inputs with calculated outputs:')
+        print('Fe/Mg_in = {} = {} = FeMg_calc'.format(femg, mol[0]/mol[2]))
+        print('Si/Mg_in = {} = {} = SiMg_calc'.format(simg, mol[3]/mol[2]))
+        print('Ca/Mg_in = {} = {} = CaMg_calc'.format(camg, mol[4]/mol[2]))
+        print('Al/Mg_in = {} = {} = alMg_calc\n'.format(almg, mol[5]/mol[2]))
 
 
 
@@ -126,12 +126,12 @@ def get_mantle_percents(args, cor_wt):
 
 
     if verbose:
-        print '\nMantle composition input for perplex:'
-        print 'FeO = {}\nMgO = {}\nSiO2 = {} \nCaO = {} \nAl2O3 = {}'.format(feo, mgo, sio2, \
-            cao, al2o3)
-        print '\nwtTot = {}'.format(wtTot)
-        print '\nCalculated bulk elemental ratios'
-        print 'Si/Mg = {} \nFe/Mg = {}\n'.format(simg_blk, femg_blk)
+        print('\nMantle composition input for perplex:')
+        print('FeO = {}\nMgO = {}\nSiO2 = {} \nCaO = {} \nAl2O3 = {}'.format(feo, mgo, sio2, \
+            cao, al2o3))
+        print('\nwtTot = {}'.format(wtTot))
+        print('\nCalculated bulk elemental ratios')
+        print('Si/Mg = {} \nFe/Mg = {}\n'.format(simg_blk, femg_blk))
 
 
 
@@ -252,8 +252,8 @@ def get_percents(*args):
     #make inequality not, absolute if. Use machine precision
     total = float(FeO_mant_wt+MgO_mant_wt+SiO2_mant_wt+CaO_mant_wt+Al2O3_mant_wt)
     if total > 1.+(5.*np.finfo(float).eps) or total < 1.-(5.*np.finfo(float).eps):
-        print total
-        print '\n\n Mantle wt% don\'t add to 1'
+        print(total)
+        print('\n\n Mantle wt% don\'t add to 1')
         sys.exit()
 
     #same as above edited for printing
@@ -281,12 +281,12 @@ def get_percents(*args):
     #make inequality not, absolute if. Use machine precision
     corwt_tot = round(S_core_wt+O_core_wt+Si_core_wt+Fe_core_wt,8)
     if corwt_tot != 1. and corwt_tot > 1:
-        print '\n\n*****Exiting program*****'
-        print 'Core wt%% don\'t add up'
-        print 'S_core_wt + O_core_wt + Si_core_wt + Fe_core_wt = %r' % (corwt_tot)
-        print 'Siwt = %.5f' % (Si_core_wt)
-        print 'Siwt_input = %.5f'% wt_frac_Si_core
-        print '*************************'
+        print('\n\n*****Exiting program*****')
+        print('Core wt%% don\'t add up')
+        print('S_core_wt + O_core_wt + Si_core_wt + Fe_core_wt = %r' % (corwt_tot))
+        print('Siwt = %.5f' % (Si_core_wt))
+        print('Siwt_input = %.5f'% wt_frac_Si_core)
+        print('*************************')
         sys.exit()
 
     Fe_core_wt = abs(round(Fe_core_wt*100.,8))
@@ -365,13 +365,13 @@ def verbosity(x, mcor, mSi):
     #DEBUG: print out the ratios of Mg/Si and Fe/Si
     # x = [nFec,nSic,nOc, nSc | ,nFem,nMgm,nSim,nOm, nCam, nAlm]
     if verbose:
-        print 'Calculated composition:'
-        print 'XFeO  = %.4f' % (x[4]/(x[0]+x[4]))
-        print 'fSic  = %.4f' % ((x[1]*(mSi))/mcor)
-        print 'Si/Mg = %.4f' % ((x[1]+x[6])/x[5])
-        print 'Fe/Mg = %.4f' % ((x[0]+x[4])/x[5])
-        print 'Ca/Mg = %.4f' % ((x[8])/x[5])
-        print 'Al/Mg = %.4f' % ((x[9])/x[5])
+        print('Calculated composition:')
+        print('XFeO  = %.4f' % (x[4]/(x[0]+x[4])))
+        print('fSic  = %.4f' % ((x[1]*(mSi))/mcor))
+        print('Si/Mg = %.4f' % ((x[1]+x[6])/x[5]))
+        print('Fe/Mg = %.4f' % ((x[0]+x[4])/x[5]))
+        print('Ca/Mg = %.4f' % ((x[8])/x[5]))
+        print('Al/Mg = %.4f' % ((x[9])/x[5]))
 
         #print 'fSic = %.4f' % ((x[1]*(mSi))/masfCor)
         #print 'fOc = %.4f' % ((x[2]*(mO))/masfCor)
@@ -437,7 +437,7 @@ def make_mantle_grid(Mantle_filename,LMUM):
     phase_grid = [row[8:] for row in grid]
 
     keys = ['temperature','pressure','density','speeds','alpha','cp','phases']
-    return dict(zip(keys,[temperature_grid,pressure_grid,density_grid,speed_grid,alpha_grid,cp_grid,phase_grid])),Phases
+    return dict(list(zip(keys,[temperature_grid,pressure_grid,density_grid,speed_grid,alpha_grid,cp_grid,phase_grid]))),Phases
 
 def get_phases(Planet,grids,layers):
 
@@ -660,9 +660,9 @@ def write(Planet,filename):
     np.savetxt(filename+'.dat', output, '%.5f', "\t", newline='\n',
                 header=string_element, footer='', comments='# ')
 
-    print
-    print "file written to:", filename+'.dat'
-    print
+    print()
+    print("file written to:", filename+'.dat')
+    print()
     return 0
 
 def find_water_phase(Pressure, Temperature):
@@ -696,8 +696,8 @@ def find_water_phase(Pressure, Temperature):
         phase = ih_or_vii(Pressure, Temperature)
 
     else:
-        print "\n\n Outside Water phase diagram, need to quit \n"
-        print "T = %r\tP = %r GPa" % (Temperature, Pressure)
+        print("\n\n Outside Water phase diagram, need to quit \n")
+        print("T = %r\tP = %r GPa" % (Temperature, Pressure))
         sys.exit()
 
     return phase
@@ -735,7 +735,7 @@ def iceVII_2(Temperature,Pressure):
     Pm = np.exp(Pm)*1.e6
 
     if (1.e9*Pressure) > Pm:
-        print "in here"
+        print("in here")
         return 'Ice_VII'
 
     else:
@@ -808,8 +808,8 @@ def update_radius(Planet, layers, rho_old):
 
 def find_Planet_radius(radius_planet, core_mass_frac, structure_params, compositional_params, grids, Core_wt_per, layers):
 
-    import planet
-    import minphys
+    from . import planet
+    from . import minphys
 
     def calc_CRF(value, args):
         radius_planet        = args[0]
@@ -827,7 +827,7 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
         planet_mass = minphys.get_mass(Planet,layers)
 
         CMF = planet_mass[num_core_layers]/planet_mass[-1]
-        print "Diff in Core Mass Fraction = ", '%.3e' % (CMF_to_fit - CMF)
+        print("Diff in Core Mass Fraction = ", '%.3e' % (CMF_to_fit - CMF))
         return (CMF_to_fit - CMF)
 
     def calc_CRF_WRF(values, *args):
@@ -864,14 +864,14 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
 
         CMF = core_mass/terrestrial_mass
         WMF = water_mass/planet_mass[-1]
-        print '\n<========================================================================>'
-        print "Diff in Core Mass percent = ", '%.3f' % (100.*CMF_to_fit - 100.*CMF)
-        print "Diff in Water Mass percent = ", '%.3f' % (100.*WMF_to_fit - 100.*WMF)
-        print '\ncalculated core mass frac {}'.format(CMF)
-        print 'input core mass frac {}'.format(CMF_to_fit)
-        print '\ncalculated h2o mass fraction {}'.format(WMF)
-        print 'input h2o mass fraction {}'.format(WMF_to_fit)
-        print '<========================================================================>'
+        print('\n<========================================================================>')
+        print("Diff in Core Mass percent = ", '%.3f' % (100.*CMF_to_fit - 100.*CMF))
+        print("Diff in Water Mass percent = ", '%.3f' % (100.*WMF_to_fit - 100.*WMF))
+        print('\ncalculated core mass frac {}'.format(CMF))
+        print('input core mass frac {}'.format(CMF_to_fit))
+        print('\ncalculated h2o mass fraction {}'.format(WMF))
+        print('input h2o mass fraction {}'.format(WMF_to_fit))
+        print('<========================================================================>')
 
         return (100.*CMF_to_fit - 100.*CMF,100.*WMF_to_fit - 100.*WMF)
 
@@ -879,8 +879,8 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
     if compositional_params[0] > 0:
         from scipy.optimize import root
         if layers[2] <10:
-            print "***Build error: too few water layers for H2Owt% = {0:6f}***".format(compositional_params[0])
-            print "Solution: changing to 100 water layers"
+            print("***Build error: too few water layers for H2Owt% = {0:6f}***".format(compositional_params[0]))
+            print("Solution: changing to 100 water layers")
             layers[2] = 100
 
         water_mass_frac = compositional_params[0]
@@ -889,8 +889,8 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
         structure_params[6], structure_params[8] = solution.x
         if structure_params[6]> 1.0:
             structure_params[6] = 0.5
-        print 'core rad frac {}'.format(structure_params[6])
-        print 'h2o rad fraction {}'.format(structure_params[8])
+        print('core rad frac {}'.format(structure_params[6]))
+        print('h2o rad fraction {}'.format(structure_params[8]))
 
         Planet = planet.initialize_by_radius(*[radius_planet, structure_params, compositional_params, layers])
         Planet = planet.compress(*[Planet, grids, Core_wt_per, structure_params, layers])
@@ -901,8 +901,8 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
         #make sure there are no water layers. User has entered H2Owt% = 0
         #if user entered >0 water layers or >0 water radius fraction, zero them out
         if layers[2] > 0 or structure_params[8] != 0 :
-            print "***Build error: excess in water layers for H2Owt% = 0 wt%***"
-            print "Solution: removing water layer"
+            print("***Build error: excess in water layers for H2Owt% = 0 wt%***")
+            print("Solution: removing water layer")
             structure_params[8] = 0
             layers[2] = 0
 
@@ -917,8 +917,8 @@ def find_Planet_radius(radius_planet, core_mass_frac, structure_params, composit
 
 
 def R_of_M(mass_planet, core_mass_frac, structure_params, compositional_params, grids, Core_wt_per, layers):
-    import planet
-    import minphys
+    from . import planet
+    from . import minphys
     #1. initialize the plant by mass
     Planet = planet.initialize_by_mass(*[mass_planet, structure_params, compositional_params, layers, core_mass_frac])
 
@@ -937,7 +937,7 @@ def R_of_M(mass_planet, core_mass_frac, structure_params, compositional_params, 
 
 
 
-    print 'Mass after compression = {}'.format(Planet.get('mass')[-1]/5.972e24)
+    print('Mass after compression = {}'.format(Planet.get('mass')[-1]/5.972e24))
 
     #Planet['phases'] = functions.get_phases(Planet, grids, layers)
 

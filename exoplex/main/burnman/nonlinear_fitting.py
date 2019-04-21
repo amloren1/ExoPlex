@@ -161,7 +161,7 @@ def nonlinear_least_squares_fit(model,
         f_delta_beta = _update_beta(lm_damping)
         max_f = np.max(np.abs(f_delta_beta))
         if verbose == True:
-            print('Iteration {0:d}: {1}. Max change in param: {2}'.format(n_it, model.get_params(), max_f))
+            print(('Iteration {0:d}: {1}. Max change in param: {2}'.format(n_it, model.get_params(), max_f)))
         if max_f < param_tolerance:
             break
         
@@ -178,13 +178,13 @@ def nonlinear_least_squares_fit(model,
     
     if verbose == True:
         if n_it == max_lm_iterations - 1:
-            print('Max iterations ({0:d}) reached (param tolerance = {1:1e})'.format(max_lm_iterations, param_tolerance))
+            print(('Max iterations ({0:d}) reached (param tolerance = {1:1e})'.format(max_lm_iterations, param_tolerance)))
         else:
-            print('Converged in {0:d} iterations'.format(n_it))
+            print(('Converged in {0:d} iterations'.format(n_it)))
         print('\nOptimised parameter values:')
-        print(model.popt)
+        print((model.popt))
         print('\nParameter covariance matrix:')
-        print(model.pcov)
+        print((model.pcov))
         print('')
         
     
@@ -433,7 +433,7 @@ def weighted_residual_plot(ax, model, flag=None, sd_limit=3, cmap=plt.cm.RdYlBu,
 
     """
     if flag == None:
-        mask = range(len(model.data[:,0]))
+        mask = list(range(len(model.data[:,0])))
     else:
         mask = [i for i, flg in enumerate(model.flags) if flg == flag]
 

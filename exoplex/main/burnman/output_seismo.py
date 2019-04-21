@@ -3,7 +3,7 @@
 # GPL v2 or later.
 
 
-from __future__ import absolute_import
+
 
 import numpy as np
 import warnings
@@ -97,7 +97,7 @@ def write_axisem_input(rock, min_depth=670.e3, max_depth=2890.e3, T0= 1900, file
     discontinuity =0
     # WRITE OUT FILE
     f = open(filename, 'w')
-    print('Writing ' + filename + ' ...')
+    print(('Writing ' + filename + ' ...'))
     f.write('# Input file '+ filename +' for AXISEM created using BurnMan, replacing ' + axisem_ref+ ' between ' +str(np.round(min_depth/1.e3)) + ' and ' + str(np.round(max_depth /1.e3)) +' km \n')
     f.write('NAME ' + filename + '\n')
     for line in lines[2:18]:
@@ -232,7 +232,7 @@ def write_mineos_input(rock, min_depth=670.e3, max_depth=2890.e3, T0 = 1900, fil
 
     # WRITE OUT FILE
     f = open(filename , 'w')
-    print('Writing ' + filename + ' ...')
+    print(('Writing ' + filename + ' ...'))
     f.write(lines[0][:-2] + ' +  ' + filename + '\n')
     for line in lines[1:3]:
         f.write(line[:-2] + '\n')

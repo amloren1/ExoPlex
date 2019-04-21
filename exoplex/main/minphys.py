@@ -1,11 +1,11 @@
 
 import numpy as np
-import burnman
+from . import burnman
 from scipy import interpolate
 import math
 from scipy.integrate import odeint
 import sys
-import functions
+from . import functions
 import pdb
 
 
@@ -77,8 +77,8 @@ def get_rho(Planet,grids,Core_wt_per,layers):
         for i in range(len(test)):
 
             if np.isnan(test[i]) == True:
-                print to_switch_P[i], to_switch_T[i]
-                print "UM Rho Outside of range!"
+                print(to_switch_P[i], to_switch_T[i])
+                print("UM Rho Outside of range!")
                 sys.exit()
             else:
                 UM_data[to_switch_index[i]] = test[i]
@@ -101,11 +101,11 @@ def get_rho(Planet,grids,Core_wt_per,layers):
         for i in range(len(test)):
 
             if np.isnan(test[i]) == True:
-                print to_switch_P[i], to_switch_T[i]
-                print to_switch_T
-                print '\n\n'
-                print min(Pressure_layers)
-                print "LM Rho Outside of range!"
+                print(to_switch_P[i], to_switch_T[i])
+                print(to_switch_T)
+                print('\n\n')
+                print(min(Pressure_layers))
+                print("LM Rho Outside of range!")
                 sys.exit()
             else:
                 LM_data[to_switch_index[i]] = test[i]
@@ -195,7 +195,7 @@ def get_water_rho(Pressure,Temperature):
                     burnman.Mineral.__init__(self)
 
             rock = Ice_Ih()
-            print "uh oh"
+            print("uh oh")
             density_ice.append(rock.evaluate(['density'], 1.e9 * (P_ice[i] / 10000.), T_ice[i])[0])
 
     density = np.concatenate((density_ice,density_water),axis=0)
@@ -597,8 +597,8 @@ def get_temperature(Planet,grids,structural_parameters,layers):
         for i in range(len(test)):
 
             if np.isnan(test[i]) == True:
-                print to_switch_P[i] , to_switch_T[i]
-                print "UM Cp Outside of range!"
+                print(to_switch_P[i] , to_switch_T[i])
+                print("UM Cp Outside of range!")
                 sys.exit()
             else:
                 UM_cp_data[to_switch_index[i]] = test[i]
@@ -620,8 +620,8 @@ def get_temperature(Planet,grids,structural_parameters,layers):
 
         for i in range(len(test)):
             if np.isnan(test[i]) == True:
-                print to_switch_P[i], to_switch_T[i]
-                print "LM Cp Outside of range!"
+                print(to_switch_P[i], to_switch_T[i])
+                print("LM Cp Outside of range!")
                 sys.exit()
             else:
                 LM_cp_data[to_switch_index[i]] = test[i]
@@ -651,8 +651,8 @@ def get_temperature(Planet,grids,structural_parameters,layers):
         for i in range(len(test)):
 
             if np.isnan(test[i]) == True:
-                print to_switch_P[i] / 1e5, to_switch_T[i]
-                print "UM Alpha Outside of range!"
+                print(to_switch_P[i] / 1e5, to_switch_T[i])
+                print("UM Alpha Outside of range!")
                 sys.exit()
             else:
                 UM_alpha_data[to_switch_index[i]] = test[i]
@@ -674,8 +674,8 @@ def get_temperature(Planet,grids,structural_parameters,layers):
         for i in range(len(test)):
 
             if np.isnan(test[i]) == True:
-                print to_switch_P[i] / 1e5, to_switch_T[i]
-                print "LM Alpha Outside of range!"
+                print(to_switch_P[i] / 1e5, to_switch_T[i])
+                print("LM Alpha Outside of range!")
                 sys.exit()
             else:
                 LM_alpha_data[to_switch_index[i]] = test[i]

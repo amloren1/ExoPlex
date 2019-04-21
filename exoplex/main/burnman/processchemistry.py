@@ -8,7 +8,7 @@
 # process_solution_chemistry returns information required to calculate
 # solid solution properties from a set of endmember formulae
 
-from __future__ import absolute_import
+
 import re
 import numpy as np
 from fractions import Fraction
@@ -59,7 +59,7 @@ def sum_formulae(formulae, amounts=None):
         
     summed_formula = Counter()
     for i, formula in enumerate(formulae):
-        summed_formula = summed_formula + Counter({element: amounts[i] * n_atoms for (element, n_atoms) in formula.items()})
+        summed_formula = summed_formula + Counter({element: amounts[i] * n_atoms for (element, n_atoms) in list(formula.items())})
     return summed_formula
 
 def formula_mass(formula, atomic_masses):
@@ -85,7 +85,7 @@ def dictionarize_site_formula(formula):
     for site in range(len(s)):
         site_occupancy = re.split(r'\]', s[site])[0]
         mult = re.split('[A-Z][^A-Z]*', re.split(r'\]', s[site])[1])[0]
-        not_in_site = str(filter(None, re.split(r'\]', s[site])))[1]
+        not_in_site = str([_f for _f in re.split(r'\]', s[site]) if _f])[1]
         not_in_site = not_in_site.replace(mult, '', 1)
         if mult == '':
             list_multiplicity[site] = 1.0
@@ -108,7 +108,7 @@ def dictionarize_site_formula(formula):
 
         # Loop over elements not on a site
         for enamenumber in re.findall('[A-Z][^A-Z]*', not_in_site):
-            element = str(filter(None, re.split(r'(\d+)', enamenumber)))
+            element = str([_f for _f in re.split(r'(\d+)', enamenumber) if _f])
             f[element[0]] = f.get(element[0], 0.0) + float(element[1])
 
     return f
@@ -222,11 +222,11 @@ def process_solution_chemistry(formulae):
 
             # Loop over elements after site
             if len(site_split) != 1:
-                not_in_site = str(filter(None, site_split[1]))
+                not_in_site = str([_f for _f in site_split[1] if _f])
                 not_in_site = not_in_site.replace(mult, '', 1)
                 for enamenumber in re.findall('[A-Z][^A-Z]*', not_in_site):
                     element = list(
-                        filter(None, re.split(r'(\d+)', enamenumber)))
+                        [_f for _f in re.split(r'(\d+)', enamenumber) if _f])
                     # Look up number of atoms of element
                     if len(element) == 1:
                         nel = 1.

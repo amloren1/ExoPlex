@@ -36,6 +36,7 @@ file).
 
 import sys
 
+sys.path.insert(0, sys.path[0]+"/../")#hack to allow import of exoplex scripts from folder
 import exoplex.run as run
 
 
@@ -63,9 +64,10 @@ arg:
 
 
 #**NOTE: ENTER FILENAME WITHOUT .py**
+input_1_file = "input_1"
+Planets = run.exoplex(input_1_file)
 
-Planets = run.exoplex('input_1')
-
+breakpoint()
 
 
 

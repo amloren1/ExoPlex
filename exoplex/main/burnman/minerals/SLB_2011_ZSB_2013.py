@@ -10,7 +10,7 @@ SLB_2011_ZSB_2013
 Minerals from Stixrude & Lithgow-Bertelloni 2011, Zhang, Stixrude & Brodholt 2013, and references therein.
 
 """
-from __future__ import absolute_import
+
 
 from .. import mineral_helpers as helpers
 from ..mineral import Mineral
