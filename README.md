@@ -22,7 +22,7 @@ ExoPlex is written in Python 2.7 and is currently stable to its full capability 
 
 - Perplex_x version 6.8.1 
 
-- Python 2.7+
+- Python 3.7+
 
 - Python libraries (use latest versions):
   - numpy: handle arrays 
