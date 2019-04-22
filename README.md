@@ -14,7 +14,7 @@ A self-consistent mineral physics solver for exoplanets. We model rocky exoplane
 
 ## Getting Started
 
-ExoPlex is written in Python 2.7 and is currently stable to its full capability in the Mac OS and Linux platforms. The mineral physics solver for mantle phase transformations relies on a Fortran program, perple_x which is freely available from their website. We have included some precompiled phase solutions from perple_X so exoplex can be run without installing perple_x however, the user is limited in choice of planet composition to what is already included. Below we detail the full dependencies for exoplex.
+ExoPlex is written in Python 3.7 and is currently stable to its full capability in the Mac OS and Linux platforms. The mineral physics solver for mantle phase transformations relies on a Fortran program, perple_x which is freely available from their website. We have included some precompiled phase solutions from perple_X so exoplex can be run without installing perple_x however, the user is limited in choice of planet composition to what is already included. Below we detail the full dependencies for exoplex.
 
 ### Requirements 
 
@@ -61,7 +61,10 @@ myworkspace/
 
 ## Using ExoPlex
 
-ExoPlex is meant to be run as a library complimentary to your python scripts. It is installed as a third party library from PyPI. Despite this, ExoPlex is not entirely a standalone program. Users are required to setup their workspace so ExoPlex may read and store local files. The following sections describe these dependencies.
+ExoPlex is meant to be run as a library complimentary to your python scripts. 
+We are currently working on a version which is meant to be added to PyPI and used as an external library.
+Rrigh now, we reccomend cloning this repository and writing your scripts in a workspace near your local copy of exoplexparty library from PyPI. Despite this, ExoPlex is not entirely a standalone program. Users are required to setup their workspace so ExoPlex may read and store local files. 
+The following sections describe these dependencies.
 
 ### Workspace directory tree
 
