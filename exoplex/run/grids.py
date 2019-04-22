@@ -18,7 +18,7 @@ if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
 
 
 import main as exo
-from . import PREM.prem as p
+from exoplex.run.PREM import prem as p
 from params import *
 import pdb
 

@@ -24,7 +24,7 @@ import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-from . import PREM.prem as p
+from exoplex.run.PREM import prem as p
 
 import pdb
   

@@ -42,7 +42,7 @@ import exoplex.run as run
 
 
 
-#####
+
 '''
 function: exoplex()
 
@@ -60,7 +60,7 @@ arg:
 	exoplex from
 
 '''
-#####
+
 
 
 #**NOTE: ENTER FILENAME WITHOUT .py**
