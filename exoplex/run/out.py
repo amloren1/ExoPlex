@@ -24,7 +24,7 @@ import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-import PREM.prem as p
+from exoplex.run.PREM import prem as p
 
 import pdb
   
@@ -122,8 +122,8 @@ def writeall(**kwargs):
     elif len(kwargs.get('file_names')) == n:
         names = kwargs.get('file_names')
     else:
-        print '\n\n***ERROR: file_name list does not match number of models***'
-        print 'Exiting program'
+        print('\n\n***ERROR: file_name list does not match number of models***')
+        print('Exiting program')
         sys.exit()
     
     for i in range(len(Planet)):
@@ -180,8 +180,8 @@ def write(**kwargs):
     elif len(kwargs.get('filenames')) == n:
         names = kwargs.get('filenames')
     else:
-        print '\n\n***ERROR: filename list does not match number of models***'
-        print 'Exiting program'
+        print('\n\n***ERROR: filename list does not match number of models***')
+        print('Exiting program')
         sys.exit()
     
     for i in range(len(Planet)):

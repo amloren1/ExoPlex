@@ -2,7 +2,7 @@ import sys
 import numpy as np
 Earth_radius = 6.371e6
 Earth_mass   = 5.972e24 # kg 
-import minphys
+from . import minphys
 import pdb
 def initialize_by_radius(*args):
     radius_planet        = args[0]
@@ -86,8 +86,8 @@ def initialize_by_radius(*args):
             'alpha','cp','Vphi''Vp','Vs','K']
 
 
-    return dict(zip(keys,[radius_layers, density_layers,Temperature_layers,gravity_layers, Pressure_layers,
-                          alpha, cp,Vphi,Vp,Vs,K]))
+    return dict(list(zip(keys,[radius_layers, density_layers,Temperature_layers,gravity_layers, Pressure_layers,
+                          alpha, cp,Vphi,Vp,Vs,K])))
 
 
 
@@ -105,9 +105,9 @@ def compress(*args):
 
     old_rho = [0  for i in range(len(Planet['density']))]
     converge = False
-    print
+    print()
     while n_iterations <= max_iterations and converge == False:
-        print "iteration #",n_iterations
+        print("iteration #",n_iterations)
 
 
         #find density with current P, T gradients
@@ -115,14 +115,14 @@ def compress(*args):
 
         for i in range(len(Planet['density'])):
             if np.isnan(Planet['density'][i]) == True:
-                print "Density has a nan"
-                print i, Planet['pressure'][i],Planet['temperature'][i]
-                print
+                print("Density has a nan")
+                print(i, Planet['pressure'][i],Planet['temperature'][i])
+                print()
                 sys.exit()
             elif np.isnan(Planet['gravity'][i]) == True:
-                print "Gravity has a nan \nat shell\tPressure\tTemperature"
-                print i, Planet['pressure'][i],Planet['temperature'][i]
-                print
+                print("Gravity has a nan \nat shell\tPressure\tTemperature")
+                print(i, Planet['pressure'][i],Planet['temperature'][i])
+                print()
                 sys.exit()
 
         #update gravity, pressure and temperature with new density
@@ -144,7 +144,7 @@ def compress(*args):
     
 def compress_fixed_mass(*args):
     
-    import functions as f
+    from . import functions as f
     import copy
     Planet            = args[0]
     grids             = args[1]
@@ -158,12 +158,12 @@ def compress_fixed_mass(*args):
 
     
     converge = False
-    print
+    print()
     while n_iterations <= max_iterations and converge == False:
         
         
-        print "iteration #",n_iterations
-        print 'radius = {}'.format(Planet.get('radius')[-1]/Earth_radius)
+        print("iteration #",n_iterations)
+        print('radius = {}'.format(Planet.get('radius')[-1]/Earth_radius))
         
         #find density with current P, T gradients
         
@@ -178,14 +178,14 @@ def compress_fixed_mass(*args):
         
         for i in range(len(Planet['density'])):
             if np.isnan(Planet['density'][i]) == True:
-                print "Density has a nan"
-                print i, Planet['pressure'][i],Planet['temperature'][i]
-                print
+                print("Density has a nan")
+                print(i, Planet['pressure'][i],Planet['temperature'][i])
+                print()
                 sys.exit()
             elif np.isnan(Planet['gravity'][i]) == True:
-                print "Gravity has a nan \nat shell\tPressure\tTemperature"
-                print i, Planet['pressure'][i],Planet['temperature'][i]
-                print
+                print("Gravity has a nan \nat shell\tPressure\tTemperature")
+                print(i, Planet['pressure'][i],Planet['temperature'][i])
+                print()
                 sys.exit()
         
         update = f.update_radius(Planet, layers, old_rho)
@@ -209,7 +209,7 @@ def compress_fixed_mass(*args):
             converge = False
         if n_iterations> n_min and delta < 1e-6:
             converge = True
-            print 'convergence reached\ndelta = {}'.format(delta)
+            print('convergence reached\ndelta = {}'.format(delta))
         n_iterations+=1
         
     return Planet
@@ -340,8 +340,8 @@ def initialize_by_mass(*args):
 
 
                           
-    return dict(zip(keys,[radius_layers, density_layers,Temperature_layers,gravity_layers, Pressure_layers,
-                          alpha, cp,Vphi,Vp,Vs,K, mass_layers, cumulative_mass, volume_layers]))
+    return dict(list(zip(keys,[radius_layers, density_layers,Temperature_layers,gravity_layers, Pressure_layers,
+                          alpha, cp,Vphi,Vp,Vs,K, mass_layers, cumulative_mass, volume_layers])))
 
 
 

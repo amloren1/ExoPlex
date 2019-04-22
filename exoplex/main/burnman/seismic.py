@@ -3,7 +3,7 @@
 # GPL v2 or later.
 
 
-from __future__ import absolute_import
+
 
 import numpy as np
 import warnings
@@ -372,7 +372,7 @@ class Slow(SeismicTable):
         min_radius = self.earth_radius - max(table2[:, 0])
         max_radius = self.earth_radius - min(table2[:, 0])
 
-        table = np.array(list(filter(lambda x: (x[1] >= min_radius and x[1] <= max_radius), table)))
+        table = np.array(list([x for x in table if (x[1] >= min_radius and x[1] <= max_radius)]))
 
         self.table_depth = table[:, 0]
         self.table_radius = table[:, 1]
@@ -406,7 +406,7 @@ class Fast(SeismicTable):
         min_radius = self.earth_radius - max(table2[:, 0])
         max_radius = self.earth_radius - min(table2[:, 0])
 
-        table = np.array(list(filter(lambda x: (x[1] >= min_radius and x[1] <= max_radius), table)))
+        table = np.array(list([x for x in table if (x[1] >= min_radius and x[1] <= max_radius)]))
 
         self.table_depth = table[:, 0]
         self.table_radius = table[:, 1]

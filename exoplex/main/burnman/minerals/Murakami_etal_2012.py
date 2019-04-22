@@ -12,7 +12,7 @@ Stixrude & Lithgow-Bertolloni 2005. Some information from personal communication
 
 
 """
-from __future__ import absolute_import
+
 from .. import mineral_helpers as helpers
 from ..mineral import Mineral
 

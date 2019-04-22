@@ -16,11 +16,11 @@ if not os.path.exists('main') and os.path.exists('../main'):
 if not os.path.exists(PerPlex_path+'/build') or not os.path.exists(PerPlex_path+'/vertex') \
     or not os.path.exists(PerPlex_path+'/werami'):
 
-    import urllib2
+    import urllib.request, urllib.error, urllib.parse
     import tarfile
 
-    print '\n\n** Downloading Perple_x. Please wait**'
-    print 'url: {}'.format('http://www.perplex.ethz.ch/ExoPlex/')
+    print('\n\n** Downloading Perple_x. Please wait**')
+    print('url: {}'.format('http://www.perplex.ethz.ch/ExoPlex/'))
 
     perplex_linux = 'http://www.perplex.ethz.ch/ExoPlex/Perple_X_6.8.1_Linux_64_gfortran_edited.tar.gz'
     perplex_mac   = 'http://www.perplex.ethz.ch/ExoPlex/Perple_X_6.8.1_OSX_10.6+_Intel_MC_Mar_6_2018_edited.zip'
@@ -35,7 +35,7 @@ if not os.path.exists(PerPlex_path+'/build') or not os.path.exists(PerPlex_path+
         
     try:
         filename = 'perplex.tar.gz'
-        response = urllib2.urlopen(perplex_link)
+        response = urllib.request.urlopen(perplex_link)
         
         with open(filename, 'wb') as f: f.write(response.read())
         
@@ -44,28 +44,28 @@ if not os.path.exists(PerPlex_path+'/build') or not os.path.exists(PerPlex_path+
         tar.extract('build', PerPlex_path)
         tar.extract('vertex', PerPlex_path)
         tar.extract('werami', PerPlex_path)
-        print '\nSuccessfully downloaded Perple_x. Stored in {}\n\n'.format(PerPlex_path)
+        print('\nSuccessfully downloaded Perple_x. Stored in {}\n\n'.format(PerPlex_path))
 
     except:
-        print '\nUnable to download Perple_x. Make sure you are connected to the internet'
+        print('\nUnable to download Perple_x. Make sure you are connected to the internet')
         
         
     
 
 
 def download_perplex():
-    import urllib2
+    import urllib.request, urllib.error, urllib.parse
     import tarfile
     
-    print '\n\n** Downloading Perple_x. Please wait**'
-    print 'url: {}'.format('http://www.perplex.ethz.ch/perplex/exoplex/')
+    print('\n\n** Downloading Perple_x. Please wait**')
+    print('url: {}'.format('http://www.perplex.ethz.ch/perplex/exoplex/'))
     
     perplex_linux = 'http://www.perplex.ethz.ch/perplex/exoplex/linux/Perple_X_6.8.1_Linux_64_gfortran.tar.gz'
     perplex_mac   = 'http://www.perplex.ethz.ch/perplex/exoplex/OSX/Perple_X_6.8.1_OSX_10.6+_Intel_MC_Mar_6_2018.zip'
     
     try:
         filename = 'perplex.tar.gz'
-        response = urllib2.urlopen(perplex_linux)
+        response = urllib.request.urlopen(perplex_linux)
         
         with open(filename, 'wb') as f: f.write(response.read())
         
@@ -76,9 +76,9 @@ def download_perplex():
         tar.extract('werami', PerPlex_path)
         
     except:
-        print 'Unable to download Perple_x. Make sure you are connected to the internet'
+        print('Unable to download Perple_x. Make sure you are connected to the internet')
         return
-    print 'Successfully downloaded Perple_x. Stored in {}'.format(PerPlex_path)
+    print('Successfully downloaded Perple_x. Stored in {}'.format(PerPlex_path))
     
     return
     
@@ -108,21 +108,21 @@ def run_perplex(*args):
     filename ='Solutions/'+solutionFileNameMan
 
     if os.path.isfile(filename+'_UM.tab') and UMLM == True:
-        print '\nThe Upper mantle .tab already exists, please wait briefly for solution:'
-        print  filename+'_UM.tab\n'
+        print('\nThe Upper mantle .tab already exists, please wait briefly for solution:')
+        print(filename+'_UM.tab\n')
         return filename
 
     if os.path.isfile(filename+'_LM.tab') and UMLM == False:
-        print '\nThe Lower mantle .tab already exists, please wait briefly for solution'
-        print  filename+'_LM.tab\n'
+        print('\nThe Lower mantle .tab already exists, please wait briefly for solution')
+        print(filename+'_LM.tab\n')
         return filename
 
     else:
         if UMLM == True:
-            print 'Making upper mantle PerPlex phase file. \n This will be stored in: '+ filename+'_UM.tab'
+            print('Making upper mantle PerPlex phase file. \n This will be stored in: '+ filename+'_UM.tab')
             description = '_UM'
         else:
-            print 'Making lower mantle PerPlex phase file. \n This will be stored in: '+ filename+'_LM.tab'
+            print('Making lower mantle PerPlex phase file. \n This will be stored in: '+ filename+'_LM.tab')
             description = '_LM'
 
         #we need to shorten the file name for PerPlex to accept it
@@ -212,7 +212,7 @@ def run_perplex(*args):
     p.read()
     p.wait()
 
-    print "Done with Build, moving on to Vertex"
+    print("Done with Build, moving on to Vertex")
 
     # Spawn Vertex ----------------#
     # Enter the project name (the name assigned in BUILD) [default = my_project]:
@@ -226,7 +226,7 @@ def run_perplex(*args):
     p.wait()
 
     
-    print 'Finished with Vertex, beginning Werami'
+    print('Finished with Vertex, beginning Werami')
 
     try:
 
@@ -281,7 +281,7 @@ def run_perplex(*args):
         p.logfile = open('werami.log','wb')
         p.expect('EXIT', timeout=None)
         p.terminate()
-        print "Done with PerPlex"
+        print("Done with PerPlex")
 
         if UMLM == True:
             os.rename(solutionFileNameMan+'_1.tab', filename+'_UM.tab')
@@ -292,7 +292,7 @@ def run_perplex(*args):
     except:
 
         successful = False
-        print 'perplex broke at werami. The details are stored in the ERROR_ files'
+        print('perplex broke at werami. The details are stored in the ERROR_ files')
         os.rename('build.log', 'ERROR_'+solutionFileNameMan+'_build.log')
         os.rename('vertex.log', 'ERROR_'+solutionFileNameMan+'_vertex.log')
         os.rename('werami.log', 'ERROR_'+solutionFileNameMan+'_werami.log')

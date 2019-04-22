@@ -19,9 +19,9 @@ sys.path.insert(1, path)
 if not os.path.exists('main') and os.path.exists('../main'):
     sys.path.insert(1, os.path.abspath('..'))
     
-import minphys
-import functions
-import run_perplex
+from . import minphys
+from . import functions
+from . import run_perplex
 #run perplex only or run full ExoPlex model?
 import pdb
 import params
@@ -43,17 +43,17 @@ def check_input_consistency(compositional_params, structure_params, layers):
 
     #Safety check for non-matching inputs, probably just remove this
     if wt_frac_water == 0. and number_h2o_layers > 0:
-       print '#============================#'
-       print "\n***Build error: excess in water layers for water mass fraction:\n wt_h2o = 0 wt%***"
-       print "Solution: removing top {} layers allocated to water layer".format(number_h2o_layers)
-       print '#============================#'
+       print('#============================#')
+       print("\n***Build error: excess in water layers for water mass fraction:\n wt_h2o = 0 wt%***")
+       print("Solution: removing top {} layers allocated to water layer".format(number_h2o_layers))
+       print('#============================#')
        number_h2o_layers     = 0
        #water_thickness_guess = 0
     elif wt_frac_water > 0 and number_h2o_layers == 0:
-        print '#============================#'
-        print "***Build error: no layers for water mass fraction:\n wt_h2 > 0 wt%***"
-        print "Solution: Adding 100 layers for water envelope"
-        print '#============================#'
+        print('#============================#')
+        print("***Build error: no layers for water mass fraction:\n wt_h2 > 0 wt%***")
+        print("Solution: Adding 100 layers for water envelope")
+        print('#============================#')
         number_h2o_layers = 100
 
     new_layers = [num_mantle_layers, num_core_layers, number_h2o_layers]
@@ -62,9 +62,9 @@ def check_input_consistency(compositional_params, structure_params, layers):
 
 def run_planet_radius(radius_planet, compositional_params, structure_params, layers,filename, truncate_comp):
     
-    print '\n*****************************************'
-    print 'Running model based off of input Radius'
-    print '-------------------------------------------'
+    print('\n*****************************************')
+    print('Running model based off of input Radius')
+    print('-------------------------------------------')
 
     #find compositional percentages: abun. of each element, core mass frac, core composition and Perplex inputs
 
@@ -79,17 +79,17 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
 
 
     if truncate_comp.get('fix_man') == False:
-        print '\nUsing molar ratios as bulk planet composiiton\n'
-        print '*********************************\n'
+        print('\nUsing molar ratios as bulk planet composiiton\n')
+        print('*********************************\n')
         Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac = functions.get_percents(*compositional_params)
 
     else:
         
         core_mass_frac = truncate_comp.get('wtCore')
 
-        print '\nUsing molar ratios to define mantle only'
-        print 'Entered core wt%% = {}\n'.format(round(core_mass_frac*100.,6))
-        print '\n*****************************************'
+        print('\nUsing molar ratios to define mantle only')
+        print('Entered core wt%% = {}\n'.format(round(core_mass_frac*100.,6)))
+        print('\n*****************************************')
         Mantle_wt_per, bulk_ratios = functions.get_mantle_percents(compositional_params, core_mass_frac)
         
 
@@ -99,7 +99,7 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
         Mantle_ratios = compositional_params[1:5]
 
 
-        print 'XFeO = {}'.format(bulk_ratios[4])
+        print('XFeO = {}'.format(bulk_ratios[4]))
 
 
         wtFe = round(100.*(1- sum(compositional_params[6:])), 8)
@@ -109,10 +109,10 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
         Core_mol_per = 'place holder?'
 
 
-    print 'Core_wt_per: ' , Core_wt_per
-    print 'Mantle_wt_per: ', Mantle_wt_per
-    print 'Core_mol_per: ', Core_mol_per
-    print 'core_mass_frac: ', core_mass_frac
+    print('Core_wt_per: ' , Core_wt_per)
+    print('Mantle_wt_per: ', Mantle_wt_per)
+    print('Core_mol_per: ', Core_mol_per)
+    print('core_mass_frac: ', core_mass_frac)
     
     #Run perplex either in series or parallel for upper and lower mantle
     if multi_process:
@@ -216,9 +216,9 @@ def run_planet_radius(radius_planet, compositional_params, structure_params, lay
 
 def run_planet_mass(mass_planet, compositional_params, structure_params, layers,filename, truncate_comp):
     
-    print '\n*****************************************'
-    print 'Running model based off of input MASS'
-    print '-------------------------------------------'
+    print('\n*****************************************')
+    print('Running model based off of input MASS')
+    print('-------------------------------------------')
 
     #find compositional percentages: abun. of each element, core mass frac, core composition and Perplex inputs
 
@@ -233,8 +233,8 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
     layers = check_input_consistency(compositional_params, structure_params, layers)
 
     if truncate_comp.get('fix_man') == False:
-        print '\nUsing molar ratios as bulk planet composiiton\n'
-        print '\n*****************************************'
+        print('\nUsing molar ratios as bulk planet composiiton\n')
+        print('\n*****************************************')
         Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac, Mantle_ratios = functions.get_percents(*compositional_params)
 
         bulk_ratios = compositional_params[1:6]
@@ -243,9 +243,9 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
         core_mass_frac = truncate_comp.get('wtCore')
 
         #print '\n*********************************'
-        print '\nUsing molar ratios to define mantle only'
-        print 'Entered core wt%% = {}\n'.format(round(core_mass_frac*100.,6))
-        print '\n*****************************************'
+        print('\nUsing molar ratios to define mantle only')
+        print('Entered core wt%% = {}\n'.format(round(core_mass_frac*100.,6)))
+        print('\n*****************************************')
 
         Mantle_wt_per, bulk_ratios = functions.get_mantle_percents(compositional_params, core_mass_frac)
 
@@ -254,7 +254,7 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
         Mantle_ratios = compositional_params[1:5]
 
 
-        print 'XFeO = {}'.format(bulk_ratios[4])
+        print('XFeO = {}'.format(bulk_ratios[4]))
 
 
         wtFe = round(100.*(1- sum(compositional_params[6:])), 8)
@@ -264,10 +264,10 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
         Core_mol_per = ''
 
 
-    print 'Core_wt_per: ' , Core_wt_per
-    print 'Mantle_wt_per: ', Mantle_wt_per
-    print 'Core_mol_per: ', Core_mol_per
-    print 'core_mass_frac: ', core_mass_frac
+    print('Core_wt_per: ' , Core_wt_per)
+    print('Mantle_wt_per: ', Mantle_wt_per)
+    print('Core_mol_per: ', Core_mol_per)
+    print('core_mass_frac: ', core_mass_frac)
     
     #DEBUG
     import pdb
@@ -356,7 +356,7 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
     except IndexError:
         import time
 
-        print '***************\nDeleting the UM solution file and starting over\n***************\n'
+        print('***************\nDeleting the UM solution file and starting over\n***************\n')
         print("3")
         time.sleep(1.5)
         print("2")
@@ -369,7 +369,7 @@ def run_planet_mass(mass_planet, compositional_params, structure_params, layers,
     except ImportError:
         import time
 
-        print '***************\nDeleting the LM solution file and starting over\n***************\n'
+        print('***************\nDeleting the LM solution file and starting over\n***************\n')
         print("3")
         time.sleep(1.5)
         print("2")
@@ -406,17 +406,17 @@ def run_perplex_only(compositional_params, structure_params, layers, filename, t
     layers = check_input_consistency(compositional_params, structure_params, layers)
 
     if truncate_comp == False:
-        print '\n*********************************'
-        print '\nUsing molar ratios as bulk planet composiiton\n'
-        print '*********************************\n'
+        print('\n*********************************')
+        print('\nUsing molar ratios as bulk planet composiiton\n')
+        print('*********************************\n')
         Core_wt_per, Mantle_wt_per, Core_mol_per, core_mass_frac = functions.get_percents(*compositional_params)
 
     else:
         core_mass_frac = truncate_comp.get('cor_wt')
-        print '\n*********************************'
-        print '\nUsing molar ratios to define mantle only'
-        print 'Entered core wt%% = {}\n'.format(round(core_mass_frac * 100., 6))
-        print '*********************************\n'
+        print('\n*********************************')
+        print('\nUsing molar ratios to define mantle only')
+        print('Entered core wt%% = {}\n'.format(round(core_mass_frac * 100., 6)))
+        print('*********************************\n')
         wtFe = round(100. * (1 - sum(compositional_params[6:])), 8)
 
         Mantle_wt_per = truncate_comp
@@ -424,10 +424,10 @@ def run_perplex_only(compositional_params, structure_params, layers, filename, t
             , 'O': round(100. * compositional_params[7], 8), 'S': round(100. * compositional_params[8], 8)}
         Core_mol_per = 'place holder?'
 
-    print 'Core_wt_per: ', Core_wt_per
-    print 'Mantle_wt_per: ', Mantle_wt_per
-    print 'Core_mol_per: ', Core_mol_per
-    print 'core_mass_frac: ', core_mass_frac
+    print('Core_wt_per: ', Core_wt_per)
+    print('Mantle_wt_per: ', Mantle_wt_per)
+    print('Core_mol_per: ', Core_mol_per)
+    print('core_mass_frac: ', core_mass_frac)
 
     # Run perplex either in series or parallel for upper and lower mantle
     if multi_process:

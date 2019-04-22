@@ -8,7 +8,7 @@ Other minerals
 ^^^^^^^^^^^^^^
 
 """
-from __future__ import absolute_import
+
 
 from .. import mineral_helpers as helpers
 from ..mineral import Mineral
