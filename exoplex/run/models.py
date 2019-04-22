@@ -102,7 +102,6 @@ def exoplex(script):
         sys.exit()
     
     comp_params = inputs_from_file(script)
-    
     Planet = np.empty(x.n_mod,dtype = object)
     for i in range(x.n_mod):
         
@@ -122,12 +121,13 @@ def exoplex(script):
         #run_planet_mass(mass_planet, compositional_params, structure_params, layers,filename, truncate_comp)
         
         if x.indp == 'M' or x.indp == 'm':
-            #sys.exit()
-            #pdb.set_trace()
             Planet[i] = exo.run_planet_mass(x.X[i], compositional_params,structure_params,layers,sol_filename, cmf2)
-        else:
-            #sys.exit()
+        elif x.indp == 'R' or x.indp == 'r':
             Planet[i] = exo.run_planet_radius(x.X[i], compositional_params, structure_params, layers,sol_filename, cmf2)
+        else:
+            print('\n***Unable to interpret model selection indp = {}***'.format(x.indp))
+            print('\n Please select independent parameter as \'R\' (radius) or \'M\' (mass)')
+            sys.exit()
         if perplex_only:
             sys.exit()
         

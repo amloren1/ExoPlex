@@ -1,6 +1,6 @@
 
 n_mod    = 1           # how many models will you run?
-indp     = 'M'         # set mass or radius as independent value. M=mass, R=radius (default = M)
+indp     = 'R'         # set mass or radius as independent value. M=mass, R=radius (default = M)
 X        = [1.]        # list of value(s) of independent parameter (M in ME=5.972e24 kg and R in RE=6.371e6 m 
 fix_core = True       # fix core mass fraction? (True or False)    
 cmf      = [0.32]     # list core mass fraction for each model if fix_core = True (0,1)
