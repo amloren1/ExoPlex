@@ -107,7 +107,7 @@ def exoplex(script):
         
         cmf2 = {'fix_man': x.fix_core, 'wtCore': x.cmf[i]}
         compositional_params = comp_params[i]
-        structure_params =  [Pressure_range_mantle_UM,Temperature_range_mantle_UM,resolution_UM,
+        structure_params = [Pressure_range_mantle_UM,Temperature_range_mantle_UM,resolution_UM,
                          Pressure_range_mantle_LM, Temperature_range_mantle_LM, resolution_LM,
                          Core_rad_frac_guess,Mantle_potential_temp, h20_radfrac_guess, T_surface_h2o]
 

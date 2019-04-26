@@ -103,7 +103,7 @@ def pltprem(**kwargs):
 
 ############################
 '''
-create data file with all posible columns
+create data file with all possible columns
 '''
 ############################
 
@@ -111,7 +111,7 @@ def writeall(**kwargs):
     from params import num_core_layers
     
     Planet = kwargs.get('planet')
-    n      =  len(Planet)
+    n = len(Planet)
     
     if kwargs.get('file_names') == None:
         names = np.empty(n, dtype='S20')
@@ -127,18 +127,14 @@ def writeall(**kwargs):
         sys.exit()
     
     for i in range(len(Planet)):
-        
-            
 
         mass = Planet[i]['mass']
         rad = Planet[i]['radius']
         rho = Planet[i]['density']
         P   = Planet[i]['pressure']
         T   = Planet[i]['temperature']
-        mntl = Planets[i]['mantle_ratios']
+        mntl = Planet[i]['mantle_ratios']
         
-        
-
         dat_header = 'Mantle composition:\n{:10}{:10}{:10}{:10}\n{:<5}  {:<5}  {:<5}  {:<5}\n\n{:25}{:25}{:25}{:25}{:25}'\
             .format('Fe/Mg','Si/Mg','Ca/Mg','Al/Mg',mntl[0] ,mntl[1] ,mntl[2] ,mntl[3] , \
                 'mass', 'radius', 'density', 'pres', 'temp')
@@ -153,8 +149,6 @@ def writeall(**kwargs):
         phase = Planet[i]['phases'][num_core_layers:]
         kitchen_sink = np.concatenate([dat,phase],axis=1)
 
-
-        
         np.savetxt(names[i], kitchen_sink , delimiter = ',' ,header = dat_header+phase_header)
         #np.savetxt('Earth_mantle.dat', np.transpose([mass, rad, rho, P, T]), delimiter = ' , ' ,header = dat_header)
     

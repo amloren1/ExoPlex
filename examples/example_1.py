@@ -67,9 +67,6 @@ arg:
 input_1_file = "input_1"
 Planets = run.exoplex(input_1_file)
 
-breakpoint()
-
-
 
 #####
 '''
@@ -88,8 +85,8 @@ filenames = (optional) list of strings that represent desired filenames for each
 #####
 
 
-run.write(planet = Planets, filenames = ['planet_1.dat'])
-
+run.writeall(planet = Planets, filenames = ['planet_1.dat'])
+breakpoint()
 
 #####
 '''
