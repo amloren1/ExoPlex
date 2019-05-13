@@ -114,10 +114,9 @@ def writeall(**kwargs):
     n = len(Planet)
     
     if kwargs.get('file_names') == None:
-        names = np.empty(n, dtype='S20')
-        
+        names = []
         for i in range(n):
-            names[i] = 'planet0{}.dat'.format(i)
+            names.append(f'planet0{i}.dat')
             
     elif len(kwargs.get('file_names')) == n:
         names = kwargs.get('file_names')
@@ -141,14 +140,13 @@ def writeall(**kwargs):
         
         phase_header = ''
         
-        n_phase = len(Planet[i]['phase_names'])
         for phases in Planet[i]['phase_names']:
             phase_header += '{:10}'.format(phases)
 
         dat = np.transpose([mass, rad, rho, P, T])
-        phase = Planet[i]['phases'][num_core_layers:]
+        phase = Planet[i]['phases']
         kitchen_sink = np.concatenate([dat,phase],axis=1)
-
+        breakpoint()
         np.savetxt(names[i], kitchen_sink , delimiter = ',' ,header = dat_header+phase_header)
         #np.savetxt('Earth_mantle.dat', np.transpose([mass, rad, rho, P, T]), delimiter = ' , ' ,header = dat_header)
     
