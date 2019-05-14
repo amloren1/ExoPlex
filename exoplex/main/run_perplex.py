@@ -297,10 +297,16 @@ def run_perplex(*args):
         os.rename('build.log', 'ERROR_'+solutionFileNameMan+'_build.log')
         os.rename('vertex.log', 'ERROR_'+solutionFileNameMan+'_vertex.log')
         os.rename('werami.log', 'ERROR_'+solutionFileNameMan+'_werami.log')
-        clear_perplex_files(solutionFileNameMan)
+        try:
+            clear_perplex_files(solutionFileNameMan)
+        except:
+            pass
+        
         sys.exit()
 
+
 def clear_perplex_files(solutionFileNameMan):
+
     os.remove(solutionFileNameMan+'.arf')
     os.remove(solutionFileNameMan+'.blk')
     os.remove(solutionFileNameMan+'.dat')
