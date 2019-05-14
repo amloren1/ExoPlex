@@ -86,7 +86,6 @@ filenames = (optional) list of strings that represent desired filenames for each
 
 
 run.writeall(planet = Planets, filenames = ['planet_1.dat'])
-breakpoint()
 
 #####
 '''

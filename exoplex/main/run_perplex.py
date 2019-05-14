@@ -290,15 +290,17 @@ def run_perplex(*args):
 
         successful = True
     except:
-
         successful = False
+        print('**ERROR**')
         print('perplex broke at werami. The details are stored in the ERROR_ files')
+        print(f'check the ERROR_{solutionFileNameMan} logs for the problem')
         os.rename('build.log', 'ERROR_'+solutionFileNameMan+'_build.log')
         os.rename('vertex.log', 'ERROR_'+solutionFileNameMan+'_vertex.log')
         os.rename('werami.log', 'ERROR_'+solutionFileNameMan+'_werami.log')
+        clear_perplex_files(solutionFileNameMan)
+        sys.exit()
 
-
-
+def clear_perplex_files(solutionFileNameMan):
     os.remove(solutionFileNameMan+'.arf')
     os.remove(solutionFileNameMan+'.blk')
     os.remove(solutionFileNameMan+'.dat')
@@ -312,52 +314,3 @@ def run_perplex(*args):
 
 
     
-    
-    
-'''
-
- p.sendline('q')  # 13
-        p.sendline('7')
-        p.sendline('ca-pv')  # 14
-        p.sendline('7')
-        p.sendline('cfs')  # 15
-        p.sendline('7')
-        p.sendline('coe')  # 16
-        p.sendline('7')
-        p.sendline('ky')  # 17
-        p.sendline('7')
-        p.sendline('seif')  # 18
-
-        # 21 species, in all for Fe-Si-Mg-O regime
-        p.sendline('7')
-        p.sendline('C2/c')  # 0
-        p.sendline('7')
-        p.sendline('Wus')  # 1
-        p.sendline('7')
-        p.sendline('Pv')  # 2
-        p.sendline('7')
-        p.sendline('an')  # 3
-        p.sendline('7')
-        p.sendline('Sp')  #4
-        p.sendline('7')
-        p.sendline('O')  # 4
-        p.sendline('7')
-        p.sendline('Wad')  # 5
-        p.sendline('7')
-        p.sendline('Ring')  # 6  
-        p.sendline('7')
-        p.sendline('Opx')  # 7
-        p.sendline('7')
-        p.sendline('Cpx')  # 8
-        p.sendline('7')
-        p.sendline('Aki')  # 9
-        p.sendline('7')
-        p.sendline('Gt')  # 10 gt_maj
-        p.sendline('7')
-        p.sendline('Ppv')  # 11
-        p.sendline('7')
-        p.sendline('CF')   # 12
-        p.sendline('7')
-        p.sendline('st')  # 12
-        p.sendline('7')
-'''

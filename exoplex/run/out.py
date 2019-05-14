@@ -146,7 +146,6 @@ def writeall(**kwargs):
         dat = np.transpose([mass, rad, rho, P, T])
         phase = Planet[i]['phases']
         kitchen_sink = np.concatenate([dat,phase],axis=1)
-        breakpoint()
         np.savetxt(names[i], kitchen_sink , delimiter = ',' ,header = dat_header+phase_header)
         #np.savetxt('Earth_mantle.dat', np.transpose([mass, rad, rho, P, T]), delimiter = ' , ' ,header = dat_header)
     
