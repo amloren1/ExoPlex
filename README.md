@@ -89,11 +89,11 @@ myworkspace/
 |  |____params.py
 ```
 
-Assuming you are working in an arbitrary directory called ```myworkspace/```. You should have at least the ```params.py``` and ```input_1.py``` files at the root. These and several example scripts can be found on the GitHub page under the ```examples``` folder.  
+Assuming you are working in an arbitrary directory called ```myworkspace/```. You should have at least one directory at the root level where yoy can store your working files. In the example above, ```examples/ ``` serves this purpose. There are several example scripts which are stored here to help you get started.
 
-Your scripts should be stored alongside ```Soulutions/```. The ```Soulutions/``` directory stores the outputs from perple_X which give mineralogy and thermodynamic parameters depending on composition. Each .dat file represents a different composition. We leave this at the top level so users can directly access these files to diagnose errors that may arise. In some cases, you will need to change the parameters for perple_X (located in ```params.py```. Within solutions, you will need to initialize a ```Grids/``` directory. Grid outputs will be stored here by default. 
+The ```Soulutions/``` directory stores the outputs from perple_X which give mineralogy and thermodynamic parameters depending on composition. Each ```.dat``` file represents a different composition. We leave this at the top level so users can directly access these files to diagnose errors that may arise. In some cases, you will need to change the parameters for perple_X (located in ```params.py```. Within solutions, you will need to initialize a ```Grids/``` directory. Grid outputs will be stored here by default. 
 
-It is important to remember that ExoPlex is designed to work only in this environment. That is, the user should have a directory tree that exactly match the one above. For example, naming your solution folder ```solutions/``` instead of ```Solutions/``` will cause ExoPlex to break. 
+It is important to remember that (currently) ExoPlex is designed to work only in this environment. That is, the user should have a directory tree that exactly matches the one above. For example, naming your solution folder ```solutions/``` instead of ```Solutions/``` will cause ExoPlex to break. 
 
 ### params.py
 
