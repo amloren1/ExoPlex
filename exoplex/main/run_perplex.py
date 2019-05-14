@@ -301,7 +301,7 @@ def run_perplex(*args):
             clear_perplex_files(solutionFileNameMan)
         except:
             pass
-        
+
         sys.exit()
 
 

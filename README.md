@@ -46,11 +46,15 @@ ExoPlex is written in Python 3.7 and is currently stable to its full capability 
 
 ```
 myworkspace/
-│   example.py    
+│      
 └───Solutions/ 
 │   │
 │   └───Grids/
 |   |   |   
+|__examples/
+|  |____example_1.py
+|  |____example_2.py
+|  |____params.py
 ```
 
 3. From the ExoPlex GitHub page, download the .tar files located in Solutions/. Put this in your local ```Solutions/``` directory and unpack. This will provide many precompiled mineral physics solutions for ExoPlex to use.     
@@ -72,13 +76,17 @@ Your workspace should look like the following:
 
 ```
 myworkspace/
-|   example.py
-|   params.py
-|   input_1.py
+│      
 └───Solutions/ 
 │   │
 │   └───Grids/
-|   |   |   
+|   |   | 
+│      
+└───exoplex/  
+|___examples/
+|  |____example_1.py
+|  |____example_2.py
+|  |____params.py
 ```
 
 Assuming you are working in an arbitrary directory called ```myworkspace/```. You should have at least the ```params.py``` and ```input_1.py``` files at the root. These and several example scripts can be found on the GitHub page under the ```examples``` folder.  
