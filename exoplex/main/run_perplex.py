@@ -289,6 +289,11 @@ def run_perplex(*args):
             os.rename(solutionFileNameMan + '_1.tab', filename + '_LM.tab')
 
         successful = True
+        try:
+            clear_perplex_files(solutionFileNameMan)
+        except:
+            print('**ERROR: Could not remove excess files from perplex run')
+            pass
     except:
         successful = False
         print('**ERROR**')
@@ -300,6 +305,8 @@ def run_perplex(*args):
         try:
             clear_perplex_files(solutionFileNameMan)
         except:
+
+            print('**ERROR: Could not remove excess files from perplex run')
             pass
 
         sys.exit()

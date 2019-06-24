@@ -64,7 +64,7 @@ arg:
 
 
 #**NOTE: ENTER FILENAME WITHOUT .py**
-input_1_file = "input_1"
+input_1_file = "input_nah"
 Planets = run.exoplex(input_1_file)
 
 
@@ -85,7 +85,7 @@ filenames = (optional) list of strings that represent desired filenames for each
 #####
 
 
-run.writeall(planet = Planets, filenames = ['planet_1.dat'])
+run.writeall(planet = Planets)
 
 #####
 '''

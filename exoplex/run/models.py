@@ -52,14 +52,33 @@ def inputs_from_file(script):
     compositional_params = np.empty((x.n_mod,), dtype = object)
     
     for i in range(x.n_mod):
-        compositional_params[i] = [x.wt_frac_water[i],x.FeMg[i],x.SiMg[i], \
-                                x.CaMg[i],x.AlMg[i],x.xFeO[i] ,x.Si_wt[i], \
-                                x.O_wt[i],x.S_wt[i]]
+        compositional_params[i] = [x.wt_frac_water[i],x.FeMg[i],x.SiMg[i],
+                                x.CaMg[i],x.AlMg[i],x.xFeO[i] ,x.Si_wt[i],
+                                x.O_wt[i], x.S_wt[i]]
         print(compositional_params)
     
     return(compositional_params)
     
-    
+def map_inputs_from_file(script):
+    x = __import__(script, ['*'])
+
+    compositional_params = []
+
+    for wtr_frac in x.wt_frac_water:
+        for femg in x.FeMg:
+            for simg in x.SiMg:
+                for camg in x.CaMg:
+                    for almg in x.AlMg:
+                        for feo in x.xFeO:
+                            for si_cor in x.Si_wt:
+                                for o_cor in x.O_wt:
+                                    for s_cor in x.S_wt:
+                                        compositional_params.append([wtr_frac, femg, simg,
+                                            camg, almg, feo, si_cor,
+                                            o_cor, s_cor])
+        print(compositional_params)
+
+    return (compositional_params)
     
 def inputs(composition, coreComp):
     
@@ -86,7 +105,23 @@ def inputs(composition, coreComp):
 get input from input.py
 '''
 ############################
-from params import *
+from params import (
+    Pressure_range_mantle_UM,
+    Temperature_range_mantle_UM,
+    resolution_UM,
+    Pressure_range_mantle_LM,
+    Temperature_range_mantle_LM,
+    resolution_LM,
+    Core_rad_frac_guess,
+    Mantle_potential_temp,
+    h20_radfrac_guess,
+    T_surface_h2o,
+    num_mantle_layers,
+    num_core_layers,
+    number_h2o_layers,
+    perplex_only,
+    verbose
+)
 
 def exoplex(script):
     
@@ -99,11 +134,11 @@ def exoplex(script):
     or (x.n_mod) != len(x.X)    \
     or (x.n_mod) != len(x.AlMg):
         print('\n***input ERROR: missing/extra list values in {}.py***'.format(script)) 
-        sys.exit()
+        #sys.exit()
     
-    comp_params = inputs_from_file(script)
-    Planet = np.empty(x.n_mod,dtype = object)
-    for i in range(x.n_mod):
+    comp_params = map_inputs_from_file(script)
+    Planet = np.empty(len(comp_params), dtype=object)
+    for i in range(len(comp_params)):
         
         cmf2 = {'fix_man': x.fix_core, 'wtCore': x.cmf[i]}
         compositional_params = comp_params[i]
@@ -115,15 +150,15 @@ def exoplex(script):
 
         sol_filename = 'NXNN00'
 
-        #Here is where the ExoPlex model is called
-        #result is a profile for density, mass, radius,
-        #heat capacity, emissivity of heat and mineralogy
-        #run_planet_mass(mass_planet, compositional_params, structure_params, layers,filename, truncate_comp)
+        # Here is where the ExoPlex model is called
+        # result is a profile for density, mass, radius,
+        # heat capacity, emissivity of heat and mineralogy
+        # run_planet_mass(mass_planet, compositional_params, structure_params, layers,filename, truncate_comp)
         
         if x.indp == 'M' or x.indp == 'm':
-            Planet[i] = exo.run_planet_mass(x.X[i], compositional_params,structure_params,layers,sol_filename, cmf2)
+            Planet[i] = exo.run_planet_mass(x.X[0], compositional_params,structure_params,layers,sol_filename, cmf2)
         elif x.indp == 'R' or x.indp == 'r':
-            Planet[i] = exo.run_planet_radius(x.X[i], compositional_params, structure_params, layers,sol_filename, cmf2)
+            Planet[i] = exo.run_planet_radius(x.X[0], compositional_params, structure_params, layers,sol_filename, cmf2)
         else:
             print('\n***Unable to interpret model selection indp = {}***'.format(x.indp))
             print('\n Please select independent parameter as \'R\' (radius) or \'M\' (mass)')

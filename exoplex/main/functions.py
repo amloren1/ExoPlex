@@ -400,9 +400,9 @@ def make_mantle_grid(Mantle_filename,LMUM):
 
     if LMUM == True:
         
-        file = open(Mantle_filename+'_UM.tab','r')
+        file = open(Mantle_filename+'_UM.tab', 'r')
     else:
-        file = open(Mantle_filename+'_LM.tab','r')
+        file = open(Mantle_filename+'_LM.tab', 'r')
 
     temp_file = file.readlines()
     num_rows = len(temp_file[13:])
