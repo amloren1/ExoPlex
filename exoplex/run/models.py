@@ -138,9 +138,10 @@ def exoplex(script):
     
     comp_params = map_inputs_from_file(script)
     Planet = np.empty(len(comp_params), dtype=object)
+
     for i in range(len(comp_params)):
         
-        cmf2 = {'fix_man': x.fix_core, 'wtCore': x.cmf[i]}
+        cmf2 = {'fix_man': x.fix_core, 'wtCore': x.cmf[0]}
         compositional_params = comp_params[i]
         structure_params = [Pressure_range_mantle_UM,Temperature_range_mantle_UM,resolution_UM,
                          Pressure_range_mantle_LM, Temperature_range_mantle_LM, resolution_LM,
@@ -164,7 +165,7 @@ def exoplex(script):
             print('\n Please select independent parameter as \'R\' (radius) or \'M\' (mass)')
             sys.exit()
         if perplex_only:
-            sys.exit()
+            continue
         
         if verbose:
 

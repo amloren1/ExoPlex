@@ -65,8 +65,9 @@ arg:
 
 #**NOTE: ENTER FILENAME WITHOUT .py**
 input_1_file = "input_nah"
+#input_tester = "input_1"
 Planets = run.exoplex(input_1_file)
-
+#sys.exit()
 
 #####
 '''
@@ -86,6 +87,8 @@ filenames = (optional) list of strings that represent desired filenames for each
 
 
 run.writeall(planet = Planets)
+
+sys.exit()
 
 #####
 '''

@@ -112,11 +112,11 @@ def writeall(**kwargs):
     
     Planet = kwargs.get('planet')
     n = len(Planet)
-    
+
     if kwargs.get('file_names') == None:
         names = []
         for i in range(n):
-            names.append(f'planet0{i}.dat')
+            names.append(f'Solutions/Grids/planet0{i}.dat')
             
     elif len(kwargs.get('file_names')) == n:
         names = kwargs.get('file_names')
@@ -133,7 +133,6 @@ def writeall(**kwargs):
         P   = Planet[i]['pressure']
         T   = Planet[i]['temperature']
         mntl = Planet[i]['mantle_ratios']
-        
         dat_header = 'Mantle composition:\n{:10}{:10}{:10}{:10}\n{:<5}  {:<5}  {:<5}  {:<5}\n\n{:25}{:25}{:25}{:25}{:25}'\
             .format('Fe/Mg','Si/Mg','Ca/Mg','Al/Mg',mntl[0] ,mntl[1] ,mntl[2] ,mntl[3] , \
                 'mass', 'radius', 'density', 'pres', 'temp')

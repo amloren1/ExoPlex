@@ -42,7 +42,7 @@ multi_process = True
 
 
 #skip model and run perple_x only?
-perplex_only = True#True # False
+perplex_only = False#True # False
 
 
 
