@@ -1,7 +1,7 @@
 cycler==0.10.0
 kiwisolver==1.0.1
 matplotlib==3.0.3
-numpy==1.16.2
+numpy==1.22.0
 pexpect==4.7.0
 ptyprocess==0.6.0
 pyparsing==2.4.0
